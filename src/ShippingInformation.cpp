@@ -12,7 +12,7 @@ ShippingInformation::ShippingInformation(QObject *parent)
     : QObject(parent)
     , m_Name("")
     , m_Phone("")
-    , m_Address(nullptr)
+    , m_Address(new Address(this))
 {
 
 }
@@ -80,7 +80,7 @@ void ShippingInformation::set(ShippingInformation &other)
     setPhone(other.phone());
     if (other.address()) {
         if (m_Address == nullptr) {
-            m_Address = new Address();
+            m_Address = new Address(this);
         }
 
         m_Address->set(*other.address());
