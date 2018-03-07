@@ -1,5 +1,6 @@
 #include <QtTest/QtTest>
 #include <QSignalSpy>
+#include "TestQStripe.h"
 // QStripe
 #include "QStripe/Address.h"
 #include "QStripe/ShippingInformation.h"
@@ -7,65 +8,38 @@
 
 using namespace QStripe;
 
-class TestQStripe: public QObject
+QVariantMap TestQStripe::getAddressData() const
 {
-    Q_OBJECT
-private:
-    QVariantMap getAddressData() const
-    {
-        QVariantMap addressData;
-        addressData[Address::FIELD_COUNTRY] = "Canada";
-        addressData[Address::FIELD_STATE] = "Ontario";
-        addressData[Address::FIELD_CITY] = "Toronto";
+    QVariantMap addressData;
+    addressData[Address::FIELD_COUNTRY] = "Canada";
+    addressData[Address::FIELD_STATE] = "Ontario";
+    addressData[Address::FIELD_CITY] = "Toronto";
 
-        addressData[Address::FIELD_LINE_1] = "Line one.";
-        addressData[Address::FIELD_LINE_2] = "Line two.";
-        addressData[Address::FIELD_POSTAL_CODE] = "M9S U7Y";
+    addressData[Address::FIELD_LINE_1] = "Line one.";
+    addressData[Address::FIELD_LINE_2] = "Line two.";
+    addressData[Address::FIELD_POSTAL_CODE] = "M9S U7Y";
 
-        return addressData;
-    }
+    return addressData;
+}
 
-    QVariantMap getShippingInformationData() const
-    {
-        QVariantMap addressData;
-        addressData[Address::FIELD_COUNTRY] = "Canada";
-        addressData[Address::FIELD_STATE] = "Ontario";
-        addressData[Address::FIELD_CITY] = "Toronto";
+QVariantMap TestQStripe::getShippingInformationData() const
+{
+    QVariantMap addressData;
+    addressData[Address::FIELD_COUNTRY] = "Canada";
+    addressData[Address::FIELD_STATE] = "Ontario";
+    addressData[Address::FIELD_CITY] = "Toronto";
 
-        addressData[Address::FIELD_LINE_1] = "Line one.";
-        addressData[Address::FIELD_LINE_2] = "Line two.";
-        addressData[Address::FIELD_POSTAL_CODE] = "M9S U7Y";
+    addressData[Address::FIELD_LINE_1] = "Line one.";
+    addressData[Address::FIELD_LINE_2] = "Line two.";
+    addressData[Address::FIELD_POSTAL_CODE] = "M9S U7Y";
 
-        QVariantMap data;
-        data[ShippingInformation::FIELD_NAME] = "Furkan Uzumcu";
-        data[ShippingInformation::FIELD_PHONE] = "+11234123123";
-        data[ShippingInformation::FIELD_ADDRESS] = addressData;
+    QVariantMap data;
+    data[ShippingInformation::FIELD_NAME] = "Furkan Uzumcu";
+    data[ShippingInformation::FIELD_PHONE] = "+11234123123";
+    data[ShippingInformation::FIELD_ADDRESS] = addressData;
 
-        return data;
-    }
-
-private slots:
-    // Begin Address Tests
-    void testAddressEquals();
-    void testAddressNotEquals();
-    void testAddressChangeSignals();
-
-    void testAddressFromJson();
-    void testAddressSet();
-    void testAddressJsonString();
-
-    void testAddressJson();
-    // End Address Tests
-
-    // Begin ShippingInformation Tests
-    void testShippingInformationFromJson();
-    void testShippingInformationJson();
-    void testShippingInformationJsonString();
-
-    void testShippingInformationSet();
-    void testShippingInformationSetAddress();
-    // End Address Tests
-};
+    return data;
+}
 
 void TestQStripe::testAddressEquals()
 {

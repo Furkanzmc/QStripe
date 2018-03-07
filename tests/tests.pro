@@ -8,3 +8,6 @@ include(../qstripe.pri)
 
 SOURCES += \
     TestQStripe.cpp
+
+HEADERS += \
+    TestQStripe.h
