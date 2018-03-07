@@ -216,27 +216,27 @@ public:
 
     /**
      * @brief Returns the expiration month.
-     * @return unsigned int
+     * @return int
      */
-    unsigned int expirationMonth() const;
+    int expirationMonth() const;
 
     /**
      * @brief Set the expiration month. This cannot be bigger than 12.
      * @param month
      */
-    void setExpirationMonth(unsigned int month);
+    void setExpirationMonth(int month);
 
     /**
      * @brief Returns the expiration year. This can be a 2 digit or a 4 digit number.
-     * @return unsigned int
+     * @return int
      */
-    unsigned int expirationYear() const;
+    int expirationYear() const;
 
     /**
      * @brief Set the expiration yer. This can be a 2 digit or a 4 digit number.
      * @param year
      */
-    void setExpirationYear(unsigned int year);
+    void setExpirationYear(int year);
 
     /**
      * @brief Returns the fingerprint.
@@ -414,9 +414,9 @@ private:
     QString m_Currency;
 
     CVCCheck m_CVCCheck;
-    unsigned int m_ExpirationMonth;
+    int m_ExpirationMonth;
     // This can be a 2 digit or 4 digit number.
-    unsigned int m_ExpirationYear;
+    int m_ExpirationYear;
 
     QString m_Fingerprint;
     FundingType m_FundingType;

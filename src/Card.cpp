@@ -190,7 +190,11 @@ QString Card::city() const
 
 void Card::setCity(const QString &ct)
 {
-    m_City = ct;
+    const bool changed = m_City != ct;
+    if (changed) {
+        m_City = ct;
+        emit cityChanged();
+    }
 }
 
 Address *Card::address()
@@ -214,7 +218,11 @@ Card::CardBrand Card::brand() const
 
 void Card::setBrand(const CardBrand &cardBrand)
 {
-    m_Brand = cardBrand;
+    const bool changed = m_Brand != cardBrand;
+    if (changed) {
+        m_Brand = cardBrand;
+        emit brandChanged();
+    }
 }
 
 QString Card::country() const
@@ -224,7 +232,11 @@ QString Card::country() const
 
 void Card::setCountry(const QString &country)
 {
-    m_Country = country;
+    const bool changed = m_Country != country;
+    if (changed) {
+        m_Country = country;
+        emit countryChanged();
+    }
 }
 
 QString Card::currency() const
@@ -234,7 +246,11 @@ QString Card::currency() const
 
 void Card::setCurrency(const QString &currency)
 {
-    m_Currency = currency;
+    const bool changed = m_Currency != currency;
+    if (changed) {
+        m_Currency = currency;
+        emit currencyChanged();
+    }
 }
 
 Card::CVCCheck Card::cvcCheck() const
@@ -244,27 +260,39 @@ Card::CVCCheck Card::cvcCheck() const
 
 void Card::setCVCCheck(CVCCheck check)
 {
-    m_CVCCheck = check;
+    const bool changed = m_CVCCheck != check;
+    if (changed) {
+        m_CVCCheck = check;
+        emit cvcCheckChanged();
+    }
 }
 
-unsigned int Card::expirationMonth() const
+int Card::expirationMonth() const
 {
     return m_ExpirationMonth;
 }
 
-void Card::setExpirationMonth(unsigned int month)
+void Card::setExpirationMonth(int month)
 {
-    m_ExpirationMonth = month;
+    const bool changed = m_ExpirationMonth != month;
+    if (changed) {
+        m_ExpirationMonth = month;
+        emit expirationMonthChanged();
+    }
 }
 
-unsigned int Card::expirationYear() const
+int Card::expirationYear() const
 {
     return m_ExpirationYear;
 }
 
-void Card::setExpirationYear(unsigned int year)
+void Card::setExpirationYear(int year)
 {
-    m_ExpirationYear = year;
+    const bool changed = m_ExpirationYear != year;
+    if (changed) {
+        m_ExpirationYear = year;
+        emit expirationYearChanged();
+    }
 }
 
 QString Card::fingerprint() const
@@ -274,7 +302,11 @@ QString Card::fingerprint() const
 
 void Card::setFingerprint(const QString &fingerprint)
 {
-    m_Fingerprint = fingerprint;
+    const bool changed = m_Fingerprint != fingerprint;
+    if (changed) {
+        m_Fingerprint = fingerprint;
+        emit fingerprintChanged();
+    }
 }
 
 Card::FundingType Card::funding() const
@@ -284,7 +316,11 @@ Card::FundingType Card::funding() const
 
 void Card::setFunding(const FundingType &type)
 {
-    m_FundingType = type;
+    const bool changed = m_FundingType != type;
+    if (changed) {
+        m_FundingType = type;
+        emit fundingChanged();
+    }
 }
 
 QString Card::name() const
@@ -294,7 +330,11 @@ QString Card::name() const
 
 void Card::setName(const QString &name)
 {
-    m_Name = name;
+    const bool changed = m_Name != name;
+    if (changed) {
+        m_Name = name;
+        emit nameChanged();
+    }
 }
 
 QString Card::lastFourDigits() const
@@ -304,7 +344,11 @@ QString Card::lastFourDigits() const
 
 void Card::setLastFourDigits(const QString &lastDigits)
 {
-    m_LastFourDigits = lastDigits;
+    const bool changed = m_LastFourDigits != lastDigits;
+    if (changed) {
+        m_LastFourDigits = lastDigits;
+        emit lastFourDigitsChanged();
+    }
 }
 
 Card::TokenizationMethod Card::tokenizationMethod() const
@@ -314,7 +358,11 @@ Card::TokenizationMethod Card::tokenizationMethod() const
 
 void Card::setTokenizationMethod(const TokenizationMethod &method)
 {
-    m_TokenizationMethod = method;
+    const bool changed = m_TokenizationMethod != method;
+    if (changed) {
+        m_TokenizationMethod = method;
+        emit tokenizationMethodChanged();
+    }
 }
 
 QVariantMap Card::metaData() const
@@ -324,7 +372,11 @@ QVariantMap Card::metaData() const
 
 void Card::setMetaData(const QVariantMap &data)
 {
-    m_MetaData = data;
+    const bool changed = m_MetaData != data;
+    if (changed) {
+        m_MetaData = data;
+        emit metaDataChanged();
+    }
 }
 
 QString Card::cardNumber() const
@@ -334,7 +386,11 @@ QString Card::cardNumber() const
 
 void Card::setCardNumber(const QString &number)
 {
-    m_CardNumber = number;
+    const bool changed = m_CardNumber != number;
+    if (changed) {
+        m_CardNumber = number;
+        emit cardNumberChanged();
+    }
 }
 
 void Card::setCardID(const QString &id)
