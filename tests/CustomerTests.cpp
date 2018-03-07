@@ -24,19 +24,14 @@ QVariantMap CustomerTests::getAddressData() const
     addressData[Address::FIELD_LINE_2] = "Line two.";
     addressData[Address::FIELD_POSTAL_CODE] = "M9S U7Y";
 
+    addressData[Address::FIELD_ZIP_CHECK] = "unknown";
+
     return addressData;
 }
 
 QVariantMap CustomerTests::getShippingInformationData() const
 {
-    QVariantMap addressData;
-    addressData[Address::FIELD_COUNTRY] = "Canada";
-    addressData[Address::FIELD_STATE] = "Ontario";
-    addressData[Address::FIELD_CITY] = "Toronto";
-
-    addressData[Address::FIELD_LINE_1] = "Line one.";
-    addressData[Address::FIELD_LINE_2] = "Line two.";
-    addressData[Address::FIELD_POSTAL_CODE] = "M9S U7Y";
+    const QVariantMap addressData = getAddressData();
 
     QVariantMap data;
     data[ShippingInformation::FIELD_NAME] = "Furkan Uzumcu";

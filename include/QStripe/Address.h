@@ -30,6 +30,17 @@ public:
     static const QString FIELD_LINE_2;
     static const QString FIELD_POSTAL_CODE;
 
+    static const QString FIELD_ZIP_CHECK;
+
+    enum ZipCheck {
+        ZipCheckPass,
+        ZipCheckFail,
+        ZipCheckUnavailable,
+        ZipCheckUnchecked,
+        ZipCheckUnknown
+    };
+    Q_ENUM(ZipCheck);
+
 public:
     explicit Address(QObject *parent = nullptr);
 
@@ -122,6 +133,18 @@ public:
     void setPostalCode(const QString &code);
 
     /**
+     * @brief Returns the postal code check status of this address if it exists.
+     * @return ZipCheck
+     */
+    ZipCheck zipCheck() const;
+
+    /**
+     * @brief Sets the zip check.
+     * @param check
+     */
+    void setZipCheck(const ZipCheck &check);
+
+    /**
      * @brief Returns the QVariantMap representation of the current object.
      * @param prefix This is useful when you are adding the address to a card or customer. The prefix is prepended to the key of each item.
      * @return QVariantMap
@@ -149,6 +172,20 @@ public:
      * @return Address
      */
     static Address *fromJson(const QString &dataStr, const QString &prefix = "");
+
+    /**
+     * @brief Returns teh ZipCheck enum from the name.
+     * @param name
+     * @return ZipCheck
+     */
+    static ZipCheck zipCheckType(const QString &name);
+
+    /**
+     * @brief Returns the zip check name for the given type. The string representation for ZipCheck::ZipCheckUnknown is `unknown`.
+     * @param check
+     * @return QString
+     */
+    static QString zipCheckName(ZipCheck check);
 
 signals:
     /**
@@ -181,6 +218,11 @@ signals:
      */
     void postalCodeChanged();
 
+    /**
+     * @brief Emitted when zip check changes.
+     */
+    void zipCheckChanged();
+
 private:
     QString m_Country,
             m_State,
@@ -188,6 +230,7 @@ private:
             m_LineOne,
             m_LineTwo,
             m_PostalCode;
+    ZipCheck m_ZipCheck;
 };
 
 }

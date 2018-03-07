@@ -12,6 +12,8 @@ const QString Address::FIELD_LINE_2 = "line2";
 const QString Address::FIELD_POSTAL_CODE = "postal_code";
 const QString Address::FIELD_STATE = "state";
 
+const QString Address::FIELD_ZIP_CHECK = "zip_check";
+
 Address::Address(QObject *parent)
     : QObject(parent)
     , m_Country("")
@@ -20,6 +22,7 @@ Address::Address(QObject *parent)
     , m_LineOne("")
     , m_LineTwo("")
     , m_PostalCode("")
+    , m_ZipCheck(ZipCheck::ZipCheckUnknown)
 {
 
 }
@@ -127,6 +130,20 @@ void Address::setPostalCode(const QString &code)
     }
 }
 
+Address::ZipCheck Address::zipCheck() const
+{
+    return m_ZipCheck;
+}
+
+void Address::setZipCheck(const ZipCheck &check)
+{
+    const bool changed = check != m_ZipCheck;
+    if (changed) {
+        m_ZipCheck = check;
+        emit zipCheckChanged();
+    }
+}
+
 QVariantMap Address::json(const QString &prefix) const
 {
     QVariantMap data;
@@ -137,6 +154,7 @@ QVariantMap Address::json(const QString &prefix) const
     data[prefix + FIELD_LINE_1] = lineOne();
     data[prefix + FIELD_LINE_2] = lineTwo();
     data[prefix + FIELD_POSTAL_CODE] = postalCode();
+    data[prefix + FIELD_ZIP_CHECK] = zipCheckName(m_ZipCheck);
 
     return data;
 }
@@ -186,7 +204,49 @@ Address *Address::fromJson(const QString &dataStr, const QString &prefix)
         address->setPostalCode(data[prefix + FIELD_POSTAL_CODE].toString());
     }
 
+    if (data.contains(prefix + FIELD_ZIP_CHECK)) {
+        address->setZipCheck(address->zipCheckType(data[prefix + FIELD_ZIP_CHECK].toString()));
+    }
+
     return address;
+}
+
+Address::ZipCheck Address::zipCheckType(const QString &name)
+{
+    ZipCheck check = ZipCheck::ZipCheckUnknown;
+    if (name == "pass") {
+        check = ZipCheck::ZipCheckPass;
+    }
+    else if (name == "fail") {
+        check = ZipCheck::ZipCheckFail;
+    }
+    else if (name == "unchecked") {
+        check = ZipCheck::ZipCheckUnchecked;
+    }
+    else if (name == "unavailable") {
+        check = ZipCheck::ZipCheckUnavailable;
+    }
+
+    return check;
+}
+
+QString Address::zipCheckName(ZipCheck check)
+{
+    QString name = "unknown";
+    if (check == ZipCheck::ZipCheckPass) {
+        name = "pass";
+    }
+    else if (check == ZipCheck::ZipCheckFail) {
+        name = "fail";
+    }
+    else if (check == ZipCheck::ZipCheckUnchecked) {
+        name = "unchecked";
+    }
+    else if (check == ZipCheck::ZipCheckUnavailable) {
+        name = "unavailable";
+    }
+
+    return name;
 }
 
 }
