@@ -2,12 +2,16 @@ TARGET = qstripe_test
 
 QT += testlib qml quick network
 
-USE_DEFAULT_STYLE = 1
-
-include(../qstripe.pri)
-
 SOURCES += \
-    TestQStripe.cpp
+    TestQStripe.cpp \
+    CustomerTests.cpp \
+    AddressTests.cpp \
+    ShippingInformationTests.cpp
 
 HEADERS += \
-    TestQStripe.h
+    TestQStripe.h \
+    CustomerTests.h \
+    AddressTests.h \
+    ShippingInformationTests.h
+
+include(../qstripe.pri)
