@@ -127,23 +127,23 @@ void Address::setPostalCode(const QString &code)
     }
 }
 
-QVariantMap Address::json() const
+QVariantMap Address::json(const QString &prefix) const
 {
     QVariantMap data;
-    data[FIELD_COUNTRY] = country();
-    data[FIELD_CITY] = city();
-    data[FIELD_STATE] = state();
+    data[prefix + FIELD_COUNTRY] = country();
+    data[prefix + FIELD_CITY] = city();
+    data[prefix + FIELD_STATE] = state();
 
-    data[FIELD_LINE_1] = lineOne();
-    data[FIELD_LINE_2] = lineTwo();
-    data[FIELD_POSTAL_CODE] = postalCode();
+    data[prefix + FIELD_LINE_1] = lineOne();
+    data[prefix + FIELD_LINE_2] = lineTwo();
+    data[prefix + FIELD_POSTAL_CODE] = postalCode();
 
     return data;
 }
 
-QString Address::jsonString() const
+QString Address::jsonString(const QString &prefix) const
 {
-    return Utils::toJsonString(json());
+    return Utils::toJsonString(json(prefix));
 }
 
 void Address::set(const Address &other)

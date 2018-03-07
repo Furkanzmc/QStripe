@@ -123,15 +123,17 @@ public:
 
     /**
      * @brief Returns the QVariantMap representation of the current object.
+     * @param prefix This is useful when you are adding the address to a card or customer. The prefix is prepended to the key of each item.
      * @return QVariantMap
      */
-    QVariantMap json() const;
+    QVariantMap json(const QString &prefix = "") const;
 
     /**
      * @brief Returns the json string that represents the current object. Empty fields will have empty strings.
+     * @param prefix See documentation for Address::json()
      * @return QString
      */
-    QString jsonString() const;
+    QString jsonString(const QString &prefix = "") const;
 
     /**
      * @brief Copy another address to this one.
