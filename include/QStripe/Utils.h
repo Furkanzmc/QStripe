@@ -1,14 +1,27 @@
 #pragma once
-#include <QObject>
+#include <QVariantMap>
 
-class Utils : public QObject
+namespace QStripe
 {
-    Q_OBJECT
 
+class Utils
+{
 public:
-    explicit Utils(QObject *parent = nullptr);
+    explicit Utils();
 
-signals:
+    /**
+     * @brief Converts the given QVariantMap to QString.
+     * @param data
+     * @return QString
+     */
+    static QString toJsonString(const QVariantMap &data);
 
-public slots:
+    /**
+     * @brief Converts the given data to variant map.
+     * @param data
+     * @return QVariantMap
+     */
+    static QVariantMap toVariantMap(const QString &data);
 };
+
+}

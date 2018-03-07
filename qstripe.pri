@@ -14,7 +14,10 @@ HEADERS += \
     $$PWD/include/QStripe/Customer.h \
     $$PWD/include/QStripe/Utils.h \
     $$PWD/include/QStripe/Stripe.h \
-    $$PWD/include/QStripe/NetworkUtils.h
+    $$PWD/include/QStripe/NetworkUtils.h \
+    $$PWD/include/QStripe/Address.h \
+    $$PWD/include/QStripe/ShippingInformation.h \
+    $$PWD/include/QStripe/PaymentSource.h
 
 SOURCES += \
     $$PWD/src/Token.cpp \
@@ -22,6 +25,9 @@ SOURCES += \
     $$PWD/src/Customer.cpp \
     $$PWD/src/Utils.cpp \
     $$PWD/src/Stripe.cpp \
-    $$PWD/src/NetworkUtils.cpp
+    $$PWD/src/NetworkUtils.cpp \
+    $$PWD/src/Address.cpp \
+    $$PWD/src/ShippingInformation.cpp \
+    $$PWD/src/PaymentSource.cpp
 
 OTHER_FILES += $$PWD/README.md
