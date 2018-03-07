@@ -157,33 +157,33 @@ void Address::set(const Address &other)
     this->setPostalCode(other.postalCode());
 }
 
-Address *Address::fromJson(const QString &dataStr)
+Address *Address::fromJson(const QString &dataStr, const QString &prefix)
 {
     const QVariantMap data = Utils::toVariantMap(dataStr);
 
     Address *address = new Address();
-    if (data.contains(FIELD_COUNTRY)) {
-        address->setCountry(data[FIELD_COUNTRY].toString());
+    if (data.contains(prefix + FIELD_COUNTRY)) {
+        address->setCountry(data[prefix + FIELD_COUNTRY].toString());
     }
 
-    if (data.contains(FIELD_CITY)) {
-        address->setCity(data[FIELD_CITY].toString());
+    if (data.contains(prefix + FIELD_CITY)) {
+        address->setCity(data[prefix + FIELD_CITY].toString());
     }
 
-    if (data.contains(FIELD_STATE)) {
-        address->setState(data[FIELD_STATE].toString());
+    if (data.contains(prefix + FIELD_STATE)) {
+        address->setState(data[prefix + FIELD_STATE].toString());
     }
 
-    if (data.contains(FIELD_LINE_1)) {
-        address->setLineOne(data[FIELD_LINE_1].toString());
+    if (data.contains(prefix + FIELD_LINE_1)) {
+        address->setLineOne(data[prefix + FIELD_LINE_1].toString());
     }
 
-    if (data.contains(FIELD_LINE_2)) {
-        address->setLineTwo(data[FIELD_LINE_2].toString());
+    if (data.contains(prefix + FIELD_LINE_2)) {
+        address->setLineTwo(data[prefix + FIELD_LINE_2].toString());
     }
 
-    if (data.contains(FIELD_POSTAL_CODE)) {
-        address->setPostalCode(data[FIELD_POSTAL_CODE].toString());
+    if (data.contains(prefix + FIELD_POSTAL_CODE)) {
+        address->setPostalCode(data[prefix + FIELD_POSTAL_CODE].toString());
     }
 
     return address;

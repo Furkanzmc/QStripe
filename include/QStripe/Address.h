@@ -143,10 +143,12 @@ public:
 
     /**
      * @brief Returns an Address instance from a json representation. If the json data cannot be parsed, returns an empty Address instance.
+     * @param prefix This is usefull If you are creating an address from the output of a, say, Customer object that has the `address_` prefix
+     * for address fields.
      * @param data
      * @return Address
      */
-    static Address *fromJson(const QString &dataStr);
+    static Address *fromJson(const QString &dataStr, const QString &prefix = "");
 
 signals:
     /**
