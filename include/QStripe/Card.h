@@ -173,16 +173,10 @@ public:
     void setCurrency(const QString &currency);
 
     /**
-     * @brief Returns the cvc check status.
+     * @brief Returns the cvc check status. CVCCheck can only be set internally.
      * @return CVCCheck
      */
     CVCCheck cvcCheck() const;
-
-    /**
-     * @brief Set cvc check.
-     * @param check
-     */
-    void setCVCCheck(CVCCheck check);
 
     /**
      * @brief Returns the expiration month.
@@ -525,6 +519,12 @@ private:
      * @return int
      */
     int maxCardNumberLenght(CardBrand brand) const;
+
+    /**
+     * @brief Set cvc check.
+     * @param check
+     */
+    void setCVCCheck(CVCCheck check);
 };
 
 }

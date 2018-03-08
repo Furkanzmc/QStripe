@@ -139,15 +139,6 @@ Card::CVCCheck Card::cvcCheck() const
     return m_CVCCheck;
 }
 
-void Card::setCVCCheck(CVCCheck check)
-{
-    const bool changed = m_CVCCheck != check;
-    if (changed) {
-        m_CVCCheck = check;
-        emit cvcCheckChanged();
-    }
-}
-
 int Card::expirationMonth() const
 {
     return m_ExpirationMonth;
@@ -580,8 +571,6 @@ QString Card::cvcCheckName(CVCCheck type)
     return name;
 }
 
-
-
 void Card::setCardID(const QString &id)
 {
     const bool changed = m_CardID != id;
@@ -644,4 +633,12 @@ int Card::maxCardNumberLenght(CardBrand brand) const
     return length;
 }
 
+void Card::setCVCCheck(CVCCheck check)
+{
+    const bool changed = m_CVCCheck != check;
+    if (changed) {
+        m_CVCCheck = check;
+        emit cvcCheckChanged();
+    }
+}
 }

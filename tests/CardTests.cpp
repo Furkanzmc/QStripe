@@ -87,10 +87,6 @@ void CardTests::testSignals()
     card.setCurrency("cad");
     QCOMPARE(spyCurrency.count(), 1);
 
-    QSignalSpy spyCVCCheck(&card, &Card::cvcCheckChanged);
-    card.setCVCCheck(Card::CVCCheckPass);
-    QCOMPARE(spyCVCCheck.count(), 1);
-
     QSignalSpy spyExpMonth(&card, &Card::expirationMonthChanged);
     card.setExpirationMonth(1);
     QCOMPARE(spyExpMonth.count(), 1);
