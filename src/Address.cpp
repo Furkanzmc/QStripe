@@ -38,6 +38,8 @@ bool Address::operator==(const Address &a2) const
     equals &= lineTwo() == a2.lineTwo();
     equals &= postalCode() == a2.postalCode();
 
+    equals &= zipCheck() == a2.zipCheck();
+
     return equals;
 }
 
