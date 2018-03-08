@@ -138,7 +138,7 @@ public:
      * @brief Copies the contents of other to this instance.
      * @param other
      */
-    void set(const Customer *other);
+    Q_INVOKABLE void set(const Customer *other);
 
 signals:
     /**

@@ -321,7 +321,7 @@ public:
      * @brief Copies the contents of other to this instance.
      * @param other
      */
-    void set(const Card &other);
+    Q_INVOKABLE void set(const Card &other);
 
     /**
      * @brief Returns the name of the brand.

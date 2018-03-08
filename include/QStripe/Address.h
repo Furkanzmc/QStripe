@@ -162,7 +162,7 @@ public:
      * @brief Copy another address to this one.
      * @param other
      */
-    void set(const Address &other);
+    Q_INVOKABLE void set(const Address &other);
 
     /**
      * @brief Returns an Address instance from a json representation. If the json data cannot be parsed, returns an empty Address instance.
