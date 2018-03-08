@@ -70,7 +70,9 @@ void CardTests::testSignals()
     QCOMPARE(spyCity.count(), 1);
 
     QSignalSpy spyAddress(&card, &Card::addressChanged);
-    card.setAddress(Address::fromJson(Utils::toJsonString(getAddressData()), Card::FIELD_ADDRESS_PREFIX));
+    Address *addr = Address::fromJson(getAddressData(), Card::FIELD_ADDRESS_PREFIX);
+    card.setAddress(addr);
+    addr->deleteLater();
     QCOMPARE(spyAddress.count(), 1);
 
     QSignalSpy spyBrand(&card, &Card::brandChanged);
@@ -131,7 +133,7 @@ void CardTests::testSignals()
 void CardTests::testFromJson()
 {
     const QVariantMap data = getCardData();
-    const Card *card = Card::fromJson(Utils::toJsonString(data));
+    const Card *card = Card::fromJson(data);
 
     QCOMPARE(card->cardID(), data[Card::FIELD_ID].toString());
     QCOMPARE(card->city(), data[Card::FIELD_ADDRESS_CITY].toString());
@@ -151,31 +153,36 @@ void CardTests::testFromJson()
 
     QCOMPARE(card->tokenizationMethodName(card->tokenizationMethod()), data[Card::FIELD_TOKENIZATION_METHOD].toString());
     QCOMPARE(card->metaData(), data[Card::FIELD_METADATA].toMap());
+
+    Address *addr = Address::fromJson(data, Card::FIELD_ADDRESS_PREFIX);
     QCOMPARE(
         card->address()->jsonString(Card::FIELD_ADDRESS_PREFIX),
-        Address::fromJson(Utils::toJsonString(data), Card::FIELD_ADDRESS_PREFIX)->jsonString(Card::FIELD_ADDRESS_PREFIX)
+        addr->jsonString(Card::FIELD_ADDRESS_PREFIX)
     );
+    addr->deleteLater();
 }
 
 void CardTests::testJsonStr()
 {
     const QVariantMap data = getCardData();
-    const Card *card = Card::fromJson(Utils::toJsonString(data));
+    Card *card = Card::fromString(Utils::toJsonString(data));
 
-    QCOMPARE(card->jsonStr(), Utils::toJsonString(data));
+    QCOMPARE(card->jsonString(), Utils::toJsonString(data));
+    card->deleteLater();
 }
 
 void CardTests::testJson()
 {
     const QVariantMap data = getCardData();
-    const Card *card = Card::fromJson(Utils::toJsonString(data));
+    Card *card = Card::fromJson(data);
 
     QCOMPARE(card->json(), data);
+    card->deleteLater();
 }
 
 void CardTests::testSet()
 {
-    const Card *c1 = Card::fromJson(Utils::toJsonString(getCardData()));
+    Card *c1 = Card::fromJson(getCardData());
     Card c2;
     c2.set(*c1);
 
@@ -198,4 +205,6 @@ void CardTests::testSet()
     QCOMPARE(c2.cvcCheckName(c2.cvcCheck()), c1->cvcCheckName(c1->cvcCheck()));
     QCOMPARE(c2.tokenizationMethodName(c2.tokenizationMethod()), c1->tokenizationMethodName(c1->tokenizationMethod()));
     QVERIFY((*c2.address()) == (*c1->address()));
+
+    c1->deleteLater();
 }

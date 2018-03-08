@@ -85,7 +85,7 @@ void AddressTests::testAddressFromJson()
 {
     const QVariantMap data = getAddressData();
 
-    Address *addr = Address::fromJson(Utils::toJsonString(data));
+    Address *addr = Address::fromJson(data);
 
     QCOMPARE(addr->country(), data[Address::FIELD_COUNTRY].toString());
     QCOMPARE(addr->state(), data[Address::FIELD_STATE].toString());

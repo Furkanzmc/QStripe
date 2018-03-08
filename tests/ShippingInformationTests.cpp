@@ -48,11 +48,14 @@ void ShippingInformationTests::testShippingInformationFromJson()
     QVariantMap addressData = getAddressData();
     const QVariantMap data = getShippingInformationData();
 
-    ShippingInformation *si = ShippingInformation::fromJson(Utils::toJsonString(data));
+    ShippingInformation *si = ShippingInformation::fromJson(data);
 
     QCOMPARE(si->name(), data[ShippingInformation::FIELD_NAME].toString());
     QCOMPARE(si->phone(), data[ShippingInformation::FIELD_PHONE].toString());
-    QVERIFY((*si->address()) == *Address::fromJson(Utils::toJsonString(addressData)));
+
+    Address *addr = Address::fromJson(addressData);
+    QVERIFY((*si->address()) == *addr);
+    addr->deleteLater();
 }
 
 void ShippingInformationTests::testShippingInformationJson()
@@ -62,7 +65,9 @@ void ShippingInformationTests::testShippingInformationJson()
     data[ShippingInformation::FIELD_PHONE] = "";
 
     ShippingInformation si;
-    si.setAddress(Address::fromJson(Utils::toJsonString(getAddressData())));
+    Address *address = Address::fromJson(getAddressData());
+    si.setAddress(address);
+    address->deleteLater();
 
     QCOMPARE(Utils::toJsonString(si.json()), Utils::toJsonString(data));
 }
@@ -74,7 +79,9 @@ void ShippingInformationTests::testShippingInformationJsonString()
     data[ShippingInformation::FIELD_PHONE] = "";
 
     ShippingInformation si;
-    si.setAddress(Address::fromJson(Utils::toJsonString(getAddressData())));
+    Address *address = Address::fromJson(getAddressData());
+    si.setAddress(address);
+    address->deleteLater();
 
     QCOMPARE(si.jsonString(), Utils::toJsonString(data));
 }
@@ -93,9 +100,10 @@ void ShippingInformationTests::testShippingInformationSet()
 
 void ShippingInformationTests::testShippingInformationSetAddress()
 {
-    Address *addr = Address::fromJson(Utils::toJsonString(getAddressData()));
+    Address *addr = Address::fromJson(getAddressData());
     ShippingInformation si;
     si.setAddress(addr);
 
     QVERIFY((*addr) == (*si.address()));
+    addr->deleteLater();
 }

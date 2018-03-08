@@ -97,7 +97,7 @@ void CustomerTests::testFromJson()
     const QVariantMap data = getData();
     const QVariantMap shippingData = data[Customer::FIELD_SHIPPING].toMap();
 
-    const Customer *customer = Customer::fromJson(Utils::toJsonString(data));
+    const Customer *customer = Customer::fromJson(data);
 
     QCOMPARE(customer->currency(), data[Customer::FIELD_CURRENCY].toString());
     QCOMPARE(customer->defaultSource(), data[Customer::FIELD_DEFAULT_SOURCE].toString());
@@ -111,15 +111,15 @@ void CustomerTests::testFromJson()
 void CustomerTests::testJsonStr()
 {
     const QVariantMap data = getData();
-    const Customer *customer = Customer::fromJson(Utils::toJsonString(data));
+    const Customer *customer = Customer::fromString(Utils::toJsonString(data));
 
-    QCOMPARE(customer->jsonStr(), Utils::toJsonString(data));
+    QCOMPARE(customer->jsonString(), Utils::toJsonString(data));
 }
 
 void CustomerTests::testJson()
 {
     const QVariantMap data = getData();
-    const Customer *customer = Customer::fromJson(Utils::toJsonString(data));
+    const Customer *customer = Customer::fromJson(data);
 
     QCOMPARE(customer->json(), data);
 }
