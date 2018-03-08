@@ -9,7 +9,13 @@ public:
 
 private:
     QVariantMap getAddressData() const;
+    QVariantMap getCardData() const;
 
 private slots:
     void testSignals();
+    void testFromJson();
+    void testJsonStr();
+
+    void testJson();
+    void testSet();
 };
