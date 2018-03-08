@@ -207,6 +207,7 @@ void CardTests::testSet()
 
 void CardTests::testCardBrand()
 {
+    // Card numbers are taken from here: https://www.paypalobjects.com/en_AU/vhelp/paypalmanager_help/credit_card_numbers.htm
     QString americanExpressOne = "378282246310005";
     QString americanExpressTwo = "371449635398431";
     QString americanExpressCorporate = "378734493671000";
