@@ -6,12 +6,14 @@ SOURCES += \
     TestQStripe.cpp \
     CustomerTests.cpp \
     AddressTests.cpp \
-    ShippingInformationTests.cpp
+    ShippingInformationTests.cpp \
+    CardTests.cpp
 
 HEADERS += \
     TestQStripe.h \
     CustomerTests.h \
     AddressTests.h \
-    ShippingInformationTests.h
+    ShippingInformationTests.h \
+    CardTests.h
 
 include(../qstripe.pri)

@@ -23,6 +23,7 @@ QVariantMap AddressTests::getAddressData() const
     addressData[Address::FIELD_LINE_1] = "Line one.";
     addressData[Address::FIELD_LINE_2] = "Line two.";
     addressData[Address::FIELD_POSTAL_CODE] = "M9S U7Y";
+    addressData[Address::FIELD_ZIP_CHECK] = "unknown";
 
     return addressData;
 }

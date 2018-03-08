@@ -12,6 +12,8 @@ const QString Address::FIELD_LINE_2 = "line2";
 const QString Address::FIELD_POSTAL_CODE = "postal_code";
 const QString Address::FIELD_STATE = "state";
 
+const QString Address::FIELD_ZIP_CHECK = "zip_check";
+
 Address::Address(QObject *parent)
     : QObject(parent)
     , m_Country("")
@@ -20,6 +22,7 @@ Address::Address(QObject *parent)
     , m_LineOne("")
     , m_LineTwo("")
     , m_PostalCode("")
+    , m_ZipCheck(ZipCheck::ZipCheckUnknown)
 {
 
 }
@@ -34,6 +37,8 @@ bool Address::operator==(const Address &a2) const
     equals &= lineOne() == a2.lineOne();
     equals &= lineTwo() == a2.lineTwo();
     equals &= postalCode() == a2.postalCode();
+
+    equals &= zipCheck() == a2.zipCheck();
 
     return equals;
 }
@@ -127,23 +132,38 @@ void Address::setPostalCode(const QString &code)
     }
 }
 
-QVariantMap Address::json() const
+Address::ZipCheck Address::zipCheck() const
+{
+    return m_ZipCheck;
+}
+
+void Address::setZipCheck(const ZipCheck &check)
+{
+    const bool changed = check != m_ZipCheck;
+    if (changed) {
+        m_ZipCheck = check;
+        emit zipCheckChanged();
+    }
+}
+
+QVariantMap Address::json(const QString &prefix) const
 {
     QVariantMap data;
-    data[FIELD_COUNTRY] = country();
-    data[FIELD_CITY] = city();
-    data[FIELD_STATE] = state();
+    data[prefix + FIELD_COUNTRY] = country();
+    data[prefix + FIELD_CITY] = city();
+    data[prefix + FIELD_STATE] = state();
 
-    data[FIELD_LINE_1] = lineOne();
-    data[FIELD_LINE_2] = lineTwo();
-    data[FIELD_POSTAL_CODE] = postalCode();
+    data[prefix + FIELD_LINE_1] = lineOne();
+    data[prefix + FIELD_LINE_2] = lineTwo();
+    data[prefix + FIELD_POSTAL_CODE] = postalCode();
+    data[prefix + FIELD_ZIP_CHECK] = zipCheckName(m_ZipCheck);
 
     return data;
 }
 
-QString Address::jsonString() const
+QString Address::jsonString(const QString &prefix) const
 {
-    return Utils::toJsonString(json());
+    return Utils::toJsonString(json(prefix));
 }
 
 void Address::set(const Address &other)
@@ -157,36 +177,78 @@ void Address::set(const Address &other)
     this->setPostalCode(other.postalCode());
 }
 
-Address *Address::fromJson(const QString &dataStr)
+Address *Address::fromJson(const QString &dataStr, const QString &prefix)
 {
     const QVariantMap data = Utils::toVariantMap(dataStr);
 
     Address *address = new Address();
-    if (data.contains(FIELD_COUNTRY)) {
-        address->setCountry(data[FIELD_COUNTRY].toString());
+    if (data.contains(prefix + FIELD_COUNTRY)) {
+        address->setCountry(data[prefix + FIELD_COUNTRY].toString());
     }
 
-    if (data.contains(FIELD_CITY)) {
-        address->setCity(data[FIELD_CITY].toString());
+    if (data.contains(prefix + FIELD_CITY)) {
+        address->setCity(data[prefix + FIELD_CITY].toString());
     }
 
-    if (data.contains(FIELD_STATE)) {
-        address->setState(data[FIELD_STATE].toString());
+    if (data.contains(prefix + FIELD_STATE)) {
+        address->setState(data[prefix + FIELD_STATE].toString());
     }
 
-    if (data.contains(FIELD_LINE_1)) {
-        address->setLineOne(data[FIELD_LINE_1].toString());
+    if (data.contains(prefix + FIELD_LINE_1)) {
+        address->setLineOne(data[prefix + FIELD_LINE_1].toString());
     }
 
-    if (data.contains(FIELD_LINE_2)) {
-        address->setLineTwo(data[FIELD_LINE_2].toString());
+    if (data.contains(prefix + FIELD_LINE_2)) {
+        address->setLineTwo(data[prefix + FIELD_LINE_2].toString());
     }
 
-    if (data.contains(FIELD_POSTAL_CODE)) {
-        address->setPostalCode(data[FIELD_POSTAL_CODE].toString());
+    if (data.contains(prefix + FIELD_POSTAL_CODE)) {
+        address->setPostalCode(data[prefix + FIELD_POSTAL_CODE].toString());
+    }
+
+    if (data.contains(prefix + FIELD_ZIP_CHECK)) {
+        address->setZipCheck(address->zipCheckType(data[prefix + FIELD_ZIP_CHECK].toString()));
     }
 
     return address;
+}
+
+Address::ZipCheck Address::zipCheckType(const QString &name)
+{
+    ZipCheck check = ZipCheck::ZipCheckUnknown;
+    if (name == "pass") {
+        check = ZipCheck::ZipCheckPass;
+    }
+    else if (name == "fail") {
+        check = ZipCheck::ZipCheckFail;
+    }
+    else if (name == "unchecked") {
+        check = ZipCheck::ZipCheckUnchecked;
+    }
+    else if (name == "unavailable") {
+        check = ZipCheck::ZipCheckUnavailable;
+    }
+
+    return check;
+}
+
+QString Address::zipCheckName(ZipCheck check)
+{
+    QString name = "unknown";
+    if (check == ZipCheck::ZipCheckPass) {
+        name = "pass";
+    }
+    else if (check == ZipCheck::ZipCheckFail) {
+        name = "fail";
+    }
+    else if (check == ZipCheck::ZipCheckUnchecked) {
+        name = "unchecked";
+    }
+    else if (check == ZipCheck::ZipCheckUnavailable) {
+        name = "unavailable";
+    }
+
+    return name;
 }
 
 }
