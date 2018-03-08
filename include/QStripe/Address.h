@@ -171,7 +171,15 @@ public:
      * @param data
      * @return Address
      */
-    static Address *fromJson(const QString &dataStr, const QString &prefix = "");
+    Q_INVOKABLE static Address *fromJson(const QVariantMap &data, const QString &prefix = "");
+
+    /**
+     * @brief Returns an Address instance from a json string. See Address::json().
+     * @param prefix See Address::json()
+     * @param dataStr
+     * @return Address
+     */
+    Q_INVOKABLE static Address *fromString(const QString &dataStr, const QString &prefix = "");
 
     /**
      * @brief Returns teh ZipCheck enum from the name.

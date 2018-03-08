@@ -82,7 +82,15 @@ public:
      * @param data
      * @return Address
      */
-    static ShippingInformation *fromJson(const QString &dataStr);
+    static ShippingInformation *fromJson(const QVariantMap &data);
+
+    /**
+     * @brief Returns an ShippingInformation instance from a json string.
+     * Address instance.
+     * @param dataStr
+     * @return Address
+     */
+    static ShippingInformation *fromString(const QString &dataStr);
 
 signals:
     /**

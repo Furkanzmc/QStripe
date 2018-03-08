@@ -141,15 +141,13 @@ QVariantMap Customer::json() const
     return data;
 }
 
-QString Customer::jsonStr() const
+QString Customer::jsonString() const
 {
     return Utils::toJsonString(json());
 }
 
-Customer *Customer::fromJson(const QString &dataStr)
+Customer *Customer::fromJson(const QVariantMap &data)
 {
-    const QVariantMap data = Utils::toVariantMap(dataStr);
-
     Customer *customer = new Customer();
 
     if (data.contains(FIELD_CURRENCY)) {
@@ -161,7 +159,9 @@ Customer *Customer::fromJson(const QString &dataStr)
     }
 
     if (data.contains(FIELD_SHIPPING)) {
-        customer->setShippingInformation(ShippingInformation::fromJson(Utils::toJsonString(data[FIELD_SHIPPING].toMap())));
+        ShippingInformation *shipping = ShippingInformation::fromJson(data[FIELD_SHIPPING].toMap());
+        customer->setShippingInformation(shipping);
+        shipping->deleteLater();
     }
 
     if (data.contains(FIELD_EMAIL)) {
@@ -177,6 +177,11 @@ Customer *Customer::fromJson(const QString &dataStr)
     }
 
     return customer;
+}
+
+Customer *Customer::fromString(const QString &dataStr)
+{
+    return fromJson(Utils::toVariantMap(dataStr));
 }
 
 void Customer::set(const Customer *other)

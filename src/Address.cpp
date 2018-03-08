@@ -177,10 +177,8 @@ void Address::set(const Address &other)
     this->setPostalCode(other.postalCode());
 }
 
-Address *Address::fromJson(const QString &dataStr, const QString &prefix)
+Address *Address::fromJson(const QVariantMap &data, const QString &prefix)
 {
-    const QVariantMap data = Utils::toVariantMap(dataStr);
-
     Address *address = new Address();
     if (data.contains(prefix + FIELD_COUNTRY)) {
         address->setCountry(data[prefix + FIELD_COUNTRY].toString());
@@ -211,6 +209,11 @@ Address *Address::fromJson(const QString &dataStr, const QString &prefix)
     }
 
     return address;
+}
+
+Address *Address::fromString(const QString &dataStr, const QString &prefix)
+{
+    return fromJson(Utils::toVariantMap(dataStr), prefix);
 }
 
 Address::ZipCheck Address::zipCheckType(const QString &name)

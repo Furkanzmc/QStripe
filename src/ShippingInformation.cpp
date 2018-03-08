@@ -87,15 +87,14 @@ void ShippingInformation::set(ShippingInformation &other)
     }
 }
 
-ShippingInformation *ShippingInformation::fromJson(const QString &dataStr)
+ShippingInformation *ShippingInformation::fromJson(const QVariantMap &data)
 {
-    const QVariantMap data = Utils::toVariantMap(dataStr);
     ShippingInformation *shipping = new ShippingInformation();
 
     if (data.contains(FIELD_ADDRESS)) {
-        Address *addr = new Address();
-        addr->set(*Address::fromJson(Utils::toJsonString(data[FIELD_ADDRESS].toMap())));
+        Address *addr = Address::fromJson(data[FIELD_ADDRESS].toMap());
         shipping->setAddress(addr);
+        addr->deleteLater();
     }
 
     if (data.contains(FIELD_NAME)) {
@@ -107,6 +106,11 @@ ShippingInformation *ShippingInformation::fromJson(const QString &dataStr)
     }
 
     return shipping;
+}
+
+ShippingInformation *ShippingInformation::fromString(const QString &dataStr)
+{
+    return fromJson(Utils::toVariantMap(dataStr));
 }
 
 }

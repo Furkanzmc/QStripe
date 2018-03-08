@@ -111,7 +111,7 @@ Token *Token::fromJson(const QVariantMap &data)
     }
 
     if (data.contains(FIELD_CARD)) {
-        Card *card = Card::fromJson(Utils::toJsonString(data[FIELD_CARD].toMap()));
+        Card *card = Card::fromJson(data[FIELD_CARD].toMap());
         token->m_Card.set(*card);
         card->deleteLater();
     }

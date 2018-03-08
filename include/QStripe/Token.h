@@ -24,6 +24,8 @@ class Token : public QObject
     Q_PROPERTY(bool liveMode READ liveMode CONSTANT)
 
     Q_PROPERTY(bool used READ used CONSTANT)
+    Q_PROPERTY(QVariantMap json READ json CONSTANT)
+    Q_PROPERTY(QString jsonString READ jsonString CONSTANT)
 
 public:
     static const QString FIELD_BANK_ACCOUNT;
@@ -124,13 +126,13 @@ public:
      * @brief Returns the json representation of this instance. This function is invokable from QML.
      * @return QVariantMap
      */
-    Q_INVOKABLE QVariantMap json() const;
+    QVariantMap json() const;
 
     /**
      * @brief Returns a json string from this instance.
      * @return QString
      */
-    Q_INVOKABLE QString jsonString() const;
+    QString jsonString() const;
 
 private:
     // FIXME: Create a seperate class for BankAccount.

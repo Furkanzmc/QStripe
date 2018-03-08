@@ -125,14 +125,21 @@ public:
      * @brief Returns a json string.
      * @return QString
      */
-    QString jsonStr() const;
+    QString jsonString() const;
+
+    /**
+     * @brief Returns a Customer instance from the given data.
+     * @param dataStr
+     * @return Customer *
+     */
+    Q_INVOKABLE static Customer *fromJson(const QVariantMap &data);
 
     /**
      * @brief Returns a Customer instance from the given dataStr.
      * @param dataStr
      * @return Customer *
      */
-    static Customer *fromJson(const QString &dataStr);
+    Q_INVOKABLE static Customer *fromString(const QString &dataStr);
 
     /**
      * @brief Copies the contents of other to this instance.

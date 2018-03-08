@@ -319,7 +319,7 @@ QVariantMap Card::json() const
     return data;
 }
 
-QString Card::jsonStr() const
+QString Card::jsonString() const
 {
     return Utils::toJsonString(json());
 }
@@ -489,9 +489,8 @@ QString Card::tokenizationMethodName(TokenizationMethod method)
     return name;
 }
 
-Card *Card::fromJson(const QString &dataStr)
+Card *Card::fromJson(const QVariantMap &data)
 {
-    const QVariantMap data = Utils::toVariantMap(dataStr);
     Card *card = new Card();
 
     if (data.contains(FIELD_ADDRESS_CITY)) {
@@ -550,9 +549,16 @@ Card *Card::fromJson(const QString &dataStr)
         card->setTokenizationMethod(tokenizationMethodType(data[FIELD_TOKENIZATION_METHOD].toString()));
     }
 
-    card->setAddress(Address::fromJson(Utils::toJsonString(data), FIELD_ADDRESS_PREFIX));
+    Address *addr = Address::fromJson(data, FIELD_ADDRESS_PREFIX);
+    card->setAddress(addr);
+    addr->deleteLater();
 
     return card;
+}
+
+Card *Card::fromString(const QString &dataStr)
+{
+    return fromJson(Utils::toVariantMap(dataStr));
 }
 
 QString Card::cvcCheckName(CVCCheck type)

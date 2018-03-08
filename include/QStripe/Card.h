@@ -33,7 +33,7 @@ class Card : public QObject
 
     Q_PROPERTY(QString cardNumber READ cardNumber WRITE setCardNumber NOTIFY cardNumberChanged)
     Q_PROPERTY(QVariantMap json READ json CONSTANT)
-    Q_PROPERTY(QString jsonStr READ jsonStr CONSTANT)
+    Q_PROPERTY(QString jsonString READ jsonString CONSTANT)
 
     Q_PROPERTY(QString cvc READ cvc WRITE setCvc NOTIFY cvcChanged)
     Q_PROPERTY(QString brandName READ brandName CONSTANT)
@@ -315,7 +315,7 @@ public:
      * @brief Returns the json representation of this instance in string.
      * @return QString
      */
-    QString jsonStr() const;
+    QString jsonString() const;
 
     /**
      * @brief Copies the contents of other to this instance.
@@ -380,11 +380,18 @@ public:
     static QString tokenizationMethodName(TokenizationMethod method);
 
     /**
-     * @brief Returns a CArd instance from the json string.
+     * @brief Returns a Card instance from the json string.
+     * @param data
+     * @return Card*
+     */
+    Q_INVOKABLE static Card *fromJson(const QVariantMap &data);
+
+    /**
+     * @brief Returns a Card instance from the json string.
      * @param dataStr
      * @return Card*
      */
-    static Card *fromJson(const QString &dataStr);
+    Q_INVOKABLE static Card *fromString(const QString &dataStr);
 
 signals:
     /**
