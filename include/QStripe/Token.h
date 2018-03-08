@@ -20,7 +20,9 @@ class Token : public QObject
     Q_PROPERTY(QDateTime created READ created CONSTANT)
 
     Q_PROPERTY(QString tokenID READ tokenID CONSTANT)
+    Q_PROPERTY(Type type READ type CONSTANT)
     Q_PROPERTY(bool liveMode READ liveMode CONSTANT)
+
     Q_PROPERTY(bool used READ used CONSTANT)
 
 public:
@@ -72,6 +74,12 @@ public:
     QString tokenID() const;
 
     /**
+     * @brief Returns the token type.
+     * @return
+     */
+    Type type() const;
+
+    /**
      * @brief Flag indicating whether the object exists in live mode or test mode.
      * @return bool
      */
@@ -97,6 +105,33 @@ public:
      */
     static Type typeEnum(const QString &name);
 
+    /**
+     * @brief Returns a token instance from json. The parent of the token instance is not set. So you will be responsible for its destruction.
+     * This function is invokable from QML.
+     * @param data
+     * @return Token *
+     */
+    Q_INVOKABLE static Token *fromJson(const QVariantMap &data);
+
+    /**
+     * @brief Parses the json string and returns a corresponding Token object. Internally, it calls `Token::fromJson()`. This function is invokable from QML.
+     * @param data
+     * @return Token *
+     */
+    Q_INVOKABLE static Token *fromString(const QString &data);
+
+    /**
+     * @brief Returns the json representation of this instance. This function is invokable from QML.
+     * @return QVariantMap
+     */
+    Q_INVOKABLE QVariantMap json() const;
+
+    /**
+     * @brief Returns a json string from this instance.
+     * @return QString
+     */
+    Q_INVOKABLE QString jsonString() const;
+
 private:
     // FIXME: Create a seperate class for BankAccount.
     QVariantMap m_BankAccount;
@@ -104,7 +139,9 @@ private:
     QDateTime m_Created;
 
     QString m_TokenID;
+    Type m_Type;
     bool m_IsLiveMode;
+
     bool m_IsUsed;
 };
 

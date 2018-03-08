@@ -1,4 +1,5 @@
 #include "QStripe/Token.h"
+#include "QStripe/Utils.h"
 
 namespace QStripe
 {
@@ -19,6 +20,7 @@ Token::Token(QObject *parent)
     , m_Card()
     , m_Created()
     , m_TokenID("")
+    , m_Type(TypeUnknown)
     , m_IsLiveMode(false)
     , m_IsUsed(false)
 {
@@ -43,6 +45,11 @@ QDateTime Token::created() const
 QString Token::tokenID() const
 {
     return m_TokenID;
+}
+
+Token::Type Token::type() const
+{
+    return m_Type;
 }
 
 bool Token::liveMode() const
@@ -93,6 +100,70 @@ Token::Type Token::typeEnum(const QString &name)
     }
 
     return type;
+}
+
+Token *Token::fromJson(const QVariantMap &data)
+{
+    Token *token = new Token();
+
+    if (data.contains(FIELD_BANK_ACCOUNT)) {
+        token->m_BankAccount = data[FIELD_BANK_ACCOUNT].toMap();
+    }
+
+    if (data.contains(FIELD_CARD)) {
+        Card *card = Card::fromJson(Utils::toJsonString(data[FIELD_CARD].toMap()));
+        token->m_Card.set(*card);
+        card->deleteLater();
+    }
+
+    if (data.contains(FIELD_CREATED)) {
+        token->m_Created = QDateTime::fromSecsSinceEpoch(data[FIELD_CREATED].toInt());
+    }
+
+    if (data.contains(FIELD_ID)) {
+        token->m_TokenID = data[FIELD_ID].toString();
+    }
+
+    if (data.contains(FIELD_LIVEMODE)) {
+        token->m_IsLiveMode = data[FIELD_LIVEMODE].toBool();
+    }
+
+    if (data.contains(FIELD_TYPE)) {
+        token->m_Type = typeEnum(data[FIELD_TYPE].toString());
+    }
+
+    if (data.contains(FIELD_USED)) {
+        token->m_IsUsed = data[FIELD_USED].toBool();
+    }
+
+    return token;
+}
+
+Token *Token::fromString(const QString &data)
+{
+    return fromJson(Utils::toVariantMap(data));
+}
+
+QVariantMap Token::json() const
+{
+    QVariantMap data;
+
+    data[FIELD_BANK_ACCOUNT] = m_BankAccount;
+    data[FIELD_CARD] = m_Card.json();
+    data[FIELD_CREATED] = m_Created.toSecsSinceEpoch();
+
+    data[FIELD_ID] = m_TokenID;
+    data[FIELD_LIVEMODE] = m_IsLiveMode;
+    data[FIELD_TYPE] = typeName(m_Type);
+
+    data[FIELD_USED] = m_IsUsed;
+
+    return data;
+}
+
+QString Token::jsonString() const
+{
+    return Utils::toJsonString(json());
 }
 
 }
