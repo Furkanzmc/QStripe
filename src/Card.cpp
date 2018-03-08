@@ -46,7 +46,7 @@ Card::Card(QObject *parent)
     , m_CardNumber("")
     , m_CVC("")
 {
-
+    connect(this, &Card::cardNumberChanged, this, &Card::updateCardBrand);
 }
 
 QString Card::cardID() const
@@ -313,6 +313,49 @@ QVariantMap Card::json() const
 QString Card::jsonString() const
 {
     return Utils::toJsonString(json());
+}
+
+Card::CardBrand Card::possibleCardBrand() const
+{
+    CardBrand cardType = CardBrand::Unknown;
+    QString number = m_CardNumber;
+    number.remove("\\s|-");
+    if (number.length() < 4) {
+        return cardType;
+    }
+
+    auto hasPrefix = [&number](const QVector<QString> &prefix) {
+        bool has = false;
+        for (const QString &str : prefix) {
+            if (number.startsWith(str)) {
+                has = true;
+                break;
+            }
+        }
+
+        return has;
+    };
+
+    if (hasPrefix(prefixes(CardBrand::AmericanExpress))) {
+        cardType = CardBrand::AmericanExpress;
+    }
+    else if (hasPrefix(prefixes(CardBrand::Discover))) {
+        cardType = CardBrand::Discover;
+    }
+    else if (hasPrefix(prefixes(CardBrand::JCB))) {
+        cardType = CardBrand::JCB;
+    }
+    else if (hasPrefix(prefixes(CardBrand::DinersClub))) {
+        cardType = CardBrand::DinersClub;
+    }
+    else if (hasPrefix(prefixes(CardBrand::Visa))) {
+        cardType = CardBrand::Visa;
+    }
+    else if (hasPrefix(prefixes(CardBrand::MasterCard))) {
+        cardType = CardBrand::MasterCard;
+    }
+
+    return cardType;
 }
 
 void Card::set(const Card &other)
@@ -641,4 +684,10 @@ void Card::setCVCCheck(CVCCheck check)
         emit cvcCheckChanged();
     }
 }
+
+void Card::updateCardBrand()
+{
+    setBrand(possibleCardBrand());
+}
+
 }

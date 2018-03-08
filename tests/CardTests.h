@@ -17,4 +17,5 @@ private slots:
 
     void testJson();
     void testSet();
+    void testCardBrand();
 };

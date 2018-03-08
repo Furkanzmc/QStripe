@@ -204,3 +204,66 @@ void CardTests::testSet()
 
     c1->deleteLater();
 }
+
+void CardTests::testCardBrand()
+{
+    QString americanExpressOne = "378282246310005";
+    QString americanExpressTwo = "371449635398431";
+    QString americanExpressCorporate = "378734493671000";
+
+    QString discoverOne = "6011111111111117";
+    QString discoverTwo = "6011000990139424";
+
+    QString jcbOne = "3530111333300000";
+    QString jcbTwo = "3566002020360505";
+
+    QString dinersClubOne = "30569309025904";
+    QString dinersClubTwo = "38520000023237";
+
+    QString visaOne = "4111111111111111";
+    QString visaTwo = "4012888888881881";
+
+    QString masterCardOne = "5555555555554444";
+    QString masterCardTwo = "5105105105105100";
+
+    Card card;
+
+    card.setCardNumber(americanExpressOne);
+    QCOMPARE(card.possibleCardBrand(), Card::AmericanExpress);
+
+    card.setCardNumber(americanExpressTwo);
+    QCOMPARE(card.possibleCardBrand(), Card::AmericanExpress);
+
+    card.setCardNumber(americanExpressCorporate);
+    QCOMPARE(card.possibleCardBrand(), Card::AmericanExpress);
+
+    card.setCardNumber(discoverOne);
+    QCOMPARE(card.possibleCardBrand(), Card::Discover);
+
+    card.setCardNumber(discoverTwo);
+    QCOMPARE(card.possibleCardBrand(), Card::Discover);
+
+    card.setCardNumber(jcbOne);
+    QCOMPARE(card.possibleCardBrand(), Card::JCB);
+
+    card.setCardNumber(jcbTwo);
+    QCOMPARE(card.possibleCardBrand(), Card::JCB);
+
+    card.setCardNumber(dinersClubOne);
+    QCOMPARE(card.possibleCardBrand(), Card::DinersClub);
+
+    card.setCardNumber(dinersClubTwo);
+    QCOMPARE(card.possibleCardBrand(), Card::DinersClub);
+
+    card.setCardNumber(visaOne);
+    QCOMPARE(card.possibleCardBrand(), Card::Visa);
+
+    card.setCardNumber(visaTwo);
+    QCOMPARE(card.possibleCardBrand(), Card::Visa);
+
+    card.setCardNumber(masterCardOne);
+    QCOMPARE(card.possibleCardBrand(), Card::MasterCard);
+
+    card.setCardNumber(masterCardTwo);
+    QCOMPARE(card.possibleCardBrand(), Card::MasterCard);
+}

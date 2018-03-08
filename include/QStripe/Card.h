@@ -312,6 +312,13 @@ public:
     QString jsonString() const;
 
     /**
+     * @brief Returns the possible card brand based on the card number. This method will be automatically called whenever the card number changes to a valid
+     * one. The check can be done If the card number contains at least 4 characters.
+     * @return CardBrand
+     */
+    CardBrand possibleCardBrand() const;
+
+    /**
      * @brief Copies the contents of other to this instance.
      * @param other
      */
@@ -525,6 +532,11 @@ private:
      * @param check
      */
     void setCVCCheck(CVCCheck check);
+
+    /**
+     * @brief This is connected to the cardNumberChanged() signal. And it udates the brand.
+     */
+    void updateCardBrand();
 };
 
 }
