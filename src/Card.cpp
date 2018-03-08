@@ -1,4 +1,5 @@
 #include "QStripe/Card.h"
+#include "QStripe/Utils.h"
 
 namespace QStripe
 {
@@ -42,140 +43,10 @@ Card::Card(QObject *parent)
     , m_LastFourDigits("")
     , m_TokenizationMethod(TokenizationMethod::TokenizationUnknown)
     , m_MetaData()
+    , m_CardNumber("")
+    , m_CVC("")
 {
 
-}
-
-QString Card::cardBrandName(CardBrand brand)
-{
-    QString name;
-    if (brand == CardBrand::AmericanExpress) {
-        name = "American Express";
-    }
-    else if (brand == CardBrand::Discover) {
-        name = "Discover";
-    }
-    else if (brand == CardBrand::JCB) {
-        name = "JCB";
-    }
-    else if (brand == CardBrand::DinersClub) {
-        name = "Diners Club";
-    }
-    else if (brand == CardBrand::Visa) {
-        name = "Visa";
-    }
-    else if (brand == CardBrand::MasterCard) {
-        name = "MasterCard";
-    }
-    else if (brand == CardBrand::Unknown) {
-        name = "Unknown";
-    }
-
-    return name;
-}
-
-Card::CardBrand Card::cardBrandType(const QString &name)
-{
-    CardBrand brand;
-    if (name == "American Express") {
-        brand = CardBrand::AmericanExpress;
-    }
-    else if (name == "Discover") {
-        brand = CardBrand::Discover;
-    }
-    else if (name == "JCB") {
-        brand = CardBrand::JCB;
-    }
-    else if (name == "Diners Club") {
-        brand = CardBrand::DinersClub;
-    }
-    else if (name == "Visa") {
-        brand = CardBrand::Visa;
-    }
-    else if (name == "MasterCard") {
-        brand = CardBrand::MasterCard;
-    }
-    else {
-        brand = CardBrand::Unknown;
-    }
-
-    return brand;
-}
-
-QString Card::fundingTypeString(FundingType type)
-{
-    QString name;
-    if (type == FundingType::FundingCredit) {
-        name = "credit";
-    }
-    else if (type == FundingType::FundingDebit) {
-        name = "debit";
-    }
-    else if (type == FundingType::FundingPrePaid) {
-        name = "prepaid";
-    }
-    else if (type == FundingType::FundingUnknown) {
-        name = "unknown";
-    }
-
-    return name;
-}
-
-Card::FundingType Card::fundingType(const QString &name)
-{
-    FundingType type;
-    if (name == "credit") {
-        type = FundingType::FundingCredit;
-    }
-    else if (name == "debit") {
-        type = FundingType::FundingDebit;
-    }
-    else if (name == "prepaid") {
-        type = FundingType::FundingPrePaid;
-    }
-    else {
-        type = FundingType::FundingUnknown;
-    }
-
-    return type;
-}
-
-Card::CVCCheck Card::cvcCheckType(const QString &name)
-{
-    CVCCheck type = CVCCheck::CVCCheckUnknown;
-    if (name == "pass") {
-        type = CVCCheck::CVCCheckPass;
-    }
-    else if (name == "fail") {
-        type = CVCCheck::CVCCheckFail;
-    }
-    else if (name == "unavailable") {
-        type = CVCCheck::CVCCheckUnavailable;
-    }
-    else if (name == "unchecked") {
-        type = CVCCheck::CVCCheckUnchecked;
-    }
-
-    return type;
-}
-
-QString Card::cvcCheckName(CVCCheck type)
-{
-    QString name = "unknown";
-    if (type == CVCCheck::CVCCheckPass) {
-        name = "pass";
-    }
-    else if (type == CVCCheck::CVCCheckFail) {
-        name = "fail";
-    }
-    else if (type == CVCCheck::CVCCheckUnavailable) {
-        name = "unavailable";
-    }
-    else if (type == CVCCheck::CVCCheckUnchecked) {
-        name = "unchecked";
-    }
-
-    return name;
 }
 
 QString Card::cardID() const
@@ -202,6 +73,11 @@ Address *Card::address()
     return &m_Address;
 }
 
+const Address *Card::address() const
+{
+    return &m_Address;
+}
+
 void Card::setAddress(const Address *addr)
 {
     const bool changed = m_Address != (*addr);
@@ -214,6 +90,11 @@ void Card::setAddress(const Address *addr)
 Card::CardBrand Card::brand() const
 {
     return m_Brand;
+}
+
+QString Card::brandName() const
+{
+    return cardBrandName(brand());
 }
 
 void Card::setBrand(const CardBrand &cardBrand)
@@ -392,6 +273,308 @@ void Card::setCardNumber(const QString &number)
         emit cardNumberChanged();
     }
 }
+
+QString Card::cvc() const
+{
+    return m_CVC;
+}
+
+void Card::setCvc(const QString &cvcNumber)
+{
+    const bool changed = m_CVC != cvcNumber;
+    if (changed) {
+        m_CVC = cvcNumber;
+        emit cvcChanged();
+    }
+}
+
+QVariantMap Card::json() const
+{
+    QVariantMap data;
+
+    data[FIELD_ID] = cardID();
+    data[FIELD_ADDRESS_CITY] = city();
+    data[FIELD_BRAND] = cardBrandName(brand());
+
+    data[FIELD_COUNTRY] = country();
+    data[FIELD_CURRENCY] = currency();
+    data[FIELD_CVC_CHECK] = cvcCheckName(cvcCheck());
+
+    data[FIELD_EXP_MONTH] = expirationMonth();
+    data[FIELD_EXP_YEAR] = expirationYear();
+    data[FIELD_FINGERPRINT] = fingerprint();
+
+    data[FIELD_FUNDING] = fundingTypeString(funding());
+    data[FIELD_NAME] = name();
+    data[FIELD_LAST4] = lastFourDigits();
+
+    data[FIELD_TOKENIZATION_METHOD] = tokenizationMethodName(tokenizationMethod());
+    data[FIELD_METADATA] = metaData();
+
+    const QVariantMap addressData = m_Address.json(FIELD_ADDRESS_PREFIX);
+    for (auto it = addressData.constBegin(); it != addressData.constEnd(); it++) {
+        data[it.key()] = it.value();
+    }
+
+    return data;
+}
+
+QString Card::jsonStr() const
+{
+    return Utils::toJsonString(json());
+}
+
+void Card::set(const Card &other)
+{
+    setCardID(other.cardID());
+    setCardNumber(other.cardNumber());
+    setCvc(other.cvc());
+
+    setCVCCheck(other.cvcCheck());
+    setCity(other.city());
+    setCountry(other.country());
+
+    setCurrency(other.currency());
+    setExpirationMonth(other.expirationMonth());
+    setExpirationYear(other.expirationYear());
+
+    setAddress(other.address());
+    setFunding(other.funding());
+    setName(other.name());
+
+    setFingerprint(other.fingerprint());
+    setLastFourDigits(other.lastFourDigits());
+    setMetaData(other.metaData());
+
+    setTokenizationMethod(other.tokenizationMethod());
+    setBrand(other.brand());
+}
+
+QString Card::cardBrandName(CardBrand brand)
+{
+    QString name;
+    if (brand == CardBrand::AmericanExpress) {
+        name = "American Express";
+    }
+    else if (brand == CardBrand::Discover) {
+        name = "Discover";
+    }
+    else if (brand == CardBrand::JCB) {
+        name = "JCB";
+    }
+    else if (brand == CardBrand::DinersClub) {
+        name = "Diners Club";
+    }
+    else if (brand == CardBrand::Visa) {
+        name = "Visa";
+    }
+    else if (brand == CardBrand::MasterCard) {
+        name = "MasterCard";
+    }
+    else if (brand == CardBrand::Unknown) {
+        name = "Unknown";
+    }
+
+    return name;
+}
+
+Card::CardBrand Card::cardBrandType(const QString &name)
+{
+    CardBrand brand;
+    if (name == "American Express") {
+        brand = CardBrand::AmericanExpress;
+    }
+    else if (name == "Discover") {
+        brand = CardBrand::Discover;
+    }
+    else if (name == "JCB") {
+        brand = CardBrand::JCB;
+    }
+    else if (name == "Diners Club") {
+        brand = CardBrand::DinersClub;
+    }
+    else if (name == "Visa") {
+        brand = CardBrand::Visa;
+    }
+    else if (name == "MasterCard") {
+        brand = CardBrand::MasterCard;
+    }
+    else {
+        brand = CardBrand::Unknown;
+    }
+
+    return brand;
+}
+
+QString Card::fundingTypeString(FundingType type)
+{
+    QString name;
+    if (type == FundingType::FundingCredit) {
+        name = "credit";
+    }
+    else if (type == FundingType::FundingDebit) {
+        name = "debit";
+    }
+    else if (type == FundingType::FundingPrePaid) {
+        name = "prepaid";
+    }
+    else if (type == FundingType::FundingUnknown) {
+        name = "unknown";
+    }
+
+    return name;
+}
+
+Card::FundingType Card::fundingType(const QString &name)
+{
+    FundingType type;
+    if (name == "credit") {
+        type = FundingType::FundingCredit;
+    }
+    else if (name == "debit") {
+        type = FundingType::FundingDebit;
+    }
+    else if (name == "prepaid") {
+        type = FundingType::FundingPrePaid;
+    }
+    else {
+        type = FundingType::FundingUnknown;
+    }
+
+    return type;
+}
+
+Card::CVCCheck Card::cvcCheckType(const QString &name)
+{
+    CVCCheck type = CVCCheck::CVCCheckUnknown;
+    if (name == "pass") {
+        type = CVCCheck::CVCCheckPass;
+    }
+    else if (name == "fail") {
+        type = CVCCheck::CVCCheckFail;
+    }
+    else if (name == "unavailable") {
+        type = CVCCheck::CVCCheckUnavailable;
+    }
+    else if (name == "unchecked") {
+        type = CVCCheck::CVCCheckUnchecked;
+    }
+
+    return type;
+}
+
+Card::TokenizationMethod Card::tokenizationMethodType(const QString &name)
+{
+    TokenizationMethod method = TokenizationUnknown;
+    if (name == "apple_pay") {
+        method = ApplePay;
+    }
+    else if (name == "android_pay") {
+        method = GooglePay;
+    }
+
+    return method;
+}
+
+QString Card::tokenizationMethodName(TokenizationMethod method)
+{
+    QString name = "unknown";
+    if (method == ApplePay) {
+        name = "apple_pay";
+    }
+    else if (method == GooglePay) {
+        name = "android_pay";
+    }
+
+    return name;
+}
+
+Card *Card::fromJson(const QString &dataStr)
+{
+    const QVariantMap data = Utils::toVariantMap(dataStr);
+    Card *card = new Card();
+
+    if (data.contains(FIELD_ADDRESS_CITY)) {
+        card->setCity(data[FIELD_ADDRESS_CITY].toString());
+    }
+
+    if (data.contains(FIELD_BRAND)) {
+        card->setBrand(cardBrandType(data[FIELD_BRAND].toString()));
+    }
+
+    if (data.contains(FIELD_COUNTRY)) {
+        card->setCountry(data[FIELD_COUNTRY].toString());
+    }
+
+    if (data.contains(FIELD_CURRENCY)) {
+        card->setCurrency(data[FIELD_CURRENCY].toString());
+    }
+
+    if (data.contains(FIELD_CVC_CHECK)) {
+        card->setCVCCheck(cvcCheckType(data[FIELD_CVC_CHECK].toString()));
+    }
+
+    if (data.contains(FIELD_EXP_MONTH)) {
+        card->setExpirationMonth(data[FIELD_EXP_MONTH].toInt());
+    }
+
+    if (data.contains(FIELD_EXP_YEAR)) {
+        card->setExpirationYear(data[FIELD_EXP_YEAR].toInt());
+    }
+
+    if (data.contains(FIELD_FINGERPRINT)) {
+        card->setFingerprint(data[FIELD_FINGERPRINT].toString());
+    }
+
+    if (data.contains(FIELD_FUNDING)) {
+        card->setFunding(fundingType(data[FIELD_FUNDING].toString()));
+    }
+
+    if (data.contains(FIELD_ID)) {
+        card->setCardID(data[FIELD_ID].toString());
+    }
+
+    if (data.contains(FIELD_LAST4)) {
+        card->setLastFourDigits(data[FIELD_LAST4].toString());
+    }
+
+    if (data.contains(FIELD_METADATA)) {
+        card->setMetaData(data[FIELD_METADATA].toMap());
+    }
+
+    if (data.contains(FIELD_NAME)) {
+        card->setName(data[FIELD_NAME].toString());
+    }
+
+    if (data.contains(FIELD_TOKENIZATION_METHOD)) {
+        card->setTokenizationMethod(tokenizationMethodType(data[FIELD_TOKENIZATION_METHOD].toString()));
+    }
+
+    card->setAddress(Address::fromJson(Utils::toJsonString(data), FIELD_ADDRESS_PREFIX));
+
+    return card;
+}
+
+QString Card::cvcCheckName(CVCCheck type)
+{
+    QString name = "unknown";
+    if (type == CVCCheck::CVCCheckPass) {
+        name = "pass";
+    }
+    else if (type == CVCCheck::CVCCheckFail) {
+        name = "fail";
+    }
+    else if (type == CVCCheck::CVCCheckUnavailable) {
+        name = "unavailable";
+    }
+    else if (type == CVCCheck::CVCCheckUnchecked) {
+        name = "unchecked";
+    }
+
+    return name;
+}
+
+
 
 void Card::setCardID(const QString &id)
 {

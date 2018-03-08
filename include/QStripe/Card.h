@@ -20,8 +20,8 @@ class Card : public QObject
     Q_PROPERTY(QString currency READ currency WRITE setCurrency NOTIFY currencyChanged)
 
     Q_PROPERTY(CVCCheck cvcCheck READ cvcCheck WRITE setCVCCheck NOTIFY cvcCheckChanged)
-    Q_PROPERTY(unsigned int expirationMonth READ expirationMonth WRITE setExpirationMonth NOTIFY expirationMonthChanged)
-    Q_PROPERTY(unsigned int expirationYear READ expirationYear WRITE setExpirationYear NOTIFY expirationYearChanged)
+    Q_PROPERTY(int expirationMonth READ expirationMonth WRITE setExpirationMonth NOTIFY expirationMonthChanged)
+    Q_PROPERTY(int expirationYear READ expirationYear WRITE setExpirationYear NOTIFY expirationYearChanged)
 
     Q_PROPERTY(QString fingerprint READ fingerprint WRITE setFingerprint NOTIFY fingerprintChanged)
     Q_PROPERTY(FundingType funding READ funding WRITE setFunding NOTIFY fundingChanged)
@@ -32,6 +32,11 @@ class Card : public QObject
     Q_PROPERTY(QVariantMap metaData READ metaData WRITE setMetaData NOTIFY metaDataChanged)
 
     Q_PROPERTY(QString cardNumber READ cardNumber WRITE setCardNumber NOTIFY cardNumberChanged)
+    Q_PROPERTY(QVariantMap json READ json CONSTANT)
+    Q_PROPERTY(QString jsonStr READ jsonStr CONSTANT)
+
+    Q_PROPERTY(QString cvc READ cvc WRITE setCvc NOTIFY cvcChanged)
+    Q_PROPERTY(QString brandName READ brandName CONSTANT)
 
 public:
     static const QString FIELD_ID;
@@ -44,16 +49,16 @@ public:
 
     static const QString FIELD_CURRENCY;
     static const QString FIELD_CVC_CHECK;
-
     static const QString FIELD_EXP_MONTH;
+
     static const QString FIELD_EXP_YEAR;
     static const QString FIELD_FINGERPRINT;
-
     static const QString FIELD_FUNDING;
+
     static const QString FIELD_NAME;
     static const QString FIELD_LAST4;
-
     static const QString FIELD_TOKENIZATION_METHOD;
+
     static const QString FIELD_METADATA;
 
     enum CardBrand {
@@ -95,48 +100,6 @@ public:
     explicit Card(QObject *parent = nullptr);
 
     /**
-     * @brief Returns the name of the brand.
-     * @param brand
-     * @return QString
-     */
-    static QString cardBrandName(CardBrand brand);
-
-    /**
-     * @brief Returns the CardBrand enum from the name.
-     * @param name
-     * @return CardBrand
-     */
-    static CardBrand cardBrandType(const QString &name);
-
-    /**
-     * @brief Returns the string representation of the funding type.
-     * @param type
-     * @return QString
-     */
-    static QString fundingTypeString(FundingType type);
-
-    /**
-     * @brief Returns the FundingType enum for the given name.
-     * @param name
-     * @return FundingType
-     */
-    static FundingType fundingType(const QString &name);
-
-    /**
-     * @brief Returns the CVCCheck type from the name.
-     * @param name
-     * @return CVCCheck
-     */
-    static CVCCheck cvcCheckType(const QString &name);
-
-    /**
-     * @brief Returns the name of the cvc check type.
-     * @param type
-     * @return QString
-     */
-    static QString cvcCheckName(CVCCheck type);
-
-    /**
      * @brief The default value is empty string.
      * @return QString
      */
@@ -159,6 +122,7 @@ public:
      * @return Address*
      */
     Address *address();
+    const Address *address() const;
 
     /**
      * @brief Sett the current address. The object is copied.
@@ -171,6 +135,12 @@ public:
      * @return CardBrand
      */
     CardBrand brand() const;
+
+    /**
+     * @brief Returns the brand name of the current brand.
+     * @return QString
+     */
+    QString brandName() const;
 
     /**
      * @brief Set the card brand. But note that this value will change when you set the card number.
@@ -322,6 +292,100 @@ public:
      */
     void setCardNumber(const QString &number);
 
+    /**
+     * @brief Returns the CVC number. This will not be present in the json representation.
+     * @return QString
+     */
+    QString cvc() const;
+
+    /**
+     * @brief Sets the CVC number.
+     * @param cvcNumber
+     */
+    void setCvc(const QString &cvcNumber);
+
+    /**
+     * @brief Returns the json representation of this instance. This will not include the CVC number or the card number.
+     * To create a token, use `QStripe::Stripe::createToken()`
+     * @return QVariantMap
+     */
+    QVariantMap json() const;
+
+    /**
+     * @brief Returns the json representation of this instance in string.
+     * @return QString
+     */
+    QString jsonStr() const;
+
+    /**
+     * @brief Copies the contents of other to this instance.
+     * @param other
+     */
+    void set(const Card &other);
+
+    /**
+     * @brief Returns the name of the brand.
+     * @param brand
+     * @return QString
+     */
+    static QString cardBrandName(CardBrand brand);
+
+    /**
+     * @brief Returns the CardBrand enum from the name.
+     * @param name
+     * @return CardBrand
+     */
+    static CardBrand cardBrandType(const QString &name);
+
+    /**
+     * @brief Returns the string representation of the funding type.
+     * @param type
+     * @return QString
+     */
+    static QString fundingTypeString(FundingType type);
+
+    /**
+     * @brief Returns the FundingType enum for the given name.
+     * @param name
+     * @return FundingType
+     */
+    static FundingType fundingType(const QString &name);
+
+    /**
+     * @brief Returns the CVCCheck type from the name.
+     * @param name
+     * @return CVCCheck
+     */
+    static CVCCheck cvcCheckType(const QString &name);
+
+    /**
+     * @brief Returns the name of the cvc check type.
+     * @param type
+     * @return QString
+     */
+    static QString cvcCheckName(CVCCheck type);
+
+    /**
+     * @brief Returns the tokenization type from its string representation.
+     * @param name
+     * @return TokenizationMethod
+     */
+    static TokenizationMethod tokenizationMethodType(const QString &name);
+
+    /**
+     * @brief Returns the string representation of the tokenization method.
+     * @param method
+     * @return QString
+     */
+    static QString tokenizationMethodName(TokenizationMethod method);
+
+    /**
+     * @brief Returns a CArd instance from the json string.
+     * @param dataStr
+     * @return Card*
+     */
+    static Card *fromJson(const QString &dataStr);
+
 signals:
     /**
      * @brief Emitted when the card ID changes.
@@ -403,6 +467,11 @@ signals:
      */
     void cardNumberChanged();
 
+    /**
+     * @brief Emitted when the CVC number changes.
+     */
+    void cvcChanged();
+
 private:
     QString m_CardID;
     QString m_City;
@@ -427,6 +496,7 @@ private:
     QVariantMap m_MetaData;
 
     QString m_CardNumber;
+    QString m_CVC;
 
 private:
     /**
