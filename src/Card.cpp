@@ -1,4 +1,7 @@
 #include "QStripe/Card.h"
+// Qt
+#include <QDate>
+// QStripe
 #include "QStripe/Utils.h"
 
 namespace QStripe
@@ -391,6 +394,63 @@ bool Card::validCardNumber() const
     return (sum % 10 == 0) && validCardLenght();
 }
 
+bool Card::validExpirationMonth() const
+{
+    return m_ExpirationMonth >= 1 && m_ExpirationMonth <= 12;
+}
+
+bool Card::validExpirationYear() const
+{
+    // Normilize the year first. Year can be a two digit or 4 digit number.
+    const QDate today = QDate::currentDate();
+    int year = m_ExpirationYear;
+    if (year < 100 && year >= 0) {
+        const QString yearStr = QString::number(year);
+        const QString currentYearStr = QString::number(today.year());
+        const QString yearPrefix = currentYearStr.left(currentYearStr.length() - yearStr.length());
+        year = QString(yearPrefix + yearStr).toInt();
+    }
+
+    bool isValid = true;
+
+    if (year == 0) {
+        isValid = false;
+    }
+    else if (year < today.year()) {
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+bool Card::validExpirationDate() const
+{
+    bool isValid = validExpirationMonth() && validExpirationYear();
+    // If the expiration year and month is valid, check If the month is in the past and return false If it is.
+    if (isValid) {
+        const QDate today = QDate::currentDate();
+        isValid = m_ExpirationMonth >= today.month();
+    }
+
+    return isValid;
+}
+
+bool Card::validCVC() const
+{
+    bool isValid = false;
+    if (m_CVC.length() == maxCVCLenght(brand())) {
+        const int cvcNumber = m_CVC.toInt();
+        isValid = cvcNumber > 0;
+    }
+
+    return isValid;
+}
+
+bool Card::validCard() const
+{
+    return validCardNumber() && validCVC() && validExpirationDate();
+}
+
 void Card::set(const Card &other)
 {
     setCardID(other.cardID());
@@ -704,6 +764,18 @@ int Card::maxCardNumberLenght(CardBrand brand) const
     }
     else if (brand == CardBrand::DinersClub) {
         length = 14;
+    }
+
+    return length;
+}
+
+int Card::maxCVCLenght(CardBrand brand) const
+{
+    // This is the standard one.
+    int length = 3;
+
+    if (brand == CardBrand::AmericanExpress) {
+        length = 4;
     }
 
     return length;

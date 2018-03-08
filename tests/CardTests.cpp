@@ -1,6 +1,7 @@
 #include "CardTests.h"
 #include <QtTest/QtTest>
 #include <QSignalSpy>
+#include <QDate>
 // QStripe
 #include "QStripe/Card.h"
 #include "QStripe/Utils.h"
@@ -395,4 +396,112 @@ void CardTests::testCardNumberValidation()
 
     card.setCardNumber(masterCardValid);
     QCOMPARE(card.validCardNumber(), true);
+}
+
+void CardTests::testValidExpirationMonth()
+{
+    Card card;
+    card.setExpirationMonth(-1);
+    QCOMPARE(card.validExpirationMonth(), false);
+
+    card.setExpirationMonth(2001);
+    QCOMPARE(card.validExpirationMonth(), false);
+
+    card.setExpirationMonth(13);
+    QCOMPARE(card.validExpirationMonth(), false);
+
+    card.setExpirationMonth(12);
+    QCOMPARE(card.validExpirationMonth(), true);
+
+    const QDate today = QDate::currentDate();
+    card.setExpirationMonth(today.month());
+    QCOMPARE(card.validExpirationMonth(), true);
+}
+
+void CardTests::testValidExpirationYear()
+{
+    const QDate today = QDate::currentDate();
+    Card card;
+
+    card.setExpirationYear(-1);
+    QCOMPARE(card.validExpirationYear(), false);
+
+    card.setExpirationYear(-2039);
+    QCOMPARE(card.validExpirationYear(), false);
+
+    card.setExpirationYear(today.year() + 5);
+    QCOMPARE(card.validExpirationYear(), true);
+
+    card.setExpirationYear(today.year());
+    QCOMPARE(card.validExpirationYear(), true);
+
+    card.setExpirationYear(today.year() - 2);
+    QCOMPARE(card.validExpirationYear(), false);
+
+    // This test should be OK for a while.
+    card.setExpirationYear(35);
+    QCOMPARE(card.validExpirationYear(), true);
+
+    // We definelty passed 2011.
+    card.setExpirationYear(11);
+    QCOMPARE(card.validExpirationYear(), false);
+}
+
+void CardTests::testValidExpirationDate()
+{
+    const QDate today = QDate::currentDate();
+    Card card;
+
+    card.setExpirationYear(-1);
+    card.setExpirationMonth(-1);
+    QCOMPARE(card.validExpirationDate(), false);
+
+    card.setExpirationMonth(today.month() - 1);
+    card.setExpirationYear(today.year() - 1);
+    QCOMPARE(card.validExpirationDate(), false);
+
+    card.setExpirationMonth(today.month());
+    card.setExpirationYear(today.year());
+    QCOMPARE(card.validExpirationDate(), true);
+
+    card.setExpirationMonth(today.month());
+    card.setExpirationYear(today.year() - 1);
+    QCOMPARE(card.validExpirationDate(), false);
+
+    card.setExpirationMonth(35);
+    card.setExpirationYear(11);
+    QCOMPARE(card.validExpirationDate(), false);
+
+    card.setExpirationMonth(1);
+    card.setExpirationYear(35);
+    QCOMPARE(card.validExpirationDate(), false);
+}
+
+void CardTests::testValidCVC()
+{
+    const QString americanExpressOne = "378282246310005";
+    const QString discoverOne = "6011111111111117";
+    const QString visaOne = "4111111111111111";
+
+    Card card;
+    card.setCvc("333");
+    card.setCardNumber(americanExpressOne);
+    QCOMPARE(card.validCVC(), false);
+
+    card.setCvc("3333");
+    QCOMPARE(card.validCVC(), true);
+
+    card.setCvc("3333");
+    card.setCardNumber(discoverOne);
+    QCOMPARE(card.validCVC(), false);
+
+    card.setCvc("333");
+    QCOMPARE(card.validCVC(), true);
+
+    card.setCvc("33");
+    card.setCardNumber(visaOne);
+    QCOMPARE(card.validCVC(), false);
+
+    card.setCvc("333");
+    QCOMPARE(card.validCVC(), true);
 }

@@ -335,6 +335,37 @@ public:
     bool validCardNumber() const;
 
     /**
+     * @brief Expiration date can be between 1 and 12. Otherwise this will return false.
+     * @return bool
+     */
+    bool validExpirationMonth() const;
+
+    /**
+     * @brief Expiration date can be between 1 and 12. Otherwise this will return false.
+     * @return bool
+     */
+    bool validExpirationYear() const;
+
+    /**
+     * @brief Validates both the month and year of expiration. The year should not be in the past.
+     * as well.
+     * @return bool
+     */
+    bool validExpirationDate() const;
+
+    /**
+     * @brief Validates the CVC number. The CVC number must be of enough length and a postive number.
+     * @return bool
+     */
+    bool validCVC() const;
+
+    /**
+     * @brief Returns true If all of the details of the card is valid.
+     * @return bool
+     */
+    bool validCard() const;
+
+    /**
      * @brief Copies the contents of other to this instance.
      * @param other
      */
@@ -542,6 +573,13 @@ private:
      * @return int
      */
     int maxCardNumberLenght(CardBrand brand) const;
+
+    /**
+     * @brief Returns the maximum CVC number length for the given brand.
+     * @param brand
+     * @return int
+     */
+    int maxCVCLenght(CardBrand brand) const;
 
     /**
      * @brief Set cvc check.

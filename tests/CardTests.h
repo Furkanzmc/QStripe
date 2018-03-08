@@ -21,4 +21,9 @@ private slots:
 
     void testCardLength();
     void testCardNumberValidation();
+    void testValidExpirationMonth();
+
+    void testValidExpirationYear();
+    void testValidExpirationDate();
+    void testValidCVC();
 };
