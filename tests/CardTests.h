@@ -20,4 +20,5 @@ private slots:
     void testCardBrand();
 
     void testCardLength();
+    void testCardNumberValidation();
 };

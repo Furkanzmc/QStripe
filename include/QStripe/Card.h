@@ -40,6 +40,7 @@ class Card : public QObject
     Q_PROPERTY(CardBrand possibleCardBrand READ possibleCardBrand CONSTANT)
 
     Q_PROPERTY(bool validCardLenght READ validCardLenght CONSTANT)
+    Q_PROPERTY(bool validCardNumber READ validCardNumber CONSTANT)
 
 public:
     static const QString FIELD_ID;
@@ -326,6 +327,12 @@ public:
      * @return bool
      */
     bool validCardLenght() const;
+
+    /**
+     * @brief Validates the card number based on the Luhn Algorithm and the length of the card number.
+     * @return bool
+     */
+    bool validCardNumber() const;
 
     /**
      * @brief Copies the contents of other to this instance.

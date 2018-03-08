@@ -208,24 +208,24 @@ void CardTests::testSet()
 void CardTests::testCardBrand()
 {
     // Card numbers are taken from here: https://www.paypalobjects.com/en_AU/vhelp/paypalmanager_help/credit_card_numbers.htm
-    QString americanExpressOne = "378282246310005";
-    QString americanExpressTwo = "371449635398431";
-    QString americanExpressCorporate = "378734493671000";
+    const QString americanExpressOne = "378282246310005";
+    const QString americanExpressTwo = "371449635398431";
+    const QString americanExpressCorporate = "378734493671000";
 
-    QString discoverOne = "6011111111111117";
-    QString discoverTwo = "6011000990139424";
+    const QString discoverOne = "6011111111111117";
+    const QString discoverTwo = "6011000990139424";
 
-    QString jcbOne = "3530111333300000";
-    QString jcbTwo = "3566002020360505";
+    const QString jcbOne = "3530111333300000";
+    const QString jcbTwo = "3566002020360505";
 
-    QString dinersClubOne = "30569309025904";
-    QString dinersClubTwo = "38520000023237";
+    const QString dinersClubOne = "30569309025904";
+    const QString dinersClubTwo = "38520000023237";
 
-    QString visaOne = "4111111111111111";
-    QString visaTwo = "4012888888881881";
+    const QString visaOne = "4111111111111111";
+    const QString visaTwo = "4012888888881881";
 
-    QString masterCardOne = "5555555555554444";
-    QString masterCardTwo = "5105105105105100";
+    const QString masterCardOne = "5555555555554444";
+    const QString masterCardTwo = "5105105105105100";
 
     Card card;
 
@@ -272,24 +272,24 @@ void CardTests::testCardBrand()
 void CardTests::testCardLength()
 {
     // Card numbers are taken from here: https://www.paypalobjects.com/en_AU/vhelp/paypalmanager_help/credit_card_numbers.htm
-    QString americanExpressInvalid = "37828";
-    QString americanExpressValid = "371449635398431";
-    QString americanExpressInvalidTwo = "3787344936";
+    const QString americanExpressInvalid = "37828";
+    const QString americanExpressValid = "371449635398431";
+    const QString americanExpressInvalidTwo = "3787344936";
 
-    QString discoverInvalid = "6011111111";
-    QString discoverValid = "6011000990139424";
+    const QString discoverInvalid = "6011111111";
+    const QString discoverValid = "6011000990139424";
 
-    QString jcbInvalid = "3530111333";
-    QString jcbValid = "3566002020360505";
+    const QString jcbInvalid = "3530111333";
+    const QString jcbValid = "3566002020360505";
 
-    QString dinersClubInvalid = "305693094";
-    QString dinersClubValid = "38520000023237";
+    const QString dinersClubInvalid = "305693094";
+    const QString dinersClubValid = "38520000023237";
 
-    QString visaInvalid = "4111111111111";
-    QString visaValid = "4012888888881881";
+    const QString visaInvalid = "4111111111111";
+    const QString visaValid = "4012888888881881";
 
-    QString masterCardInvalid = "555555555555";
-    QString masterCardValid = "5105105105105100";
+    const QString masterCardInvalid = "555555555555";
+    const QString masterCardValid = "5105105105105100";
 
     Card card;
 
@@ -331,4 +331,68 @@ void CardTests::testCardLength()
 
     card.setCardNumber(masterCardValid);
     QCOMPARE(card.validCardLenght(), true);
+}
+
+void CardTests::testCardNumberValidation()
+{
+    // Card numbers are taken from here: https://www.paypalobjects.com/en_AU/vhelp/paypalmanager_help/credit_card_numbers.htm
+    const QString americanExpressInvalid = "37828224631000a5";
+    const QString americanExpressValid = "371449635398431";
+    const QString americanExpressInvalidTwo = "3787344936710022a323220";
+
+    const QString discoverInvalid = "6011111111111112227";
+    const QString discoverValid = "6011000990139424";
+
+    const QString jcbInvalid = "3530111333300000222222222";
+    const QString jcbValid = "3566002020360505";
+
+    const QString dinersClubInvalid = "305693090259046734343434asdad";
+    const QString dinersClubValid = "38520000023237";
+
+    const QString visaInvalid = "4111111112dd23434333441111";
+    const QString visaValid = "4012888888881881";
+
+    const QString masterCardInvalid = "555555535644422ffr33355555";
+    const QString masterCardValid = "5105105105105100";
+
+    Card card;
+
+    card.setCardNumber(americanExpressInvalid);
+    QCOMPARE(card.validCardNumber(), false);
+
+    card.setCardNumber(americanExpressValid);
+    QCOMPARE(card.validCardNumber(), true);
+
+    card.setCardNumber(americanExpressInvalidTwo);
+    QCOMPARE(card.validCardNumber(), false);
+
+    card.setCardNumber(discoverInvalid);
+    QCOMPARE(card.validCardNumber(), false);
+
+    card.setCardNumber(discoverValid);
+    QCOMPARE(card.validCardNumber(), true);
+
+    card.setCardNumber(jcbInvalid);
+    QCOMPARE(card.validCardNumber(), false);
+
+    card.setCardNumber(jcbValid);
+    QCOMPARE(card.validCardNumber(), true);
+
+    card.setCardNumber(dinersClubInvalid);
+    QCOMPARE(card.validCardNumber(), false);
+
+    card.setCardNumber(dinersClubValid);
+    QCOMPARE(card.validCardNumber(), true);
+
+    card.setCardNumber(visaInvalid);
+    QCOMPARE(card.validCardNumber(), false);
+
+    card.setCardNumber(visaValid);
+    QCOMPARE(card.validCardNumber(), true);
+
+    card.setCardNumber(masterCardInvalid);
+    QCOMPARE(card.validCardNumber(), false);
+
+    card.setCardNumber(masterCardValid);
+    QCOMPARE(card.validCardNumber(), true);
 }

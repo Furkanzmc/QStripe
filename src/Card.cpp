@@ -363,6 +363,34 @@ bool Card::validCardLenght() const
     return maxCardNumberLenght(brand()) == m_CardNumber.length();
 }
 
+bool Card::validCardNumber() const
+{
+    bool isOdd = true;
+    int sum = 0;
+
+    for (int index = m_CardNumber.length() - 1; index >= 0; index--) {
+        const QChar digit = m_CardNumber.at(index);
+        if (!digit.isDigit()) {
+            return false;
+        }
+
+        int digitInteger = digit.digitValue();
+        isOdd = !isOdd;
+
+        if (isOdd) {
+            digitInteger *= 2;
+        }
+
+        if (digitInteger > 9) {
+            digitInteger -= 9;
+        }
+
+        sum += digitInteger;
+    }
+
+    return (sum % 10 == 0) && validCardLenght();
+}
+
 void Card::set(const Card &other)
 {
     setCardID(other.cardID());
