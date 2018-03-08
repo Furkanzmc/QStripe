@@ -13,7 +13,7 @@ CardTests::CardTests(QObject *parent)
 
 }
 
-QVariantMap CardTests::getAddressData() const
+QVariantMap CardTests::getAddressData()
 {
     QVariantMap addressData;
     addressData[Card::FIELD_ADDRESS_PREFIX + Address::FIELD_COUNTRY] = "Canada";
@@ -28,7 +28,7 @@ QVariantMap CardTests::getAddressData() const
     return addressData;
 }
 
-QVariantMap CardTests::getCardData() const
+QVariantMap CardTests::getCardData()
 {
     QVariantMap data;
     data[Card::FIELD_ID] = "id";
