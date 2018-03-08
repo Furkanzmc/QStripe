@@ -7,9 +7,8 @@ class CardTests : public QObject
 public:
     explicit CardTests(QObject *parent = nullptr);
 
-private:
-    QVariantMap getAddressData() const;
-    QVariantMap getCardData() const;
+    static QVariantMap getAddressData();
+    static QVariantMap getCardData();
 
 private slots:
     void testSignals();

@@ -1,9 +1,11 @@
 #include <QtTest/QtTest>
 #include <QSignalSpy>
-#include "TestQStripe.h"
+// Tests
+#include "ShippingInformationTests.h"
 #include "CustomerTests.h"
 #include "AddressTests.h"
-#include "ShippingInformationTests.h"
+#include "TestQStripe.h"
+#include "TokenTests.h"
 #include "CardTests.h"
 // QStripe
 #include "QStripe/PaymentSource.h"
@@ -28,6 +30,7 @@ int main(int argc, char *argv[])
     ShippingInformationTests shippingTests;
     CustomerTests customerTests;
     CardTests cardTests;
+    TokenTests tokenTests;
 
     int status = 0;
     // The order of the tests is important.
@@ -36,6 +39,7 @@ int main(int argc, char *argv[])
     status |= QTest::qExec(&shippingTests, argc, argv);
     status |= QTest::qExec(&customerTests, argc, argv);
     status |= QTest::qExec(&cardTests, argc, argv);
+    status |= QTest::qExec(&tokenTests, argc, argv);
 
     return status;
 }
