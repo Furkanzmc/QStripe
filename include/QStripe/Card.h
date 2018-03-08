@@ -39,6 +39,8 @@ class Card : public QObject
     Q_PROPERTY(QString brandName READ brandName CONSTANT)
     Q_PROPERTY(CardBrand possibleCardBrand READ possibleCardBrand CONSTANT)
 
+    Q_PROPERTY(bool validCardLenght READ validCardLenght CONSTANT)
+
 public:
     static const QString FIELD_ID;
     static const QString FIELD_OBJECT;
@@ -318,6 +320,12 @@ public:
      * @return CardBrand
      */
     CardBrand possibleCardBrand() const;
+
+    /**
+     * @brief Returns true If the card number length is valid for the current card brand. If the card brand is unknown, it will return false.
+     * @return bool
+     */
+    bool validCardLenght() const;
 
     /**
      * @brief Copies the contents of other to this instance.

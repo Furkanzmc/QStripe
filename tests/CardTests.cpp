@@ -268,3 +268,67 @@ void CardTests::testCardBrand()
     card.setCardNumber(masterCardTwo);
     QCOMPARE(card.possibleCardBrand(), Card::MasterCard);
 }
+
+void CardTests::testCardLength()
+{
+    // Card numbers are taken from here: https://www.paypalobjects.com/en_AU/vhelp/paypalmanager_help/credit_card_numbers.htm
+    QString americanExpressInvalid = "37828";
+    QString americanExpressValid = "371449635398431";
+    QString americanExpressInvalidTwo = "3787344936";
+
+    QString discoverInvalid = "6011111111";
+    QString discoverValid = "6011000990139424";
+
+    QString jcbInvalid = "3530111333";
+    QString jcbValid = "3566002020360505";
+
+    QString dinersClubInvalid = "305693094";
+    QString dinersClubValid = "38520000023237";
+
+    QString visaInvalid = "4111111111111";
+    QString visaValid = "4012888888881881";
+
+    QString masterCardInvalid = "555555555555";
+    QString masterCardValid = "5105105105105100";
+
+    Card card;
+
+    card.setCardNumber(americanExpressInvalid);
+    QCOMPARE(card.validCardLenght(), false);
+
+    card.setCardNumber(americanExpressValid);
+    QCOMPARE(card.validCardLenght(), true);
+
+    card.setCardNumber(americanExpressInvalidTwo);
+    QCOMPARE(card.validCardLenght(), false);
+
+    card.setCardNumber(discoverInvalid);
+    QCOMPARE(card.validCardLenght(), false);
+
+    card.setCardNumber(discoverValid);
+    QCOMPARE(card.validCardLenght(), true);
+
+    card.setCardNumber(jcbInvalid);
+    QCOMPARE(card.validCardLenght(), false);
+
+    card.setCardNumber(jcbValid);
+    QCOMPARE(card.validCardLenght(), true);
+
+    card.setCardNumber(dinersClubInvalid);
+    QCOMPARE(card.validCardLenght(), false);
+
+    card.setCardNumber(dinersClubValid);
+    QCOMPARE(card.validCardLenght(), true);
+
+    card.setCardNumber(visaInvalid);
+    QCOMPARE(card.validCardLenght(), false);
+
+    card.setCardNumber(visaValid);
+    QCOMPARE(card.validCardLenght(), true);
+
+    card.setCardNumber(masterCardInvalid);
+    QCOMPARE(card.validCardLenght(), false);
+
+    card.setCardNumber(masterCardValid);
+    QCOMPARE(card.validCardLenght(), true);
+}

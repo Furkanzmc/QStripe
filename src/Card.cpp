@@ -358,6 +358,11 @@ Card::CardBrand Card::possibleCardBrand() const
     return cardType;
 }
 
+bool Card::validCardLenght() const
+{
+    return maxCardNumberLenght(brand()) == m_CardNumber.length();
+}
+
 void Card::set(const Card &other)
 {
     setCardID(other.cardID());
