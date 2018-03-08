@@ -37,6 +37,7 @@ class Card : public QObject
 
     Q_PROPERTY(QString cvc READ cvc WRITE setCvc NOTIFY cvcChanged)
     Q_PROPERTY(QString brandName READ brandName CONSTANT)
+    Q_PROPERTY(CardBrand possibleCardBrand READ possibleCardBrand CONSTANT)
 
 public:
     static const QString FIELD_ID;
