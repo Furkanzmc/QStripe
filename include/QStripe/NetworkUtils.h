@@ -29,6 +29,21 @@ class NetworkUtils : public QObject
     Q_OBJECT
 
 public:
+    enum HttpStatusCodes {
+        HTTP_200 = 200,
+        HTTP_400 = 400,
+        HTTP_401 = 401,
+        HTTP_402 = 402,
+        HTTP_404 = 404,
+        HTTP_409 = 409,
+        HTTP_429 = 429,
+        HTTP_500 = 500,
+        HTTP_502 = 502,
+        HTTP_503 = 503,
+        HTTP_504 = 504
+    };
+
+public:
     explicit NetworkUtils(QObject *parent = nullptr);
     ~NetworkUtils();
 
