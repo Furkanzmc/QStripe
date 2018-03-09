@@ -101,7 +101,7 @@ void AddressTests::testAddressSet()
     Address a1;
     a1.setCity("Toronto");
     Address a2;
-    a2.set(a1);
+    a2.set(&a1);
 
     QVERIFY(a1 == a2);
 }

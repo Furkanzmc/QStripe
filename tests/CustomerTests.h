@@ -20,4 +20,12 @@ private slots:
 
     void testJson();
     void testSet();
+    void testCreateCustomerErrors();
+
+    void testCreateCustomer();
+    void testUpdateCustomerErrors();
+    void testUpdateCustomer();
+
+private:
+    QString m_CustomerID;
 };

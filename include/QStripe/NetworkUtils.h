@@ -11,14 +11,14 @@ namespace QStripe
 struct Response {
     Response(QString _data, unsigned int _httpCode, QNetworkReply::NetworkError error)
         : data(_data)
-        , httpCode(_httpCode)
+        , httpStatus(_httpCode)
         , networkError(error)
     {
 
     }
 
     QString data;
-    unsigned int httpCode;
+    unsigned int httpStatus;
     QNetworkReply::NetworkError networkError;
 };
 
@@ -27,6 +27,21 @@ using RequestCallback = std::function<void(const Response &)>;
 class NetworkUtils : public QObject
 {
     Q_OBJECT
+
+public:
+    enum HttpStatusCodes {
+        HTTP_200 = 200,
+        HTTP_400 = 400,
+        HTTP_401 = 401,
+        HTTP_402 = 402,
+        HTTP_404 = 404,
+        HTTP_409 = 409,
+        HTTP_429 = 429,
+        HTTP_500 = 500,
+        HTTP_502 = 502,
+        HTTP_503 = 503,
+        HTTP_504 = 504
+    };
 
 public:
     explicit NetworkUtils(QObject *parent = nullptr);
@@ -49,12 +64,12 @@ public:
     void sendDelete(const QString &url, RequestCallback callback);
 
     /**
-     * @brief Sends a post request. When the request is finished, the callback is called.
+     * @brief Sends a post request. When the request is finished, the callback is called. Stripe expects `application/x-www-form-urlencoded`.
      * @param url
      * @param data
      * @param callback
      */
-    void sendPost(const QString &url, const QString &data, RequestCallback callback);
+    void sendPost(const QString &url, const QVariantMap &data, RequestCallback callback);
 
     /**
      * @brief Sends a put request. When the request is finished, the callback is called.
@@ -62,7 +77,7 @@ public:
      * @param data
      * @param callback
      */
-    void sendPut(const QString &url, const QString &data, RequestCallback callback);
+    void sendPut(const QString &url, const QVariantMap &data, RequestCallback callback);
 
     /**
      * @brief Increases m_RequestCount and returns the resulting ID

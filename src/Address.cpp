@@ -166,15 +166,15 @@ QString Address::jsonString(const QString &prefix) const
     return Utils::toJsonString(json(prefix));
 }
 
-void Address::set(const Address &other)
+void Address::set(const Address *other)
 {
-    this->setCountry(other.country());
-    this->setState(other.state());
-    this->setCity(other.city());
+    this->setCountry(other->country());
+    this->setState(other->state());
+    this->setCity(other->city());
 
-    this->setLineOne(other.lineOne());
-    this->setLineTwo(other.lineTwo());
-    this->setPostalCode(other.postalCode());
+    this->setLineOne(other->lineOne());
+    this->setLineTwo(other->lineTwo());
+    this->setPostalCode(other->postalCode());
 }
 
 Address *Address::fromJson(const QVariantMap &data, const QString &prefix)

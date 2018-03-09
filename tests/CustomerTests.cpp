@@ -3,12 +3,17 @@
 #include <QSignalSpy>
 // QStripe
 #include "QStripe/Customer.h"
+#include "QStripe/Stripe.h"
 #include "QStripe/Utils.h"
 
 using namespace QStripe;
 
+#define STRINGIFY_(x) #x
+#define STRINGIFY(x) STRINGIFY_(x)
+
 CustomerTests::CustomerTests(QObject *parent)
     : QObject(parent)
+    , m_CustomerID("")
 {
 
 }
@@ -44,6 +49,7 @@ QVariantMap CustomerTests::getShippingInformationData() const
 QVariantMap CustomerTests::getData() const
 {
     QVariantMap data;
+    data[Customer::FIELD_ID] = "customer_id";
     data[Customer::FIELD_CURRENCY] = "cad";
     data[Customer::FIELD_DEFAULT_SOURCE] = "source";
     data[Customer::FIELD_SHIPPING] = getShippingInformationData();
@@ -53,6 +59,8 @@ QVariantMap CustomerTests::getData() const
 
     QVariantMap meta;
     meta["meta"] = "data";
+    meta["first_name"] = "Furkan";
+    meta["last_name"] = "Uzumcu";
     data[Customer::FIELD_METADATA] = meta;
 
     return data;
@@ -106,21 +114,64 @@ void CustomerTests::testFromJson()
     QCOMPARE(customer->email(), data[Customer::FIELD_EMAIL].toString());
     QCOMPARE(customer->description(), data[Customer::FIELD_DESCRIPTION].toString());
     QCOMPARE(customer->metadata(), data[Customer::FIELD_METADATA].toMap());
+
+    QCOMPARE(customer->customerID(), data[Customer::FIELD_ID].toString());
 }
 
 void CustomerTests::testJsonStr()
 {
-    const QVariantMap data = getData();
+    QVariantMap data = getData();
     const Customer *customer = Customer::fromString(Utils::toJsonString(data));
+
+    const QVariantMap metadata = customer->metadata();
+    for (auto it = metadata.constBegin(); it != metadata.constEnd(); it++) {
+        const QString key = Customer::FIELD_METADATA + "[" + it.key() + "]";
+        const QVariant &value = it.value();
+
+        if (value.type() == QVariant::String) {
+            data[key] = value.toString();
+        }
+        else if (value.type() == QVariant::Int) {
+            data[key] = value.toInt();
+        }
+        else if (value.type() == QVariant::Int) {
+            data[key] = value.toInt();
+        }
+        else if (value.type() == QVariant::Map) {
+            qWarning() << "Do not put Map in metadata.";
+        }
+    }
+
+    data.remove(Customer::FIELD_METADATA);
 
     QCOMPARE(customer->jsonString(), Utils::toJsonString(data));
 }
 
 void CustomerTests::testJson()
 {
-    const QVariantMap data = getData();
+    QVariantMap data = getData();
     const Customer *customer = Customer::fromJson(data);
 
+    const QVariantMap metadata = customer->metadata();
+    for (auto it = metadata.constBegin(); it != metadata.constEnd(); it++) {
+        const QString key = Customer::FIELD_METADATA + "[" + it.key() + "]";
+        const QVariant &value = it.value();
+
+        if (value.type() == QVariant::String) {
+            data[key] = value.toString();
+        }
+        else if (value.type() == QVariant::Int) {
+            data[key] = value.toInt();
+        }
+        else if (value.type() == QVariant::Int) {
+            data[key] = value.toInt();
+        }
+        else if (value.type() == QVariant::Map) {
+            qWarning() << "Do not put Map in metadata.";
+        }
+    }
+
+    data.remove(Customer::FIELD_METADATA);
     QCOMPARE(customer->json(), data);
 }
 
@@ -136,4 +187,89 @@ void CustomerTests::testSet()
 
     QCOMPARE(c1.description(), c2.description());
     QCOMPARE(c1.email(), c2.email());
+}
+
+void CustomerTests::testCreateCustomerErrors()
+{
+    QVariantMap data = getData();
+    Customer *customer = Customer::fromJson(data);
+
+    QCOMPARE(customer->create(), false);
+
+    customer->deleteLater();
+    data.remove(Customer::FIELD_ID);
+    customer = Customer::fromJson(data);
+    QCOMPARE(customer->create(), true);
+
+    QSignalSpy spyError(customer, &Customer::errorOccurred);
+    QCOMPARE(spyError.wait(), true);
+
+    const Error *error = customer->lastError();
+    QCOMPARE(error->type(), Error::ErrorInvalidRequest);
+    QCOMPARE(error->httpStatus(), NetworkUtils::HTTP_401);
+
+    customer->deleteLater();
+    data.remove(Customer::FIELD_ID);
+    customer = Customer::fromJson(data);
+
+    Stripe::setPublishableKey(STRINGIFY(STRIPE_PUBLIC_KEY));
+    Stripe::setSecretKey(STRINGIFY(STRIPE_SECRET_KEY));
+
+    QSignalSpy spyCreate(customer, &Customer::errorOccurred);
+    QCOMPARE(customer->create(), true);
+    QCOMPARE(spyCreate.wait(), true);
+    error = customer->lastError();
+    QCOMPARE(error->param(), "source");
+}
+
+void CustomerTests::testCreateCustomer()
+{
+    QVariantMap data = getData();
+    data.remove(Customer::FIELD_ID);
+    data.remove(Customer::FIELD_DEFAULT_SOURCE);
+    Customer *customer = Customer::fromJson(data);
+
+    Stripe::setPublishableKey(STRINGIFY(STRIPE_PUBLIC_KEY));
+    Stripe::setSecretKey(STRINGIFY(STRIPE_SECRET_KEY));
+
+    QSignalSpy spyCreate(customer, &Customer::created);
+    QCOMPARE(customer->create(), true);
+    QVERIFY2(spyCreate.wait() == true, customer->lastError()->message().toStdString().c_str());
+    QVERIFY(customer->customerID().length() > 0);
+
+    m_CustomerID = customer->customerID();
+}
+
+void CustomerTests::testUpdateCustomerErrors()
+{
+    QVERIFY2(m_CustomerID.length() > 0, "Customer ID doesn't exist. Cannot continue update test.");
+    if (m_CustomerID.length() > 0) {
+        QVariantMap data = getData();
+        data.remove(Customer::FIELD_ID);
+        Customer *customer = Customer::fromJson(data);
+
+        QCOMPARE(customer->update(), false);
+
+        customer->deleteLater();
+    }
+}
+
+void CustomerTests::testUpdateCustomer()
+{
+    QVERIFY2(m_CustomerID.length() > 0, "Customer ID doesn't exist. Cannot continue update test.");
+    if (m_CustomerID.length() > 0) {
+        QVariantMap data = getData();
+        data[Customer::FIELD_ID] = m_CustomerID;
+        data.remove(Customer::FIELD_DEFAULT_SOURCE);
+
+        Customer *customer = Customer::fromJson(data);
+        customer->setDescription("Hey description!");
+        QVariantMap metadata = customer->metadata();
+        metadata["simple"] = "man";
+        customer->setMetadata(metadata);
+        QCOMPARE(customer->update(), true);
+
+        QSignalSpy spyUpdated(customer, &Customer::updated);
+        QVERIFY2(spyUpdated.wait() == true, customer->lastError()->message().toStdString().c_str());
+    }
 }

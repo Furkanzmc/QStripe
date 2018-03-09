@@ -47,14 +47,19 @@ void ShippingInformation::setPhone(const QString &phone)
 
 Address *ShippingInformation::address()
 {
-    return m_Address;
+    return &m_Address;
 }
 
-void ShippingInformation::setAddress(Address *addr)
+const Address *ShippingInformation::address() const
 {
-    const bool changed = addr != m_Address;
+    return &m_Address;
+}
+
+void ShippingInformation::setAddress(const Address *addr)
+{
+    const bool changed = (*addr) != m_Address;
     if (changed) {
-        m_Address = addr;
+        m_Address.set(addr);
         emit addressChanged();
     }
 }
@@ -62,7 +67,7 @@ void ShippingInformation::setAddress(Address *addr)
 QVariantMap ShippingInformation::json() const
 {
     QVariantMap data;
-    data[FIELD_ADDRESS] = m_Address != nullptr ? m_Address->json() : QVariant::fromValue(nullptr);
+    data[FIELD_ADDRESS] = m_Address.json();
     data[FIELD_NAME] = name();
     data[FIELD_PHONE] = phone();
 
@@ -74,16 +79,12 @@ QString ShippingInformation::jsonString() const
     return Utils::toJsonString(json());
 }
 
-void ShippingInformation::set(ShippingInformation &other)
+void ShippingInformation::set(const ShippingInformation *other)
 {
-    setName(other.name());
-    setPhone(other.phone());
-    if (other.address()) {
-        if (m_Address == nullptr) {
-            m_Address = new Address(this);
-        }
-
-        m_Address->set(*other.address());
+    setName(other->name());
+    setPhone(other->phone());
+    if (other->address()) {
+        m_Address.set(other->address());
     }
 }
 

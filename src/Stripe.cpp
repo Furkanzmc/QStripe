@@ -3,18 +3,19 @@
 namespace QStripe
 {
 
+QString Stripe::m_PublishableKey = "";
+QString Stripe::m_SecretKey = "";
+QString Stripe::m_APIVersion = "";
+
 Stripe::Stripe(QObject *parent)
     : QObject(parent)
-    , m_PublishableKey("")
-    , m_SecretKey("")
-    , m_APIVersion("")
     , m_Customers()
     , m_NetworkUtils()
 {
 
 }
 
-QString Stripe::publishableKey() const
+QString Stripe::publishableKey()
 {
     return m_PublishableKey;
 }
@@ -24,11 +25,10 @@ void Stripe::setPublishableKey(const QString &key)
     const bool changed = key != m_PublishableKey;
     if (changed) {
         m_PublishableKey = key;
-        emit publishableKeyChanged();
     }
 }
 
-QString Stripe::secretKey() const
+QString Stripe::secretKey()
 {
     return m_SecretKey;
 }
@@ -38,11 +38,10 @@ void Stripe::setSecretKey(const QString &key)
     const bool changed = key != m_SecretKey;
     if (changed) {
         m_SecretKey = key;
-        emit secretKeyChanged();
     }
 }
 
-QString Stripe::apiVersion() const
+QString Stripe::apiVersion()
 {
     return m_APIVersion;
 }
@@ -52,7 +51,6 @@ void Stripe::setApiVersion(const QString &version)
     const bool changed = version != m_APIVersion;
     if (changed) {
         m_PublishableKey = version;
-        emit apiVersionChanged();
     }
 }
 

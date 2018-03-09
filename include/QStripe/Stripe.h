@@ -13,9 +13,9 @@ class Stripe : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString publishableKey READ publishableKey WRITE setPublishableKey NOTIFY publishableKeyChanged)
-    Q_PROPERTY(QString secretKey READ secretKey WRITE setSecretKey NOTIFY secretKeyChanged)
-    Q_PROPERTY(QString apiVersion READ apiVersion WRITE setApiVersion NOTIFY apiVersionChanged)
+    Q_PROPERTY(QString publishableKey READ publishableKey WRITE setPublishableKey)
+    Q_PROPERTY(QString secretKey READ secretKey WRITE setSecretKey)
+    Q_PROPERTY(QString apiVersion READ apiVersion WRITE setApiVersion)
 
     Q_PROPERTY(QQmlListProperty<Customer> customers READ customers)
 
@@ -26,38 +26,38 @@ public:
      * @brief Returns the publishable key.
      * @return QString
      */
-    QString publishableKey() const;
+    static QString publishableKey();
 
     /**
      * @brief Sets the current publishable key. This change does not effect the currently running requests. But any request after this change will use this key.
      * @param key
      */
-    void setPublishableKey(const QString &key);
+    static void setPublishableKey(const QString &key);
 
     /**
      * @brief Returns the secret key.
      * @return
      */
-    QString secretKey() const;
+    static QString secretKey();
 
     /**
      * @brief Sets the current secret key. This change does not effect the currently running requests. But any request after this change will use this key.
      * @param key
      */
-    void setSecretKey(const QString &key);
+    static void setSecretKey(const QString &key);
 
     /**
      * @brief The current API version. The default value is empty and uses the latest API version.
      * @return QString
      */
-    QString apiVersion() const;
+    static QString apiVersion();
 
     /**
      * @brief Sets the current api version to the given one. This change does not effect the currently running requests. But any request after this change will
      * use this key.
      * @param version
      */
-    void setApiVersion(const QString &version);
+    static void setApiVersion(const QString &version);
 
     /**
      * @brief Returns the list of customer currently attached to this instance.
@@ -89,26 +89,11 @@ public:
      */
     void clearCustomers();
 
-signals:
-    /**
-     * @brief Emitted when the `publishableKey` property changes.
-     */
-    void publishableKeyChanged();
-
-    /**
-     * @brief Emitted when the `secretKey` property changes.
-     */
-    void secretKeyChanged();
-
-    /**
-     * @brief Emitted when the `apiVersion` property changes.
-     */
-    void apiVersionChanged();
-
 private:
-    QString m_PublishableKey,
-            m_SecretKey,
-            m_APIVersion;
+    static QString m_PublishableKey,
+           m_SecretKey,
+           m_APIVersion;
+
     QVector<Customer *> m_Customers;
     NetworkUtils m_NetworkUtils;
 
