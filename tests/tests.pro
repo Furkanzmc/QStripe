@@ -9,7 +9,8 @@ SOURCES += \
     ShippingInformationTests.cpp \
     CardTests.cpp \
     TokenTests.cpp \
-    ErrorTests.cpp
+    ErrorTests.cpp \
+    StripeTests.cpp
 
 HEADERS += \
     TestQStripe.h \
@@ -18,7 +19,8 @@ HEADERS += \
     ShippingInformationTests.h \
     CardTests.h \
     TokenTests.h \
-    ErrorTests.h
+    ErrorTests.h \
+    StripeTests.h
 
 include(../qstripe.pri)
 

@@ -5,6 +5,7 @@
 // Stripe
 #include "Customer.h"
 #include "NetworkUtils.h"
+#include "Error.h"
 
 namespace QStripe
 {
@@ -89,6 +90,31 @@ public:
      */
     void clearCustomers();
 
+    /**
+     * @brief Fetches the customer with the given ID. If the customer exists and it is sucesfully fetched, `customerFetched()` signal will be emitted.
+     * If the customerID length is 0, this method will return false.
+     * @param customerID
+     */
+    Q_INVOKABLE bool fetchCustomer(const QString &customerID);
+
+    /**
+     * @brief Returns the last ocurred error.
+     * @return const Error *
+     */
+    const Error *lastError() const;
+
+signals:
+    /**
+     * @brief Emitted when the customer is fetched. The parent of customer is initially this instance of Stripe.
+     */
+    void customerFetched(Customer *customer);
+
+    /**
+     * @brief Emitted when a request to Stripe fails.
+     * @param error
+     */
+    void errorOccurred(const Error *error);
+
 private:
     static QString m_PublishableKey,
            m_SecretKey,
@@ -96,6 +122,7 @@ private:
 
     QVector<Customer *> m_Customers;
     NetworkUtils m_NetworkUtils;
+    Error m_Error;
 
 private:
     /**

@@ -8,6 +8,8 @@ class CustomerTests : public QObject
 public:
     explicit CustomerTests(QObject *parent = nullptr);
 
+    QString getCustomerID() const;
+
 private:
     QVariantMap getAddressData() const;
     QVariantMap getShippingInformationData() const;

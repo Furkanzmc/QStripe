@@ -5,6 +5,7 @@
 #include "CustomerTests.h"
 #include "AddressTests.h"
 #include "TestQStripe.h"
+#include "StripeTests.h"
 #include "TokenTests.h"
 #include "ErrorTests.h"
 #include "CardTests.h"
@@ -43,6 +44,9 @@ int main(int argc, char *argv[])
     status |= QTest::qExec(&cardTests, argc, argv);
     status |= QTest::qExec(&tokenTests, argc, argv);
     status |= QTest::qExec(&errorTests, argc, argv);
+
+    StripeTests stripeTests(customerTests.getCustomerID());
+    status |= QTest::qExec(&stripeTests, argc, argv);
 
     return status;
 }

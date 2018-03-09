@@ -18,6 +18,11 @@ CustomerTests::CustomerTests(QObject *parent)
 
 }
 
+QString CustomerTests::getCustomerID() const
+{
+    return m_CustomerID;
+}
+
 QVariantMap CustomerTests::getAddressData() const
 {
     QVariantMap addressData;

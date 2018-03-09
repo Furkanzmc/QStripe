@@ -1,4 +1,7 @@
 #include "QStripe/Stripe.h"
+// QStripe
+#include "QStripe/Customer.h"
+#include "QStripe/Utils.h"
 
 namespace QStripe
 {
@@ -9,8 +12,8 @@ QString Stripe::m_APIVersion = "";
 
 Stripe::Stripe(QObject *parent)
     : QObject(parent)
-    , m_Customers()
     , m_NetworkUtils()
+    , m_Error()
 {
 
 }
@@ -78,6 +81,41 @@ void Stripe::clearCustomers()
 {
     return m_Customers.clear();
 }
+
+bool Stripe::fetchCustomer(const QString &customerID)
+{
+    if (customerID.length() == 0) {
+        return false;
+    }
+
+    m_NetworkUtils.setHeader("Authorization", "Bearer " + Stripe::secretKey());
+    if (Stripe::apiVersion().length() > 0) {
+        m_NetworkUtils.setHeader("Stripe-Version", Stripe::apiVersion());
+    }
+
+    auto callback = [this](const Response & response) {
+        QVariantMap data = Utils::toVariantMap(response.data);
+        if (response.httpStatus == NetworkUtils::HttpStatusCodes::HTTP_200) {
+            Customer *customer = Customer::fromJson(data);
+            customer->setParent(this);
+            emit customerFetched(customer);
+        }
+        else {
+            qDebug() << "[ERROR] Error occurred while fetching the customer.";
+            m_Error.set(data, response.httpStatus, response.networkError);
+            emit errorOccurred(&m_Error);
+        }
+    };
+
+    m_NetworkUtils.sendGet(Customer::getURL(customerID), callback);
+    return true;
+}
+
+const Error *Stripe::lastError() const
+{
+    return &m_Error;
+}
+
 
 void Stripe::updateVersionHeader()
 {
