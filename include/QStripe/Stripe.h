@@ -26,7 +26,7 @@ public:
      * @brief Returns the publishable key.
      * @return QString
      */
-    QString publishableKey() const;
+    static QString publishableKey();
 
     /**
      * @brief Sets the current publishable key. This change does not effect the currently running requests. But any request after this change will use this key.
@@ -38,7 +38,7 @@ public:
      * @brief Returns the secret key.
      * @return
      */
-    QString secretKey() const;
+    static QString secretKey();
 
     /**
      * @brief Sets the current secret key. This change does not effect the currently running requests. But any request after this change will use this key.
@@ -106,9 +106,10 @@ signals:
     void apiVersionChanged();
 
 private:
-    QString m_PublishableKey,
-            m_SecretKey,
-            m_APIVersion;
+    static QString m_PublishableKey,
+           m_SecretKey,
+           m_APIVersion;
+
     QVector<Customer *> m_Customers;
     NetworkUtils m_NetworkUtils;
 

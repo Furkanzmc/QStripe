@@ -3,18 +3,19 @@
 namespace QStripe
 {
 
+QString Stripe::m_PublishableKey = "";
+QString Stripe::m_SecretKey = "";
+QString Stripe::m_APIVersion = "";
+
 Stripe::Stripe(QObject *parent)
     : QObject(parent)
-    , m_PublishableKey("")
-    , m_SecretKey("")
-    , m_APIVersion("")
     , m_Customers()
     , m_NetworkUtils()
 {
 
 }
 
-QString Stripe::publishableKey() const
+QString Stripe::publishableKey()
 {
     return m_PublishableKey;
 }
@@ -28,7 +29,7 @@ void Stripe::setPublishableKey(const QString &key)
     }
 }
 
-QString Stripe::secretKey() const
+QString Stripe::secretKey()
 {
     return m_SecretKey;
 }
