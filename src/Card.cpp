@@ -82,7 +82,7 @@ void Card::setAddress(const Address *addr)
 {
     const bool changed = m_Address != (*addr);
     if (changed) {
-        m_Address.set(*addr);
+        m_Address.set(addr);
         emit addressChanged();
     }
 }

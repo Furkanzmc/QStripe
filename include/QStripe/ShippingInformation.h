@@ -51,12 +51,13 @@ public:
      * @return Address
      */
     Address *address();
+    const Address *address() const;
 
     /**
      * @brief Set the address to the given address.
      * @param name
      */
-    void setAddress(Address *addr);
+    void setAddress(const Address *addr);
 
     /**
      * @brief Returns the QVariantMap representation of the current object.
@@ -74,7 +75,7 @@ public:
      * @brief Copy another address to this one. This will copy the address.
      * @param other
      */
-    Q_INVOKABLE void set(ShippingInformation &other);
+    Q_INVOKABLE void set(const ShippingInformation *other);
 
     /**
      * @brief Returns an ShippingInformation instance from a json representation. If the json data cannot be parsed, returns an ShippingInformation
@@ -110,7 +111,7 @@ signals:
 
 private:
     QString m_Name, m_Phone;
-    Address *m_Address;
+    Address m_Address;
 };
 
 }

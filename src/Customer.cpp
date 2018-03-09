@@ -25,7 +25,7 @@ Customer::Customer(QObject *parent)
     , m_Description("")
     , m_Currency("")
     , m_Metadata()
-    , m_ShippingInformation(new ShippingInformation(this))
+    , m_ShippingInformation()
 {
 
 }
@@ -105,17 +105,24 @@ void Customer::setMetadata(const QVariantMap &metadata)
     }
 }
 
-ShippingInformation *Customer::shippingInformation() const
+ShippingInformation *Customer::shippingInformation()
 {
-    return m_ShippingInformation;
+    return &m_ShippingInformation;
 }
 
-void Customer::setShippingInformation(ShippingInformation *shippingInformation)
+const ShippingInformation *Customer::shippingInformation() const
+{
+    return &m_ShippingInformation;
+}
+
+void Customer::setShippingInformation(const ShippingInformation *shippingInformation)
 {
     // TODO: Check for content equality instead of memory location.
-    const bool changed = m_ShippingInformation != shippingInformation;
+    const bool changed = m_ShippingInformation.name() != shippingInformation->name() ||
+                         m_ShippingInformation.phone() != shippingInformation->phone() ||
+                         (*m_ShippingInformation.address()) != (*shippingInformation->address());
     if (changed) {
-        m_ShippingInformation = shippingInformation;
+        m_ShippingInformation.set(shippingInformation);
         emit shippingInformationChanged();
     }
 }
@@ -131,7 +138,7 @@ QVariantMap Customer::json() const
     data[FIELD_CURRENCY] = currency();
     data[FIELD_DEFAULT_SOURCE] = defaultSource();
 
-    data[FIELD_SHIPPING] = m_ShippingInformation->json();
+    data[FIELD_SHIPPING] = m_ShippingInformation.json();
     data[FIELD_EMAIL] = email();
     data[FIELD_DESCRIPTION] = description();
 

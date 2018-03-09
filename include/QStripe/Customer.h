@@ -107,13 +107,14 @@ public:
      * @brief Returns the shipping information, The defaul is an empty shipping information.
      * @return ShippingInformation
      */
-    ShippingInformation *shippingInformation() const;
+    ShippingInformation *shippingInformation();
+    const ShippingInformation *shippingInformation() const;
 
     /**
      * @brief Sett shipping information.
      * @param shippingInformation
      */
-    void setShippingInformation(ShippingInformation *shippingInformation);
+    void setShippingInformation(const ShippingInformation *shippingInformation);
 
     /**
      * @brief Returns a json representation of this object. If the customerID is empty, it omits that field.
@@ -191,7 +192,7 @@ private:
             m_Currency;
 
     QVariantMap m_Metadata;
-    ShippingInformation *m_ShippingInformation;
+    ShippingInformation m_ShippingInformation;
 
 private:
     /**

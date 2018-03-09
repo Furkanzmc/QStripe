@@ -92,7 +92,7 @@ void ShippingInformationTests::testShippingInformationSet()
     si1.setName("Furkan Uzumcu");
     si1.setPhone("1234123123");
 
-    si2.set(si1);
+    si2.set(&si1);
 
     QCOMPARE(si1.name(), si2.name());
     QCOMPARE(si1.phone(), si2.phone());
