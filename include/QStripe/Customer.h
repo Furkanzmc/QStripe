@@ -156,14 +156,14 @@ public:
      * If the instance already has a customer ID, this will return false and do nothing. When the customer is created, `created()` signal will be emitted.
      * @return bool
      */
-    bool create();
+    Q_INVOKABLE bool create();
 
     /**
      * @brief If the customer instance has an ID, this method will send the current details of the instance and update the remote. If there's no customer ID
      * present, this method will return false. When the customer is updated, `updated()` signal will be emitted.
      * @return bool
      */
-    bool update();
+    Q_INVOKABLE bool update();
 
     /**
      * @brief Returns the last ocurred error.
