@@ -305,6 +305,20 @@ bool Customer::update()
     return true;
 }
 
+void Customer::clear()
+{
+    m_CustomerID.clear();
+    m_DefaultSource.clear();
+    m_Email.clear();
+
+    m_Description.clear();
+    m_Currency.clear();
+    m_Metadata.clear();
+
+    m_ShippingInformation.clear();
+    emit cleared();
+}
+
 const Error *Customer::lastError() const
 {
     return &m_Error;

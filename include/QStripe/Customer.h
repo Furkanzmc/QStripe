@@ -166,6 +166,12 @@ public:
     Q_INVOKABLE bool update();
 
     /**
+     * @brief Resets every property to its default state. When the clearing is complete, `cleared()` signal will be emitted.
+     * The changes in the properties does NOT emit the related signals.
+     */
+    Q_INVOKABLE void clear();
+
+    /**
      * @brief Returns the last ocurred error.
      * @return const Error *
      */
@@ -224,10 +230,20 @@ signals:
     void updated();
 
     /**
+     * @brief Emitted when the customer is deleted. Prior to emission of this signal, the contents of the instance will be cleared.
+     */
+    void deleted();
+
+    /**
      * @brief Emitted when a request to Stripe fails.
      * @param error
      */
     void errorOccurred(const Error *error);
+
+    /**
+     * @brief Emitted when the instance has been cleared.
+     */
+    void cleared();
 
 private:
     QString m_CustomerID,

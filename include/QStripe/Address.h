@@ -165,6 +165,12 @@ public:
     Q_INVOKABLE void set(const Address *other);
 
     /**
+     * @brief Resets every property to its default state. When the clearing is complete, `cleared()` signal will be emitted.
+     * The changes in the properties does NOT emit the related signals.
+     */
+    Q_INVOKABLE void clear();
+
+    /**
      * @brief Returns an Address instance from a json representation. If the json data cannot be parsed, returns an empty Address instance.
      * @param prefix This is usefull If you are creating an address from the output of a, say, Customer object that has the `address_` prefix
      * for address fields.
@@ -231,6 +237,11 @@ signals:
      */
     void zipCheckChanged();
 
+    /**
+     * @brief Emitted after the instance has been cleared.
+     */
+    void cleared();
+
 private:
     QString m_Country,
             m_State,
@@ -238,6 +249,7 @@ private:
             m_LineOne,
             m_LineTwo,
             m_PostalCode;
+
     ZipCheck m_ZipCheck;
 };
 

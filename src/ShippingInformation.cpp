@@ -88,6 +88,14 @@ void ShippingInformation::set(const ShippingInformation *other)
     }
 }
 
+void ShippingInformation::clear()
+{
+    m_Name.clear();
+    m_Phone.clear();
+    m_Address.clear();
+    emit cleared();
+}
+
 ShippingInformation *ShippingInformation::fromJson(const QVariantMap &data)
 {
     ShippingInformation *shipping = new ShippingInformation();
