@@ -94,16 +94,15 @@ Stripe {
 
 ## Card
 
-A `Card` instance contains the details of a credit card. It has some convenience functions for checking if the card is valid or not. `Stripe` takes a `Card`
-instance to create the card token. `validateCard()` method will return a `CardValidationStatus` enum.
+A `Card` instance contains the details of a credit card. You can use the following methods to determine If a card instance
+is valid or not.
 
-Available `CardValidationStatus` options are:
-
-- `Valid`
-- `InvalidCardNumber`
-- `InvalidCardNumberLength`
-- `InvalidCardCVC`
-- `InvalidExpirationDate`
+- validCVC()
+- validCardNumber()
+- validCardLenght()
+- validExpirationMonth()
+- validExpirationYear()
+- validCard(): This checks for all of the above.
 
 ## Customer
 
