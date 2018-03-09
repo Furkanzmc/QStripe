@@ -267,14 +267,52 @@ bool Customer::create()
     return true;
 }
 
+bool Customer::update()
+{
+    if (m_CustomerID.length() == 0) {
+        return false;
+    }
+
+    auto callback = [this](const Response & response) {
+        QVariantMap data = Utils::toVariantMap(response.data);
+        if (response.httpStatus == NetworkUtils::HttpStatusCodes::HTTP_200) {
+            Customer *customer = fromJson(data);
+            set(customer);
+            customer->deleteLater();
+            emit updated();
+        }
+        else {
+            qDebug() << "[ERROR] Error occurred while updating the customer.";
+            m_Error.set(data, response.httpStatus, response.networkError);
+            emit errorOccurred(&m_Error);
+        }
+    };
+
+    m_NetworkUtils.setHeader("Authorization", "Bearer " + Stripe::secretKey());
+    if (Stripe::apiVersion().length() > 0) {
+        m_NetworkUtils.setHeader("Stripe-Version", Stripe::apiVersion());
+    }
+
+    QVariantMap data = json();
+    // currency and default_source should be removed.
+    data.remove(FIELD_CURRENCY);
+    data.remove(FIELD_ID);
+    if (m_DefaultSource.length() == 0) {
+        data.remove(FIELD_DEFAULT_SOURCE);
+    }
+
+    m_NetworkUtils.sendPost(getURL(m_CustomerID), data, callback);
+    return true;
+}
+
 const Error *Customer::lastError() const
 {
     return &m_Error;
 }
 
-QString Customer::getURL()
+QString Customer::getURL(const QString &customerID)
 {
-    return "https://api.stripe.com/v1/customers";
+    return "https://api.stripe.com/v1/customers" + (customerID.length() > 0 ? "/" + customerID : "");
 }
 
 void Customer::setCustomerID(const QString &id)

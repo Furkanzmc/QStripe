@@ -159,6 +159,13 @@ public:
     bool create();
 
     /**
+     * @brief If the customer instance has an ID, this method will send the current details of the instance and update the remote. If there's no customer ID
+     * present, this method will return false. When the customer is updated, `updated()` signal will be emitted.
+     * @return bool
+     */
+    bool update();
+
+    /**
      * @brief Returns the last ocurred error.
      * @return const Error *
      */
@@ -168,7 +175,7 @@ public:
      * @brief Returns the customers endpoint full URL.
      * @return QString
      */
-    static QString getURL();
+    static QString getURL(const QString &customerID = "");
 
 signals:
     /**
@@ -210,6 +217,11 @@ signals:
      * @brief Emitted when the customer object is created.
      */
     void created();
+
+    /**
+     * @brief Emitted when the customer is updated.
+     */
+    void updated();
 
     /**
      * @brief Emitted when a request to Stripe fails.

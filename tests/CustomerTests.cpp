@@ -13,6 +13,7 @@ using namespace QStripe;
 
 CustomerTests::CustomerTests(QObject *parent)
     : QObject(parent)
+    , m_CustomerID("")
 {
 
 }
@@ -235,4 +236,40 @@ void CustomerTests::testCreateCustomer()
     QCOMPARE(customer->create(), true);
     QVERIFY2(spyCreate.wait() == true, customer->lastError()->message().toStdString().c_str());
     QVERIFY(customer->customerID().length() > 0);
+
+    m_CustomerID = customer->customerID();
+}
+
+void CustomerTests::testUpdateCustomerErrors()
+{
+    QVERIFY2(m_CustomerID.length() > 0, "Customer ID doesn't exist. Cannot continue update test.");
+    if (m_CustomerID.length() > 0) {
+        QVariantMap data = getData();
+        data.remove(Customer::FIELD_ID);
+        Customer *customer = Customer::fromJson(data);
+
+        QCOMPARE(customer->update(), false);
+
+        customer->deleteLater();
+    }
+}
+
+void CustomerTests::testUpdateCustomer()
+{
+    QVERIFY2(m_CustomerID.length() > 0, "Customer ID doesn't exist. Cannot continue update test.");
+    if (m_CustomerID.length() > 0) {
+        QVariantMap data = getData();
+        data[Customer::FIELD_ID] = m_CustomerID;
+        data.remove(Customer::FIELD_DEFAULT_SOURCE);
+
+        Customer *customer = Customer::fromJson(data);
+        customer->setDescription("Hey description!");
+        QVariantMap metadata = customer->metadata();
+        metadata["simple"] = "man";
+        customer->setMetadata(metadata);
+        QCOMPARE(customer->update(), true);
+
+        QSignalSpy spyUpdated(customer, &Customer::updated);
+        QVERIFY2(spyUpdated.wait() == true, customer->lastError()->message().toStdString().c_str());
+    }
 }
