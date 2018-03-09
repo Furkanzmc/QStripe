@@ -13,6 +13,7 @@ Error::Error(QObject *parent)
     , m_Type()
     , m_HttpStatus(-1)
     , m_NetworkError(-1)
+    , m_RawError()
 {
 
 }
@@ -57,28 +58,34 @@ int Error::networkErrorCode() const
     return m_NetworkError;
 }
 
-void Error::set(const QVariantMap &errorResponse, int httpCode, int networkErrorCode)
+void Error::set(QVariantMap errorResponse, int httpCode, int networkErrorCode)
 {
+    if (errorResponse.contains("error")) {
+        errorResponse = errorResponse["error"].toMap();
+    }
+
+    m_RawError = errorResponse;
     if (errorResponse.contains("type")) {
-        if (errorResponse["type"].toString() == "api_connection_error") {
+        const QString typeString = errorResponse["type"].toString();
+        if (typeString == "api_connection_error") {
             m_Type = ErrorType::ErrorApiConnection;
         }
-        else if (errorResponse["type"].toString() == "api_error") {
+        else if (typeString == "api_error") {
             m_Type = ErrorType::ErrorApi;
         }
-        else if (errorResponse["type"].toString() == "authentication_error") {
+        else if (typeString == "authentication_error") {
             m_Type = ErrorType::ErrorAuthentication;
         }
-        else if (errorResponse["type"].toString() == "card_error") {
+        else if (typeString == "card_error") {
             m_Type = ErrorType::ErrorCard;
         }
-        else if (errorResponse["type"].toString() == "idempotency_error") {
+        else if (typeString == "idempotency_error") {
             m_Type = ErrorType::ErrorIdempotency;
         }
-        else if (errorResponse["type"].toString() == "invalid_request_error") {
+        else if (typeString == "invalid_request_error") {
             m_Type = ErrorType::ErrorInvalidRequest;
         }
-        else if (errorResponse["type"].toString() == "rate_limit_error") {
+        else if (typeString == "rate_limit_error") {
             m_Type = ErrorType::ErrorRateLimit;
         }
     }
@@ -158,6 +165,11 @@ void Error::set(const QVariantMap &errorResponse, int httpCode, int networkError
 
     m_HttpStatus = httpCode;
     m_NetworkError = networkErrorCode;
+}
+
+const QVariantMap &Error::rawErrorObject() const
+{
+    return m_RawError;
 }
 
 }

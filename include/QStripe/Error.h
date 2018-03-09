@@ -113,7 +113,13 @@ public:
      * @brief Changes the contents of this instance based on the errorResponse. If any field does not exist for some reason, the default values are set.
      * @param errorResponse
      */
-    void set(const QVariantMap &errorResponse, int httpCode = -1, int networkErrorCode = -1);
+    void set(QVariantMap errorResponse, int httpCode = -1, int networkErrorCode = -1);
+
+    /**
+     * @brief Returns the JSON object that was used to construct this Error.
+     * @return QVariantMap
+     */
+    const QVariantMap &rawErrorObject() const;
 
 private:
     QString m_ChargeID,
@@ -124,6 +130,8 @@ private:
     ErrorCode m_Code;
     ErrorType m_Type;
     int m_HttpStatus, m_NetworkError;
+
+    QVariantMap m_RawError;
 };
 
 }

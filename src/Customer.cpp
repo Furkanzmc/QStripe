@@ -1,6 +1,9 @@
 #include "QStripe/Customer.h"
+// Qt
+#include <QUrlQuery>
+// QStripe
 #include "QStripe/Utils.h"
-#include "QDebug"
+#include "QStripe/Stripe.h"
 
 namespace QStripe
 {
@@ -26,8 +29,9 @@ Customer::Customer(QObject *parent)
     , m_Currency("")
     , m_Metadata()
     , m_ShippingInformation()
+    , m_NetworkUtils()
+    , m_Error()
 {
-
 }
 
 QString Customer::customerID() const
@@ -143,7 +147,23 @@ QVariantMap Customer::json() const
     data[FIELD_DESCRIPTION] = description();
 
     data[FIELD_CURRENCY] = currency();
-    data[FIELD_METADATA] = metadata();
+    for (auto it = m_Metadata.constBegin(); it != m_Metadata.constEnd(); it++) {
+        const QString key = FIELD_METADATA + "[" + it.key() + "]";
+        const QVariant &value = it.value();
+
+        if (value.type() == QVariant::String) {
+            data[key] = value.toString();
+        }
+        else if (value.type() == QVariant::Int) {
+            data[key] = value.toInt();
+        }
+        else if (value.type() == QVariant::Int) {
+            data[key] = value.toInt();
+        }
+        else if (value.type() == QVariant::Map) {
+            qWarning() << "Do not put Map in metadata.";
+        }
+    }
 
     return data;
 }
@@ -159,6 +179,10 @@ Customer *Customer::fromJson(const QVariantMap &data)
 
     if (data.contains(FIELD_CURRENCY)) {
         customer->setCurrency(data[FIELD_CURRENCY].toString());
+    }
+
+    if (data.contains(FIELD_ID)) {
+        customer->setCustomerID(data[FIELD_ID].toString());
     }
 
     if (data.contains(FIELD_DEFAULT_SOURCE)) {
@@ -204,6 +228,53 @@ void Customer::set(const Customer *other)
     setMetadata(other->metadata());
 
     setShippingInformation(other->shippingInformation());
+}
+
+bool Customer::create()
+{
+    if (m_CustomerID.length() > 0) {
+        return false;
+    }
+
+    auto callback = [this](const Response & response) {
+        QVariantMap data = Utils::toVariantMap(response.data);
+        if (response.httpStatus == NetworkUtils::HttpStatusCodes::HTTP_200) {
+            Customer *customer = fromJson(data);
+            set(customer);
+            customer->deleteLater();
+            emit created();
+        }
+        else {
+            qDebug() << "[ERROR] Error occurred while creating the customer.";
+            m_Error.set(data, response.httpStatus, response.networkError);
+            emit errorOccurred(&m_Error);
+        }
+    };
+
+    m_NetworkUtils.setHeader("Authorization", "Bearer " + Stripe::secretKey());
+    if (Stripe::apiVersion().length() > 0) {
+        m_NetworkUtils.setHeader("Stripe-Version", Stripe::apiVersion());
+    }
+
+    QVariantMap data = json();
+    // currency and default_source should be removed.
+    data.remove(FIELD_CURRENCY);
+    if (m_DefaultSource.length() == 0) {
+        data.remove(FIELD_DEFAULT_SOURCE);
+    }
+
+    m_NetworkUtils.sendPost(getURL(), data, callback);
+    return true;
+}
+
+const Error *Customer::lastError() const
+{
+    return &m_Error;
+}
+
+QString Customer::getURL()
+{
+    return "https://api.stripe.com/v1/customers";
 }
 
 void Customer::setCustomerID(const QString &id)

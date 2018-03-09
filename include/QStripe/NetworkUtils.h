@@ -64,12 +64,12 @@ public:
     void sendDelete(const QString &url, RequestCallback callback);
 
     /**
-     * @brief Sends a post request. When the request is finished, the callback is called.
+     * @brief Sends a post request. When the request is finished, the callback is called. Stripe expects `application/x-www-form-urlencoded`.
      * @param url
      * @param data
      * @param callback
      */
-    void sendPost(const QString &url, const QString &data, RequestCallback callback);
+    void sendPost(const QString &url, const QVariantMap &data, RequestCallback callback);
 
     /**
      * @brief Sends a put request. When the request is finished, the callback is called.
@@ -77,7 +77,7 @@ public:
      * @param data
      * @param callback
      */
-    void sendPut(const QString &url, const QString &data, RequestCallback callback);
+    void sendPut(const QString &url, const QVariantMap &data, RequestCallback callback);
 
     /**
      * @brief Increases m_RequestCount and returns the resulting ID

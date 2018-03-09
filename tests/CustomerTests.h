@@ -20,4 +20,7 @@ private slots:
 
     void testJson();
     void testSet();
+    void testCreateCustomerErrors();
+
+    void testCreateCustomer();
 };

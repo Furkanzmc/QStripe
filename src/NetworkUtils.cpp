@@ -6,9 +6,8 @@
 #include <QFile>
 #include <QMimeDatabase>
 #include <QUrlQuery>
-#include <QDebug>
-
-#define LOG_ERROR(msg) qDebug() << "[ERROR]" << __FUNCTION__ << "(" << __LINE__ << "):" << msg
+// QStripe
+#include "QStripe/Utils.h"
 
 namespace QStripe
 {
@@ -19,6 +18,7 @@ NetworkUtils::NetworkUtils(QObject *parent)
     : QObject(parent)
 {
     connect(&m_Network, &QNetworkAccessManager::finished, this, &NetworkUtils::onRequestFinished);
+    setHeader("Content-Type", "application/x-www-form-urlencoded");
 }
 
 NetworkUtils::~NetworkUtils()
@@ -62,7 +62,7 @@ void NetworkUtils::sendDelete(const QString &url, RequestCallback callback)
     insertCallback(threadIndex, std::move(callback));
 }
 
-void NetworkUtils::sendPost(const QString &url, const QString &data, RequestCallback callback)
+void NetworkUtils::sendPost(const QString &url, const QVariantMap &data, RequestCallback callback)
 {
     const int availableIndex = getAvailableIndex();
     const unsigned int threadIndex = availableIndex == -1 ? m_Callbacks.size() : availableIndex;
@@ -70,7 +70,23 @@ void NetworkUtils::sendPost(const QString &url, const QString &data, RequestCall
     QNetworkRequest request(qurl);
     setHeaders(request);
 
-    const QByteArray postData = data.toUtf8();
+    QUrlQuery query;
+    for (auto it = data.constBegin(); it != data.constEnd(); it++) {
+        QString value = "";
+        if (it.value().type() == QVariant::String) {
+            value = it.value().toString();
+        }
+        else if (it.value().type() == QVariant::Map) {
+            value = Utils::toJsonString(it.value().toMap());
+        }
+        else if (it.value().type() == QVariant::Int) {
+            value = QString::number(it.value().toInt());
+        }
+
+        query.addQueryItem(it.key(), it.value().toString());
+    }
+
+    const QByteArray postData = query.toString().toUtf8();
     request.setHeader(QNetworkRequest::KnownHeaders::ContentLengthHeader, postData.size());
     QNetworkReply *reply = m_Network.post(request, postData);
 
@@ -78,14 +94,30 @@ void NetworkUtils::sendPost(const QString &url, const QString &data, RequestCall
     insertCallback(threadIndex, std::move(callback));
 }
 
-void NetworkUtils::sendPut(const QString &url, const QString &data, RequestCallback callback)
+void NetworkUtils::sendPut(const QString &url, const QVariantMap &data, RequestCallback callback)
 {
     const int availableIndex = getAvailableIndex();
     const unsigned int threadIndex = availableIndex == -1 ? m_Callbacks.size() : availableIndex;
     const QUrl qurl = QUrl(url);
     QNetworkRequest request(qurl);
     setHeaders(request);
-    const QByteArray putData = data.toUtf8();
+
+    QUrlQuery query;
+    for (auto it = data.constBegin(); it != data.constEnd(); it++) {
+        QString value = "";
+        if (it.value().type() == QVariant::String) {
+            value = it.value().toString();
+        }
+        else if (it.value().type() == QVariant::Map) {
+            value = Utils::toJsonString(it.value().toMap());
+        }
+        else if (it.value().type() == QVariant::Int) {
+            value = QString::number(it.value().toInt());
+        }
+
+        query.addQueryItem(it.key(), it.value().toString());
+    }
+    const QByteArray putData = query.toString().toUtf8();
     request.setHeader(QNetworkRequest::KnownHeaders::ContentLengthHeader, putData.size());
 
     QNetworkReply *reply = m_Network.put(request, putData);
@@ -156,15 +188,7 @@ void NetworkUtils::setHeaders(QNetworkRequest &request)
 
 void NetworkUtils::onRequestFinished(QNetworkReply *reply)
 {
-    if (reply->error() != QNetworkReply::NetworkError::NoError) {
-        LOG_ERROR("Network error occured for URL (" << reply->request().url().toString() << ")."
-                  "\nError string: " << reply->errorString() <<
-                  "\nError code: " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() <<
-                  "\nNetwork Error code: " << reply->error());
-    }
-
     const Response response(reply->readAll(), reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(), reply->error());
-
     bool intConversionOk = false;
     int callbackIndex = reply->objectName().toInt(&intConversionOk);
     if (intConversionOk == false) {

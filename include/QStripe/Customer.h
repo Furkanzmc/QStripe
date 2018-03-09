@@ -2,6 +2,8 @@
 #include <QObject>
 // QStripe
 #include "ShippingInformation.h"
+#include "QStripe/NetworkUtils.h"
+#include "QStripe/Error.h"
 
 namespace QStripe
 {
@@ -148,6 +150,26 @@ public:
      */
     Q_INVOKABLE void set(const Customer *other);
 
+    /**
+     * @brief If this instance does not have an assosicated customer ID, you can create a new customer. When the customer is created, the customer ID of this
+     * instance will change accordingly. If the customer instance does not have a valid ID, you can create the customer and this function will return true.
+     * If the instance already has a customer ID, this will return false and do nothing. When the customer is created, `created()` signal will be emitted.
+     * @return bool
+     */
+    bool create();
+
+    /**
+     * @brief Returns the last ocurred error.
+     * @return const Error *
+     */
+    const Error *lastError() const;
+
+    /**
+     * @brief Returns the customers endpoint full URL.
+     * @return QString
+     */
+    static QString getURL();
+
 signals:
     /**
      * @brief Emitted when customer ID changes.
@@ -184,6 +206,17 @@ signals:
      */
     void shippingInformationChanged();
 
+    /**
+     * @brief Emitted when the customer object is created.
+     */
+    void created();
+
+    /**
+     * @brief Emitted when a request to Stripe fails.
+     * @param error
+     */
+    void errorOccurred(const Error *error);
+
 private:
     QString m_CustomerID,
             m_DefaultSource,
@@ -193,6 +226,9 @@ private:
 
     QVariantMap m_Metadata;
     ShippingInformation m_ShippingInformation;
+    NetworkUtils m_NetworkUtils;
+
+    Error m_Error;
 
 private:
     /**

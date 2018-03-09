@@ -25,7 +25,6 @@ void Stripe::setPublishableKey(const QString &key)
     const bool changed = key != m_PublishableKey;
     if (changed) {
         m_PublishableKey = key;
-        emit publishableKeyChanged();
     }
 }
 
@@ -39,11 +38,10 @@ void Stripe::setSecretKey(const QString &key)
     const bool changed = key != m_SecretKey;
     if (changed) {
         m_SecretKey = key;
-        emit secretKeyChanged();
     }
 }
 
-QString Stripe::apiVersion() const
+QString Stripe::apiVersion()
 {
     return m_APIVersion;
 }
@@ -53,7 +51,6 @@ void Stripe::setApiVersion(const QString &version)
     const bool changed = version != m_APIVersion;
     if (changed) {
         m_PublishableKey = version;
-        emit apiVersionChanged();
     }
 }
 
