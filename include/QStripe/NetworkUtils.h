@@ -11,14 +11,14 @@ namespace QStripe
 struct Response {
     Response(QString _data, unsigned int _httpCode, QNetworkReply::NetworkError error)
         : data(_data)
-        , httpCode(_httpCode)
+        , httpStatus(_httpCode)
         , networkError(error)
     {
 
     }
 
     QString data;
-    unsigned int httpCode;
+    unsigned int httpStatus;
     QNetworkReply::NetworkError networkError;
 };
 
