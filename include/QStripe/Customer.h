@@ -21,6 +21,7 @@ class Customer : public QObject
     Q_PROPERTY(QVariantMap metadata READ metadata WRITE setMetadata NOTIFY metadataChanged)
 
     Q_PROPERTY(ShippingInformation *shippingInformation READ shippingInformation WRITE setShippingInformation NOTIFY shippingInformationChanged)
+    Q_PROPERTY(bool deleted READ deleted CONSTANT)
 
 public:
     static const QString FIELD_ID;
@@ -34,6 +35,8 @@ public:
     static const QString FIELD_DESCRIPTION;
     static const QString FIELD_CURRENCY;
     static const QString FIELD_METADATA;
+
+    static const QString FIELD_DELETED;
 
 public:
     explicit Customer(QObject *parent = nullptr);
@@ -113,6 +116,12 @@ public:
     const ShippingInformation *shippingInformation() const;
 
     /**
+     * @brief This will be true when a deleted Customer is fetched. The defaul value is false and this will NOT be affected by the call of `deleteCustomer()`.
+     * @return bool
+     */
+    bool deleted() const;
+
+    /**
      * @brief Sett shipping information.
      * @param shippingInformation
      */
@@ -164,6 +173,14 @@ public:
      * @return bool
      */
     Q_INVOKABLE bool update();
+
+    /**
+     * @brief If the customer instance has an ID, this method will send the current details of the instance and delete the remote. If there's no customer ID
+     * present, this method will return false. When the customer is deleted, `customerDeleted()` signal will be emitted. When the customer is deleted, only the
+     * customerID will be cleared, so you can use the same instance to create the customer again.
+     * @return
+     */
+    Q_INVOKABLE bool deleteCustomer();
 
     /**
      * @brief Resets every property to its default state. When the clearing is complete, `cleared()` signal will be emitted.
@@ -232,7 +249,7 @@ signals:
     /**
      * @brief Emitted when the customer is deleted. Prior to emission of this signal, the contents of the instance will be cleared.
      */
-    void deleted();
+    void customerDeleted();
 
     /**
      * @brief Emitted when a request to Stripe fails.
@@ -254,8 +271,9 @@ private:
 
     QVariantMap m_Metadata;
     ShippingInformation m_ShippingInformation;
-    NetworkUtils m_NetworkUtils;
+    bool m_IsDeleted;
 
+    NetworkUtils m_NetworkUtils;
     Error m_Error;
 
 private:
@@ -264,6 +282,12 @@ private:
      * @param id
      */
     void setCustomerID(const QString &id);
+
+    /**
+     * @brief Deleted property can only be changed internally.
+     * @param deleted
+     */
+    void setDeleted(bool deleted);
 };
 
 }

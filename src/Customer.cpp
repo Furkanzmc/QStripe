@@ -20,6 +20,8 @@ const QString Customer::FIELD_DESCRIPTION = "description";
 const QString Customer::FIELD_CURRENCY = "currency";
 const QString Customer::FIELD_METADATA = "metadata";
 
+const QString Customer::FIELD_DELETED = "deleted";
+
 Customer::Customer(QObject *parent)
     : QObject(parent)
     , m_CustomerID("")
@@ -29,6 +31,7 @@ Customer::Customer(QObject *parent)
     , m_Currency("")
     , m_Metadata()
     , m_ShippingInformation()
+    , m_IsDeleted(false)
     , m_NetworkUtils()
     , m_Error()
 {
@@ -119,6 +122,11 @@ const ShippingInformation *Customer::shippingInformation() const
     return &m_ShippingInformation;
 }
 
+bool Customer::deleted() const
+{
+    return m_IsDeleted;
+}
+
 void Customer::setShippingInformation(const ShippingInformation *shippingInformation)
 {
     // TODO: Check for content equality instead of memory location.
@@ -205,6 +213,10 @@ Customer *Customer::fromJson(const QVariantMap &data)
 
     if (data.contains(FIELD_METADATA)) {
         customer->setMetadata(data[FIELD_METADATA].toMap());
+    }
+
+    if (data.contains(FIELD_DELETED)) {
+        customer->setDeleted(data[FIELD_DELETED].toBool());
     }
 
     return customer;
@@ -305,6 +317,34 @@ bool Customer::update()
     return true;
 }
 
+bool Customer::deleteCustomer()
+{
+    if (m_CustomerID.length() == 0) {
+        return false;
+    }
+
+    auto callback = [this](const Response & response) {
+        QVariantMap data = Utils::toVariantMap(response.data);
+        if (response.httpStatus == NetworkUtils::HttpStatusCodes::HTTP_200) {
+            m_CustomerID = "";
+            emit customerDeleted();
+        }
+        else {
+            qDebug() << "[ERROR] Error occurred while deleting the customer.";
+            m_Error.set(data, response.httpStatus, response.networkError);
+            emit errorOccurred(&m_Error);
+        }
+    };
+
+    m_NetworkUtils.setHeader("Authorization", "Bearer " + Stripe::secretKey());
+    if (Stripe::apiVersion().length() > 0) {
+        m_NetworkUtils.setHeader("Stripe-Version", Stripe::apiVersion());
+    }
+
+    m_NetworkUtils.sendDelete(getURL(m_CustomerID), callback);
+    return true;
+}
+
 void Customer::clear()
 {
     m_CustomerID.clear();
@@ -336,6 +376,11 @@ void Customer::setCustomerID(const QString &id)
         m_CustomerID = id;
         emit customerIDChanged();
     }
+}
+
+void Customer::setDeleted(bool deleted)
+{
+    m_IsDeleted = deleted;
 }
 
 }

@@ -278,3 +278,27 @@ void CustomerTests::testUpdateCustomer()
         QVERIFY2(spyUpdated.wait() == true, customer->lastError()->message().toStdString().c_str());
     }
 }
+
+void CustomerTests::testDeleteCustomerErrors()
+{
+    QVERIFY2(m_CustomerID.length() > 0, "Customer ID doesn't exist. Cannot continue delete test.");
+    if (m_CustomerID.length() > 0) {
+        Customer customer;
+        QCOMPARE(customer.deleteCustomer(), false);
+    }
+}
+
+void CustomerTests::testDeleteCustomer()
+{
+    QVERIFY2(m_CustomerID.length() > 0, "Customer ID doesn't exist. Cannot continue delete test.");
+    if (m_CustomerID.length() > 0) {
+        QVariantMap data;
+        data[Customer::FIELD_ID] = m_CustomerID;
+
+        Customer *customer = Customer::fromJson(data);
+        QCOMPARE(customer->deleteCustomer(), true);
+
+        QSignalSpy spyDelete(customer, &Customer::customerDeleted);
+        QVERIFY2(spyDelete.wait() == true, customer->lastError()->message().toStdString().c_str());
+    }
+}
