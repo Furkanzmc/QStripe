@@ -1,9 +1,12 @@
 #pragma once
 #include <QObject>
+#include <QQmlListProperty>
+#include <QVector>
 // QStripe
 #include "ShippingInformation.h"
-#include "QStripe/NetworkUtils.h"
-#include "QStripe/Error.h"
+#include "NetworkUtils.h"
+#include "Error.h"
+#include "Card.h"
 
 namespace QStripe
 {
@@ -22,6 +25,9 @@ class Customer : public QObject
 
     Q_PROPERTY(ShippingInformation *shippingInformation READ shippingInformation WRITE setShippingInformation NOTIFY shippingInformationChanged)
     Q_PROPERTY(bool deleted READ deleted CONSTANT)
+    Q_PROPERTY(QQmlListProperty<Card> cards READ cards)
+
+    Q_CLASSINFO("DefaultProperty", "cards")
 
 public:
     static const QString FIELD_ID;
@@ -189,6 +195,36 @@ public:
     Q_INVOKABLE void clear();
 
     /**
+     * @brief Returns the list of customer currently attached to this instance.
+     * @return QQmlListProperty<cards>
+     */
+    QQmlListProperty<Card> cards();
+
+    /**
+     * @brief Appends a new customer to the list.
+     * @param customer
+     */
+    void appendCard(Card *card);
+
+    /**
+     * @brief Returns the number of customers that belong to this instance.
+     * @return int
+     */
+    int cardCount() const;
+
+    /**
+     * @brief Returns the customer.
+     * @param index
+     * @return Customer
+     */
+    Card *card(int index) const;
+
+    /**
+     * @brief Clears all of the customer instances that belong to this instance.
+     */
+    void clearCards();
+
+    /**
      * @brief Returns the last ocurred error.
      * @return const Error *
      */
@@ -275,6 +311,7 @@ private:
 
     NetworkUtils m_NetworkUtils;
     Error m_Error;
+    QVector<Card *> m_Cards;
 
 private:
     /**
@@ -288,6 +325,34 @@ private:
      * @param deleted
      */
     void setDeleted(bool deleted);
+
+    /**
+     * @brief Append function for QQmlListProperty.
+     * @param list
+     * @param card
+     */
+    static void appendCard(QQmlListProperty<Card> *list, Card *card);
+
+    /**
+     * @brief Count function for QQmlListProperty.
+     * @param list
+     * @return
+     */
+    static int cardCount(QQmlListProperty<Card> *list);
+
+    /**
+     * @brief At function for QQmlListProperty.
+     * @param list
+     * @param index
+     * @return
+     */
+    static Card *card(QQmlListProperty<Card> *list, int index);
+
+    /**
+     * @brief Clear function for QQmlListProperty.
+     * @param list
+     */
+    static void clearCards(QQmlListProperty<Card> *list);
 };
 
 }

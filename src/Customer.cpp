@@ -34,6 +34,7 @@ Customer::Customer(QObject *parent)
     , m_IsDeleted(false)
     , m_NetworkUtils()
     , m_Error()
+    , m_Cards()
 {
 }
 
@@ -359,6 +360,31 @@ void Customer::clear()
     emit cleared();
 }
 
+QQmlListProperty<Card> Customer::cards()
+{
+    return QQmlListProperty<Card>(this, this, &Customer::appendCard, &Customer::cardCount, &Customer::card, &Customer::clearCards);
+}
+
+void Customer::appendCard(Card *customer)
+{
+    m_Cards.append(customer);
+}
+
+int Customer::cardCount() const
+{
+    return m_Cards.count();
+}
+
+Card *Customer::card(int index) const
+{
+    return m_Cards.at(index);
+}
+
+void Customer::clearCards()
+{
+    return m_Cards.clear();
+}
+
 const Error *Customer::lastError() const
 {
     return &m_Error;
@@ -381,6 +407,26 @@ void Customer::setCustomerID(const QString &id)
 void Customer::setDeleted(bool deleted)
 {
     m_IsDeleted = deleted;
+}
+
+void Customer::appendCard(QQmlListProperty<Card> *list, Card *card)
+{
+    reinterpret_cast<Customer *>(list->data)->appendCard(card);
+}
+
+int Customer::cardCount(QQmlListProperty<Card> *list)
+{
+    return reinterpret_cast<Customer *>(list->data)->cardCount();
+}
+
+Card *Customer::card(QQmlListProperty<Card> *list, int index)
+{
+    return reinterpret_cast<Customer *>(list->data)->card(index);
+}
+
+void Customer::clearCards(QQmlListProperty<Card> *list)
+{
+    reinterpret_cast<Customer *>(list->data)->clearCards();
 }
 
 }
