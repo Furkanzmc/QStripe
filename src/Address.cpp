@@ -177,6 +177,20 @@ void Address::set(const Address *other)
     this->setPostalCode(other->postalCode());
 }
 
+void Address::clear()
+{
+    m_Country.clear();
+    m_State.clear();
+    m_City.clear();
+
+    m_LineOne.clear();
+    m_LineTwo.clear();
+    m_PostalCode.clear();
+
+    m_ZipCheck = ZipCheck::ZipCheckUnknown;
+    emit cleared();
+}
+
 Address *Address::fromJson(const QVariantMap &data, const QString &prefix)
 {
     Address *address = new Address();

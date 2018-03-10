@@ -28,6 +28,9 @@ private slots:
     void testUpdateCustomerErrors();
     void testUpdateCustomer();
 
+    void testDeleteCustomerErrors();
+    void testDeleteCustomer();
+
 private:
     QString m_CustomerID;
 };

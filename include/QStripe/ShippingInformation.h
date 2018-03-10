@@ -78,6 +78,12 @@ public:
     Q_INVOKABLE void set(const ShippingInformation *other);
 
     /**
+     * @brief Resets every property to its default state. When the clearing is complete, `cleared()` signal will be emitted.
+     * The changes in the properties does NOT emit the related signals.
+     */
+    Q_INVOKABLE void clear();
+
+    /**
      * @brief Returns an ShippingInformation instance from a json representation. If the json data cannot be parsed, returns an ShippingInformation
      * Address instance.
      * @param data
@@ -108,6 +114,11 @@ signals:
      * @brief Emitted when address property changes.
      */
     void addressChanged();
+
+    /**
+     * @brief Emitted after the instance has been cleared.
+     */
+    void cleared();
 
 private:
     QString m_Name, m_Phone;
