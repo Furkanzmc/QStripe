@@ -21,18 +21,18 @@ You can create a card token by passing the card instance tho `createToken()` met
 Stripe {
     id: stripe
     publishableKey: "PUBLISHABLE_KEY"
-    onCardTokenCreated: {
-        // token is the Token instance.
-        console.log(token.id);
-        // You can also copy the token instance to an existing one for convenience.
-        cardToken.set(token);
-    }
 
     Customer {
         id: customer
 
         Card {
             id: card
+            onCardTokenCreated: {
+                // token is the Token instance.
+                console.log(token.id);
+                // You can also copy the token instance to an existing one for convenience.
+                cardToken.set(token);
+            }
 
             Token {
                 id: cardToken

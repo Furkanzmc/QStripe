@@ -19,6 +19,7 @@ class Stripe : public QObject
     Q_PROPERTY(QString apiVersion READ apiVersion WRITE setApiVersion)
 
     Q_PROPERTY(QQmlListProperty<Customer> customers READ customers)
+    Q_CLASSINFO("DefaultProperty", "customers")
 
 public:
     explicit Stripe(QObject *parent = nullptr);
