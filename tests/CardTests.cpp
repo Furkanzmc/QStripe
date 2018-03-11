@@ -162,8 +162,29 @@ void CardTests::testFromJson()
 
 void CardTests::testJsonStr()
 {
-    const QVariantMap data = getCardData();
+    QVariantMap data = getCardData();
     Card *card = Card::fromString(Utils::toJsonString(data));
+
+    const QVariantMap metadata = card->metaData();
+    for (auto it = metadata.constBegin(); it != metadata.constEnd(); it++) {
+        const QString key = Card::FIELD_METADATA + "[" + it.key() + "]";
+        const QVariant &value = it.value();
+
+        if (value.type() == QVariant::String) {
+            data[key] = value.toString();
+        }
+        else if (value.type() == QVariant::Int) {
+            data[key] = value.toInt();
+        }
+        else if (value.type() == QVariant::Int) {
+            data[key] = value.toInt();
+        }
+        else if (value.type() == QVariant::Map) {
+            qWarning() << "Do not put Map in metadata.";
+        }
+    }
+
+    data.remove(Card::FIELD_METADATA);
 
     QCOMPARE(card->jsonString(), Utils::toJsonString(data));
     card->deleteLater();
@@ -171,8 +192,29 @@ void CardTests::testJsonStr()
 
 void CardTests::testJson()
 {
-    const QVariantMap data = getCardData();
+    QVariantMap data = getCardData();
     Card *card = Card::fromJson(data);
+
+    const QVariantMap metadata = card->metaData();
+    for (auto it = metadata.constBegin(); it != metadata.constEnd(); it++) {
+        const QString key = Card::FIELD_METADATA + "[" + it.key() + "]";
+        const QVariant &value = it.value();
+
+        if (value.type() == QVariant::String) {
+            data[key] = value.toString();
+        }
+        else if (value.type() == QVariant::Int) {
+            data[key] = value.toInt();
+        }
+        else if (value.type() == QVariant::Int) {
+            data[key] = value.toInt();
+        }
+        else if (value.type() == QVariant::Map) {
+            qWarning() << "Do not put Map in metadata.";
+        }
+    }
+
+    data.remove(Card::FIELD_METADATA);
 
     QCOMPARE(card->json(), data);
     card->deleteLater();

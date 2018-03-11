@@ -19,7 +19,13 @@ QVariantMap TokenTests::getTokenData() const
 
     // FIXME: When the BankAccount becomes a class of its own, replace this.
     data[Token::FIELD_BANK_ACCOUNT] = QVariantMap();
-    data[Token::FIELD_CARD] = CardTests::getCardData();
+    QVariantMap cardData = CardTests::getCardData();
+    /**
+     * Note: Removing the metadata field here because when we use the `Card::json()`, the metadata is merged into the object as metadata[key], which causes
+     * the test to fail becuase we are not comparing it to the merged kind of data in `testJson()` and `testJsonString()`.
+     */
+    cardData.remove(Card::FIELD_METADATA);
+    data[Token::FIELD_CARD] = cardData;
     data[Token::FIELD_CREATED] = 1513192868;
 
     data[Token::FIELD_ID] = "tok_1BYfmyC1pSuA14ZwtBWBGpml";
