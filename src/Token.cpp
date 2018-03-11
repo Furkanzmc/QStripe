@@ -5,7 +5,6 @@ namespace QStripe
 {
 
 const QString Token::FIELD_BANK_ACCOUNT = "bank_account";
-const QString Token::FIELD_CARD = "card";
 const QString Token::FIELD_CREATED = "created";
 
 const QString Token::FIELD_ID = "id";
@@ -17,7 +16,6 @@ const QString Token::FIELD_USED = "used";
 Token::Token(QObject *parent)
     : QObject(parent)
     , m_BankAccount()
-    , m_Card()
     , m_Created()
     , m_TokenID("")
     , m_Type(TypeUnknown)
@@ -25,11 +23,6 @@ Token::Token(QObject *parent)
     , m_IsUsed(false)
 {
 
-}
-
-const Card *Token::card() const
-{
-    return &m_Card;
 }
 
 QVariantMap Token::bankAccount() const
@@ -110,12 +103,6 @@ Token *Token::fromJson(const QVariantMap &data)
         token->m_BankAccount = data[FIELD_BANK_ACCOUNT].toMap();
     }
 
-    if (data.contains(FIELD_CARD)) {
-        Card *card = Card::fromJson(data[FIELD_CARD].toMap());
-        token->m_Card.set(*card);
-        card->deleteLater();
-    }
-
     if (data.contains(FIELD_CREATED)) {
         token->m_Created = QDateTime::fromSecsSinceEpoch(data[FIELD_CREATED].toInt());
     }
@@ -149,7 +136,6 @@ QVariantMap Token::json() const
     QVariantMap data;
 
     data[FIELD_BANK_ACCOUNT] = m_BankAccount;
-    data[FIELD_CARD] = m_Card.json();
     data[FIELD_CREATED] = m_Created.toSecsSinceEpoch();
 
     data[FIELD_ID] = m_TokenID;

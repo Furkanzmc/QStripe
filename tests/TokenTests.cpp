@@ -4,6 +4,7 @@
 // QStripe
 #include "QStripe/Token.h"
 #include "QStripe/Utils.h"
+#include "QStripe/Card.h"
 
 using namespace QStripe;
 
@@ -25,13 +26,11 @@ QVariantMap TokenTests::getTokenData() const
      * the test to fail becuase we are not comparing it to the merged kind of data in `testJson()` and `testJsonString()`.
      */
     cardData.remove(Card::FIELD_METADATA);
-    data[Token::FIELD_CARD] = cardData;
     data[Token::FIELD_CREATED] = 1513192868;
-
     data[Token::FIELD_ID] = "tok_1BYfmyC1pSuA14ZwtBWBGpml";
+
     data[Token::FIELD_LIVEMODE] = false;
     data[Token::FIELD_TYPE] = Token::typeName(Token::TypeCard);
-
     data[Token::FIELD_USED] = false;
 
     return data;
@@ -43,13 +42,11 @@ void TokenTests::testFromJson()
     const Token *token = Token::fromJson(data);
 
     QCOMPARE(token->bankAccount(), data[Token::FIELD_BANK_ACCOUNT].toMap());
-    QCOMPARE(token->card()->json(), data[Token::FIELD_CARD].toMap());
     QCOMPARE(token->created(), QDateTime::fromSecsSinceEpoch(data[Token::FIELD_CREATED].toInt()));
-
     QCOMPARE(token->tokenID(), data[Token::FIELD_ID].toString());
+
     QCOMPARE(token->liveMode(), data[Token::FIELD_LIVEMODE].toBool());
     QCOMPARE(token->type(), Token::typeEnum(data[Token::FIELD_TYPE].toString()));
-
     QCOMPARE(token->used(), data[Token::FIELD_USED].toBool());
 }
 

@@ -7,6 +7,8 @@
 namespace QStripe
 {
 
+class Token;
+
 class Card : public QObject
 {
     Q_OBJECT
@@ -39,8 +41,11 @@ class Card : public QObject
     Q_PROPERTY(QString brandName READ brandName CONSTANT)
     Q_PROPERTY(CardBrand possibleCardBrand READ possibleCardBrand CONSTANT)
 
+    Q_PROPERTY(const Token *token READ token CONSTANT)
     Q_PROPERTY(bool validCardLenght READ validCardLenght CONSTANT)
     Q_PROPERTY(bool validCardNumber READ validCardNumber CONSTANT)
+
+    Q_CLASSINFO("DefaultProperty", "token")
 
 public:
     static const QString FIELD_ID;
@@ -64,7 +69,6 @@ public:
     static const QString FIELD_TOKENIZATION_METHOD;
 
     static const QString FIELD_METADATA;
-    static const QString FIELD_SOURCE;
 
     enum CardBrand {
         AmericanExpress,
@@ -325,6 +329,12 @@ public:
     CardBrand possibleCardBrand() const;
 
     /**
+     * @brief Returns the Token object for this Card. If the token was not created, the ID of the token will be empty.
+     * @return
+     */
+    const Token *token() const;
+
+    /**
      * @brief Returns true If the card number length is valid for the current card brand. If the card brand is unknown, it will return false.
      * @return bool
      */
@@ -443,12 +453,6 @@ public:
      */
     Q_INVOKABLE static Card *fromString(const QString &dataStr);
 
-    /**
-     * @brief The token ID created for the card. This will be automatically set when you create the card. Thus the set method for this property is private.
-     * @return QString
-     */
-    QString source() const;
-
 signals:
     /**
      * @brief Emitted when the card ID changes.
@@ -535,6 +539,11 @@ signals:
      */
     void cvcChanged();
 
+    /**
+     * @brief Emitted when a Token is created for this card.
+     */
+    void tokenCreated();
+
 private:
     QString m_CardID;
     QString m_City;
@@ -560,7 +569,7 @@ private:
 
     QString m_CardNumber;
     QString m_CVC;
-    QString m_Source;
+    Token *m_Token;
 
 private:
     /**
@@ -600,12 +609,6 @@ private:
      * @brief This is connected to the cardNumberChanged() signal. And it udates the brand.
      */
     void updateCardBrand();
-
-    /**
-     * @brief Set the source ID for this card. This will be set when the credit card is created.
-     * @param src
-     */
-    void setSource(const QString &src);
 };
 
 }
