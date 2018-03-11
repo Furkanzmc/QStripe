@@ -9,22 +9,13 @@ QStripe is a client for Stripe's REST API. It is completely compatible for use w
     + [X] Delete Card
     + [X] Create Token
     + [X] Fetch Token
-    + [ ] Update Card
 - Customer
     + [X] Create Customer
     + [X] Update Customer
     + [X] Delete Customer
-    + [ ] Fetch Cards
-    + [ ] Create Charge
-    + [ ] Create Charges
 - Stripe
     + [X] Fetch Customer
-    + [ ] Fetch Customers
     + [X] Fetch Card
-- Charge
-    + [ ] Create Charge
-    + [ ] Update Charge
-    + [ ] Capture Charge
 
 # TODO
 
@@ -69,6 +60,26 @@ Stripe {
     }
     Component.onCompleted: {
         fetchCustomer("cus_sakdjh3ehjkf");
+    }
+}
+```
+
+### Fetch Card
+
+You fetch the card using `Stripe`. Once it is fetched, `cardFetched(Card *)` signal will be emitted and the
+parent of the created `Card` will be the `Stripe` instance. You can change the parent of the `Card` If you want.
+But If you don't change it, the created `Card` will be deleted when the `Stripe` instance is deleted.
+
+```qml
+Stripe {
+    id: stripe
+    publishableKey: "PUBLISHABLE_KEY"
+    secretKey: "SECRET_KEY"
+    onCardFetched: {
+        console.log("Card is fetched:", card.cardID;
+    }
+    Component.onCompleted: {
+        fetchCard("card_sakdjh3ehjkf");
     }
 }
 ```
