@@ -115,6 +115,13 @@ public:
     Q_INVOKABLE static Token *fromString(const QString &data);
 
     /**
+     * @brief Returns the complete Tokens endpoint url.
+     * @param tokenURL
+     * @return QString
+     */
+    static QString getURL(const QString &tokenID = "");
+
+    /**
      * @brief Returns the json representation of this instance. This function is invokable from QML.
      * @return QVariantMap
      */
@@ -125,6 +132,12 @@ public:
      * @return QString
      */
     QString jsonString() const;
+
+    /**
+     * @brief Copies the contents of other to this one.
+     * @param other
+     */
+    Q_INVOKABLE void set(const Token *other);
 
 private:
     // FIXME: Create a seperate class for BankAccount.

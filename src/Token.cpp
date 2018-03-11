@@ -131,6 +131,11 @@ Token *Token::fromString(const QString &data)
     return fromJson(Utils::toVariantMap(data));
 }
 
+QString Token::getURL(const QString &tokenID)
+{
+    return "https://api.stripe.com/v1/tokens" + (tokenID.length() > 0 ? "/" + tokenID : "");
+}
+
 QVariantMap Token::json() const
 {
     QVariantMap data;
@@ -150,6 +155,19 @@ QVariantMap Token::json() const
 QString Token::jsonString() const
 {
     return Utils::toJsonString(json());
+}
+
+void Token::set(const Token *other)
+{
+    if (other) {
+        m_BankAccount = other->bankAccount();
+        m_Created = other->created();
+        m_TokenID = other->tokenID();
+
+        m_IsLiveMode = other->liveMode();
+        m_Type = other->type();
+        m_IsUsed = other->used();
+    }
 }
 
 }

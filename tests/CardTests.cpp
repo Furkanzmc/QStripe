@@ -5,6 +5,7 @@
 // QStripe
 #include "QStripe/Card.h"
 #include "QStripe/Utils.h"
+#include "QStripe/Token.h"
 
 using namespace QStripe;
 
@@ -33,20 +34,18 @@ QVariantMap CardTests::getCardData()
 {
     QVariantMap data;
     data[Card::FIELD_ID] = "id";
-    data[Card::FIELD_ADDRESS_CITY] = "address_city";
-
     data[Card::FIELD_BRAND] = "American Express";
     data[Card::FIELD_COUNTRY] = "country";
-    data[Card::FIELD_CURRENCY] = "cad";
 
+    data[Card::FIELD_CURRENCY] = "cad";
     data[Card::FIELD_CVC_CHECK] = "pass";
     data[Card::FIELD_EXP_MONTH] = 11;
-    data[Card::FIELD_EXP_YEAR] = 2023;
 
+    data[Card::FIELD_EXP_YEAR] = 2023;
     data[Card::FIELD_FINGERPRINT] = "fingerprint";
     data[Card::FIELD_FUNDING] = "debit";
-    data[Card::FIELD_NAME] = "Furkan Uzumcu";
 
+    data[Card::FIELD_NAME] = "Furkan Uzumcu";
     data[Card::FIELD_LAST4] = "last4";
     data[Card::FIELD_TOKENIZATION_METHOD] = "apple_pay";
 
@@ -65,10 +64,6 @@ QVariantMap CardTests::getCardData()
 void CardTests::testSignals()
 {
     Card card;
-
-    QSignalSpy spyCity(&card, &Card::cityChanged);
-    card.setCity("Toronto");
-    QCOMPARE(spyCity.count(), 1);
 
     QSignalSpy spyAddress(&card, &Card::addressChanged);
     Address *addr = Address::fromJson(getAddressData(), Card::FIELD_ADDRESS_PREFIX);
@@ -133,29 +128,25 @@ void CardTests::testFromJson()
     const Card *card = Card::fromJson(data);
 
     QCOMPARE(card->cardID(), data[Card::FIELD_ID].toString());
-    QCOMPARE(card->city(), data[Card::FIELD_ADDRESS_CITY].toString());
     QCOMPARE(card->brandName(), data[Card::FIELD_BRAND].toString());
-
     QCOMPARE(card->country(), data[Card::FIELD_COUNTRY].toString());
+
     QCOMPARE(card->currency(), data[Card::FIELD_CURRENCY].toString());
     QCOMPARE(card->cvcCheckName(card->cvcCheck()), data[Card::FIELD_CVC_CHECK].toString());
-
     QCOMPARE(card->expirationMonth(), data[Card::FIELD_EXP_MONTH].toInt());
+
     QCOMPARE(card->expirationYear(), data[Card::FIELD_EXP_YEAR].toInt());
     QCOMPARE(card->fingerprint(), data[Card::FIELD_FINGERPRINT].toString());
-
     QCOMPARE(card->fundingTypeString(card->funding()), data[Card::FIELD_FUNDING].toString());
+
     QCOMPARE(card->name(), data[Card::FIELD_NAME].toString());
     QCOMPARE(card->lastFourDigits(), data[Card::FIELD_LAST4].toString());
-
     QCOMPARE(card->tokenizationMethodName(card->tokenizationMethod()), data[Card::FIELD_TOKENIZATION_METHOD].toString());
+
     QCOMPARE(card->metaData(), data[Card::FIELD_METADATA].toMap());
 
     Address *addr = Address::fromJson(data, Card::FIELD_ADDRESS_PREFIX);
-    QCOMPARE(
-        card->address()->jsonString(Card::FIELD_ADDRESS_PREFIX),
-        addr->jsonString(Card::FIELD_ADDRESS_PREFIX)
-    );
+    QCOMPARE(card->address()->jsonString(Card::FIELD_ADDRESS_PREFIX), addr->jsonString(Card::FIELD_ADDRESS_PREFIX));
     addr->deleteLater();
 }
 
@@ -223,25 +214,24 @@ void CardTests::testSet()
 {
     Card *c1 = Card::fromJson(getCardData());
     Card c2;
-    c2.set(*c1);
+    c2.set(c1);
 
     QCOMPARE(c2.cardID(), c1->cardID());
-    QCOMPARE(c2.city(), c1->city());
     QCOMPARE(c2.brandName(), c1->brandName());
-
     QCOMPARE(c2.country(), c1->country());
+
     QCOMPARE(c2.currency(), c1->currency());
     QCOMPARE(c2.expirationMonth(), c1->expirationMonth());
-
     QCOMPARE(c2.expirationYear(), c1->expirationYear());
+
     QCOMPARE(c2.fingerprint(), c1->fingerprint());
     QCOMPARE(c2.name(), c1->name());
-
     QCOMPARE(c2.lastFourDigits(), c1->lastFourDigits());
+
     QCOMPARE(c2.metaData(), c1->metaData());
     QCOMPARE(c2.fundingTypeString(c2.funding()), c1->fundingTypeString(c1->funding()));
-
     QCOMPARE(c2.cvcCheckName(c2.cvcCheck()), c1->cvcCheckName(c1->cvcCheck()));
+
     QCOMPARE(c2.tokenizationMethodName(c2.tokenizationMethod()), c1->tokenizationMethodName(c1->tokenizationMethod()));
     QVERIFY((*c2.address()) == (*c1->address()));
 
@@ -546,4 +536,37 @@ void CardTests::testValidCVC()
 
     card.setCvc("333");
     QCOMPARE(card.validCVC(), true);
+}
+
+void CardTests::testCreateToken()
+{
+    const QDate today = QDate::currentDate();
+    QVariantMap data;
+    data[Card::FIELD_CURRENCY] = "cad";
+    data[Card::FIELD_EXP_MONTH] = today.month();
+    data[Card::FIELD_EXP_YEAR] = today.year() + 5;
+
+    data[Card::FIELD_COUNTRY] = "CA";
+    data[Card::FIELD_NAME] = "Furkan Uzumcu";
+
+    Card *card = Card::fromJson(data);
+
+    Address *address = card->address();
+    address->setCity("Toronto");
+    address->setCountry("Canada");
+
+    address->setLineOne("101 Botfield Ave.");
+
+    QCOMPARE(card->createToken(), false);
+
+    card->setCvc("232");
+    card->setCardNumber("4242424242424242");
+    QCOMPARE(card->createToken(), true);
+    QSignalSpy spy(card, &Card::tokenCreated);
+    const bool sucess = spy.wait() == true;
+    QVERIFY2(sucess, card->lastError()->message().toStdString().c_str());
+    if (sucess) {
+        qInfo() << card->token()->tokenID();
+    }
+
 }

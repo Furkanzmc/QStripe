@@ -26,4 +26,6 @@ private slots:
     void testValidExpirationYear();
     void testValidExpirationDate();
     void testValidCVC();
+
+    void testCreateToken();
 };
