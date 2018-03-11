@@ -99,6 +99,13 @@ public:
     Q_INVOKABLE bool fetchCustomer(const QString &customerID);
 
     /**
+     * @brief Fetches the card with the given ID. If the customer exists and it is sucesfully fetched, `cardFetched()` signal will be emitted.
+     * If the cardID length is 0, this method will return false.
+     * @param cardID
+     */
+    Q_INVOKABLE bool fetchCard(const QString &customerID, const QString &cardID);
+
+    /**
      * @brief Returns the last ocurred error.
      * @return const Error *
      */
@@ -109,6 +116,11 @@ signals:
      * @brief Emitted when the customer is fetched. The parent of customer is initially this instance of Stripe.
      */
     void customerFetched(Customer *customer);
+
+    /**
+     * @brief Emitted when the card is fetched. The parent of card is initially this instance of Stripe.
+     */
+    void cardFetched(Card *card);
 
     /**
      * @brief Emitted when a request to Stripe fails.

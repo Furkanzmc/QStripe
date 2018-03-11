@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
     status |= QTest::qExec(&tokenTests, argc, argv);
     status |= QTest::qExec(&errorTests, argc, argv);
 
-    StripeTests stripeTests(customerTests.getCustomerID());
+    StripeTests stripeTests(customerTests.getCustomerID(), cardTests.getCardID());
     status |= QTest::qExec(&stripeTests, argc, argv);
 
     return status;

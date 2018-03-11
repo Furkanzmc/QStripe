@@ -15,6 +15,8 @@ public:
     static QVariantMap getAddressData();
     static QVariantMap getCardData();
 
+    QString getCardID() const;
+
 private slots:
     void testSignals();
     void testFromJson();

@@ -64,6 +64,11 @@ QVariantMap CardTests::getCardData()
     return data;
 }
 
+QString CardTests::getCardID() const
+{
+    return m_Card->cardID();
+}
+
 void CardTests::testSignals()
 {
     Card card;
