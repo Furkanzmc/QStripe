@@ -117,6 +117,10 @@ bool Stripe::fetchCard(const QString &customerID, const QString &cardID)
         return false;
     }
 
+    if (customerID.length() == 0) {
+        return false;
+    }
+
     m_NetworkUtils.setHeader("Authorization", "Bearer " + Stripe::secretKey());
     if (Stripe::apiVersion().length() > 0) {
         m_NetworkUtils.setHeader("Stripe-Version", Stripe::apiVersion());

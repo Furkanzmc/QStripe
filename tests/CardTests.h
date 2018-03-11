@@ -38,8 +38,12 @@ private slots:
     void testTokenFetch();
     void testCreate();
 
+    void testDelete();
+
 private:
-    QString m_CustomerID, m_TokenID;
+    QString m_CustomerID,
+            m_TokenID,
+            m_CardID;
     // The card that the token ID belongs to.
     QStripe::Card *m_Card;
 };

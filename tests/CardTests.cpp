@@ -14,6 +14,7 @@ CardTests::CardTests(QString customerID, QObject *parent)
     , m_CustomerID(customerID)
     , m_TokenID("")
     , m_Card(nullptr)
+    , m_CardID()
 {
     QVERIFY2(m_CustomerID.length() > 0, "Customer ID is not set. Card creatin test will not run.");
 }
@@ -66,7 +67,7 @@ QVariantMap CardTests::getCardData()
 
 QString CardTests::getCardID() const
 {
-    return m_Card->cardID();
+    return m_CardID;
 }
 
 void CardTests::testSignals()
@@ -611,6 +612,20 @@ void CardTests::testCreate()
         QCOMPARE(m_Card->create(m_CustomerID), true);
 
         QSignalSpy spy(m_Card, &Card::created);
+        const bool sucess = spy.wait() == true;
+        QVERIFY2(sucess, m_Card->lastError()->message().toStdString().c_str());
+    }
+}
+
+void CardTests::testDelete()
+{
+    QVERIFY2(m_Card != nullptr, "m_Card is not set.");
+
+    if (m_Card) {
+        QCOMPARE(m_Card->deleteCard(), false);
+        QCOMPARE(m_Card->deleteCard(m_CustomerID), true);
+
+        QSignalSpy spy(m_Card, &Card::deleted);
         const bool sucess = spy.wait() == true;
         QVERIFY2(sucess, m_Card->lastError()->message().toStdString().c_str());
     }
