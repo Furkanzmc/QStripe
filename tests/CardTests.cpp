@@ -9,11 +9,13 @@
 
 using namespace QStripe;
 
-CardTests::CardTests(QObject *parent)
+CardTests::CardTests(QString customerID, QObject *parent)
     : QObject(parent)
+    , m_CustomerID(customerID)
     , m_TokenID("")
+    , m_Card(nullptr)
 {
-
+    QVERIFY2(m_CustomerID.length() > 0, "Customer ID is not set. Card creatin test will not run.");
 }
 
 QVariantMap CardTests::getAddressData()
@@ -569,6 +571,9 @@ void CardTests::testCreateToken()
     if (sucess) {
         m_TokenID = card->token()->tokenID();
     }
+
+    card->setParent(this);
+    m_Card = card;
 }
 
 void CardTests::testTokenFetch()
@@ -589,5 +594,19 @@ void CardTests::testTokenFetch()
         QCOMPARE(card.lastFourDigits(), "4242");
         QCOMPARE(card.expirationMonth(), today.month());
         QCOMPARE(card.expirationYear(), today.year() + 5);
+    }
+}
+
+void CardTests::testCreate()
+{
+    QVERIFY2(m_Card != nullptr, "m_Card is not set.");
+
+    if (m_Card) {
+        QCOMPARE(m_Card->create(), false);
+        QCOMPARE(m_Card->create(m_CustomerID), true);
+
+        QSignalSpy spy(m_Card, &Card::created);
+        const bool sucess = spy.wait() == true;
+        QVERIFY2(sucess, m_Card->lastError()->message().toStdString().c_str());
     }
 }

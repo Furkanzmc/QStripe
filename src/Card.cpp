@@ -582,6 +582,50 @@ void Card::fetchToken(const QString &tokenID)
     m_NetworkUtils.sendGet(Token::getURL(tokenID), callback);
 }
 
+bool Card::create(QString customerID)
+{
+    if (m_Token->tokenID().length() == 0) {
+        return false;
+    }
+
+    if (m_CardID.length() > 0) {
+        return false;
+    }
+
+    if (customerID.length() == 0) {
+        customerID = getCustomerID();
+    }
+
+    if (customerID.length() == 0) {
+        return false;
+    }
+
+    auto callback = [this](const Response & response) {
+        QVariantMap data = Utils::toVariantMap(response.data);
+        if (response.httpStatus == NetworkUtils::HttpStatusCodes::HTTP_200) {
+            Card *card = Card::fromJson(data);
+            set(card);
+            card->deleteLater();
+            emit created();
+        }
+        else {
+            qDebug() << "[ERROR] Error occurred while creating the card.";
+            m_Error.set(data, response.httpStatus, response.networkError);
+            emit errorOccurred(&m_Error);
+        }
+    };
+
+    m_NetworkUtils.setHeader("Authorization", "Bearer " + Stripe::secretKey());
+    if (Stripe::apiVersion().length() > 0) {
+        m_NetworkUtils.setHeader("Stripe-Version", Stripe::apiVersion());
+    }
+
+    QVariantMap data;
+    data["source"] = m_Token->tokenID();
+    m_NetworkUtils.sendPost(getURL(customerID), data, callback);
+    return true;
+}
+
 const Error *Card::lastError() const
 {
     return &m_Error;
@@ -794,6 +838,16 @@ Card *Card::fromString(const QString &dataStr)
     return fromJson(Utils::toVariantMap(dataStr));
 }
 
+QString Card::getURL(const QString &customerID, const QString &cardID)
+{
+    QString url = "https://api.stripe.com/v1/customers/" + customerID + "/sources";
+    if (cardID.length() > 0) {
+        url += "/" + cardID;
+    }
+
+    return url;
+}
+
 QString Card::cvcCheckName(CVCCheck type)
 {
     QString name = "unknown";
@@ -933,6 +987,20 @@ QVariantMap Card::jsonForTokenCreation() const
     }
 
     return data;
+}
+
+QString Card::getCustomerID() const
+{
+    QString id = "";
+
+    if (parent()) {
+        Customer *customer = dynamic_cast<Customer *>(parent());
+        if (customer) {
+            id = customer->customerID();
+        }
+    }
+
+    return id;
 }
 
 }

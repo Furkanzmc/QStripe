@@ -32,5 +32,5 @@ private slots:
     void testDeleteCustomer();
 
 private:
-    QString m_CustomerID;
+    QString m_CustomerID, m_CustomerIDToDelete;
 };

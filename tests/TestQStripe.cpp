@@ -31,7 +31,6 @@ int main(int argc, char *argv[])
     AddressTests addressTests;
     ShippingInformationTests shippingTests;
     CustomerTests customerTests;
-    CardTests cardTests;
     TokenTests tokenTests;
     ErrorTests errorTests;
 
@@ -41,6 +40,7 @@ int main(int argc, char *argv[])
     status |= QTest::qExec(&addressTests, argc, argv);
     status |= QTest::qExec(&shippingTests, argc, argv);
     status |= QTest::qExec(&customerTests, argc, argv);
+    CardTests cardTests(customerTests.getCustomerID());
     status |= QTest::qExec(&cardTests, argc, argv);
     status |= QTest::qExec(&tokenTests, argc, argv);
     status |= QTest::qExec(&errorTests, argc, argv);

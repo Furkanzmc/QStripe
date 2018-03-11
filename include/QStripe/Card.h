@@ -385,6 +385,14 @@ public:
     void fetchToken(const QString &tokenID);
 
     /**
+     * @brief This will only work If the Token has a Token ID. If the token ID does not exist, it will return false.
+     * You can provide the customerID here. If the parent of this instance is a Customer object, the customer ID will be fetched from that Customer.
+     * If that's not the case and you provided an empty customerID, this will return false. You cannot call the createCard method If the card ID exists.
+     * @param customerID
+     */
+    Q_INVOKABLE bool create(QString customerID = "");
+
+    /**
      * @brief Returns the last ocurred error.
      * @return const Error *
      */
@@ -459,6 +467,14 @@ public:
      * @return Card*
      */
     Q_INVOKABLE static Card *fromString(const QString &dataStr);
+
+    /**
+     * @brief Returns the full URL for Card endpint.
+     * @param customerID
+     * @param cardID
+     * @return QString
+     */
+    static QString getURL(const QString &customerID, const QString &cardID = "");
 
 signals:
     /**
@@ -552,6 +568,11 @@ signals:
     void tokenFetched();
 
     /**
+     * @brief Emitted when the card is created.
+     */
+    void created();
+
+    /**
      * @brief Emitted when a request to Stripe fails.
      * @param error
      */
@@ -630,6 +651,12 @@ private:
      * @return QVariantMap
      */
     QVariantMap jsonForTokenCreation() const;
+
+    /**
+     * @brief If the parent of this instance is a Customer object, returns the ID of that customer. Otherwise returns an empty string.
+     * @return QString
+     */
+    QString getCustomerID() const;
 };
 
 }

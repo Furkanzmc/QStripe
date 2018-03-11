@@ -35,6 +35,6 @@ void StripeTests::testFetchCustomer()
         QObject *obj = qvariant_cast<QObject *>(list.at(0));
         Customer *customer = qobject_cast<Customer *>(obj);
         QCOMPARE(customer->customerID(), m_CustomerID);
-        QCOMPARE(customer->deleted(), true);
+        QCOMPARE(customer->deleted(), false);
     }
 }

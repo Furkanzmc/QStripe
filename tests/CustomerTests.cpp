@@ -14,6 +14,7 @@ using namespace QStripe;
 CustomerTests::CustomerTests(QObject *parent)
     : QObject(parent)
     , m_CustomerID("")
+    , m_CustomerIDToDelete("")
 {
 
 }
@@ -247,6 +248,19 @@ void CustomerTests::testCreateCustomer()
     QVERIFY(customer->customerID().length() > 0);
 
     m_CustomerID = customer->customerID();
+
+    data = getData();
+    data.remove(Customer::FIELD_ID);
+    data.remove(Customer::FIELD_DEFAULT_SOURCE);
+    data[Customer::FIELD_EMAIL] = "bar@foo.com";
+    customer = Customer::fromJson(data);
+
+    QSignalSpy spyCreateDelete(customer, &Customer::created);
+    QCOMPARE(customer->create(), true);
+    QVERIFY2(spyCreateDelete.wait() == true, customer->lastError()->message().toStdString().c_str());
+    QVERIFY(customer->customerID().length() > 0);
+
+    m_CustomerIDToDelete = customer->customerID();
 }
 
 void CustomerTests::testUpdateCustomerErrors()
@@ -285,8 +299,8 @@ void CustomerTests::testUpdateCustomer()
 
 void CustomerTests::testDeleteCustomerErrors()
 {
-    QVERIFY2(m_CustomerID.length() > 0, "Customer ID doesn't exist. Cannot continue delete test.");
-    if (m_CustomerID.length() > 0) {
+    QVERIFY2(m_CustomerIDToDelete.length() > 0, "m_CustomerIDToDelete doesn't exist. Cannot continue delete test.");
+    if (m_CustomerIDToDelete.length() > 0) {
         Customer customer;
         QCOMPARE(customer.deleteCustomer(), false);
     }
@@ -294,10 +308,10 @@ void CustomerTests::testDeleteCustomerErrors()
 
 void CustomerTests::testDeleteCustomer()
 {
-    QVERIFY2(m_CustomerID.length() > 0, "Customer ID doesn't exist. Cannot continue delete test.");
-    if (m_CustomerID.length() > 0) {
+    QVERIFY2(m_CustomerIDToDelete.length() > 0, "m_CustomerIDToDelete doesn't exist. Cannot continue delete test.");
+    if (m_CustomerIDToDelete.length() > 0) {
         QVariantMap data;
-        data[Customer::FIELD_ID] = m_CustomerID;
+        data[Customer::FIELD_ID] = m_CustomerIDToDelete;
 
         Customer *customer = Customer::fromJson(data);
         QCOMPARE(customer->deleteCustomer(), true);

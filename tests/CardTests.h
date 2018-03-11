@@ -1,11 +1,16 @@
 #pragma once
 #include <QObject>
 
+namespace QStripe
+{
+class Card;
+}
+
 class CardTests : public QObject
 {
     Q_OBJECT
 public:
-    explicit CardTests(QObject *parent = nullptr);
+    explicit CardTests(QString customerID, QObject *parent = nullptr);
 
     static QVariantMap getAddressData();
     static QVariantMap getCardData();
@@ -29,7 +34,10 @@ private slots:
 
     void testCreateToken();
     void testTokenFetch();
+    void testCreate();
 
 private:
-    QString m_TokenID;
+    QString m_CustomerID, m_TokenID;
+    // The card that the token ID belongs to.
+    QStripe::Card *m_Card;
 };
