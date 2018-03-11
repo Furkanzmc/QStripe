@@ -26,4 +26,10 @@ private slots:
     void testValidExpirationYear();
     void testValidExpirationDate();
     void testValidCVC();
+
+    void testCreateToken();
+    void testTokenFetch();
+
+private:
+    QString m_TokenID;
 };

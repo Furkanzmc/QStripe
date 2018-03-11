@@ -135,15 +135,17 @@ public:
 
     /**
      * @brief Returns a json representation of this object. If the customerID is empty, it omits that field.
+     * @param omitEmpty If set to true, the empty fields will not present in the json.
      * @return QVariantMap
      */
-    QVariantMap json() const;
+    Q_INVOKABLE QVariantMap json(bool omitEmpty = false) const;
 
     /**
      * @brief Returns a json string.
+     * @param omitEmpty If set to true, the empty fields will not present in the json.
      * @return QString
      */
-    QString jsonString() const;
+    Q_INVOKABLE QString jsonString(bool omitEmpty = false) const;
 
     /**
      * @brief Returns a Customer instance from the given data.

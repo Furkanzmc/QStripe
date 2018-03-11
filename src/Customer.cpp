@@ -140,7 +140,7 @@ void Customer::setShippingInformation(const ShippingInformation *shippingInforma
     }
 }
 
-QVariantMap Customer::json() const
+QVariantMap Customer::json(bool omitEmpty) const
 {
     QVariantMap data;
 
@@ -148,14 +148,26 @@ QVariantMap Customer::json() const
         data[FIELD_ID] = customerID();
     }
 
-    data[FIELD_CURRENCY] = currency();
-    data[FIELD_DEFAULT_SOURCE] = defaultSource();
+    if ((omitEmpty && m_Currency.length() > 0) || omitEmpty == false) {
+        data[FIELD_CURRENCY] = m_Currency;
+    }
 
-    data[FIELD_SHIPPING] = m_ShippingInformation.json();
-    data[FIELD_EMAIL] = email();
-    data[FIELD_DESCRIPTION] = description();
+    if ((omitEmpty && m_DefaultSource.length() > 0) || omitEmpty == false) {
+        data[FIELD_DEFAULT_SOURCE] = m_DefaultSource;
+    }
 
-    data[FIELD_CURRENCY] = currency();
+    if ((omitEmpty && m_ShippingInformation.phone().length() > 0 && m_ShippingInformation.name().length() > 0) || omitEmpty == false) {
+        data[FIELD_SHIPPING] = m_ShippingInformation.json();
+    }
+
+    if ((omitEmpty && m_Email.length() > 0) || omitEmpty == false) {
+        data[FIELD_EMAIL] = m_Email;
+    }
+
+    if ((omitEmpty && m_Description.length() > 0) || omitEmpty == false) {
+        data[FIELD_DESCRIPTION] = m_Description;
+    }
+
     for (auto it = m_Metadata.constBegin(); it != m_Metadata.constEnd(); it++) {
         const QString key = FIELD_METADATA + "[" + it.key() + "]";
         const QVariant &value = it.value();
@@ -177,9 +189,9 @@ QVariantMap Customer::json() const
     return data;
 }
 
-QString Customer::jsonString() const
+QString Customer::jsonString(bool omitEmpty) const
 {
-    return Utils::toJsonString(json());
+    return Utils::toJsonString(json(omitEmpty));
 }
 
 Customer *Customer::fromJson(const QVariantMap &data)

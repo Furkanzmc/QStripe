@@ -3,36 +3,35 @@
 #include <QDate>
 // QStripe
 #include "QStripe/Utils.h"
+#include "QStripe/Token.h"
+#include "QStripe/Stripe.h"
 
 namespace QStripe
 {
 
 const QString Card::FIELD_ID = "id";
 const QString Card::FIELD_OBJECT = "object";
-const QString Card::FIELD_ADDRESS_CITY = "address_city";
-
 const QString Card::FIELD_ADDRESS_PREFIX = "address_";
+
 const QString Card::FIELD_BRAND = "brand";
 const QString Card::FIELD_COUNTRY = "country";
-
 const QString Card::FIELD_CURRENCY = "currency";
-const QString Card::FIELD_CVC_CHECK = "cvc_check";
 
+const QString Card::FIELD_CVC_CHECK = "cvc_check";
 const QString Card::FIELD_EXP_MONTH = "exp_month";
 const QString Card::FIELD_EXP_YEAR = "exp_year";
-const QString Card::FIELD_FINGERPRINT = "fingerprint";
 
+const QString Card::FIELD_FINGERPRINT = "fingerprint";
 const QString Card::FIELD_FUNDING = "funding";
 const QString Card::FIELD_NAME = "name";
-const QString Card::FIELD_LAST4 = "last4";
 
+const QString Card::FIELD_LAST4 = "last4";
 const QString Card::FIELD_TOKENIZATION_METHOD = "tokenization_method";
 const QString Card::FIELD_METADATA = "metadata";
 
 Card::Card(QObject *parent)
     : QObject(parent)
     , m_CardID("")
-    , m_City("")
     , m_Address()
     , m_Brand(CardBrand::Unknown)
     , m_Country("")
@@ -48,6 +47,9 @@ Card::Card(QObject *parent)
     , m_MetaData()
     , m_CardNumber("")
     , m_CVC("")
+    , m_Token(new Token(this))
+    , m_NetworkUtils()
+    , m_Error()
 {
     connect(this, &Card::cardNumberChanged, this, &Card::updateCardBrand);
 }
@@ -55,20 +57,6 @@ Card::Card(QObject *parent)
 QString Card::cardID() const
 {
     return m_CardID;
-}
-
-QString Card::city() const
-{
-    return m_City;
-}
-
-void Card::setCity(const QString &ct)
-{
-    const bool changed = m_City != ct;
-    if (changed) {
-        m_City = ct;
-        emit cityChanged();
-    }
 }
 
 Address *Card::address()
@@ -282,40 +270,88 @@ void Card::setCvc(const QString &cvcNumber)
     }
 }
 
-QVariantMap Card::json() const
+QVariantMap Card::json(bool omitEmpty) const
 {
     QVariantMap data;
 
-    data[FIELD_ID] = cardID();
-    data[FIELD_ADDRESS_CITY] = city();
-    data[FIELD_BRAND] = cardBrandName(brand());
+    if ((omitEmpty && m_CardID.length() > 0) || !omitEmpty) {
+        data[FIELD_ID] = cardID();
+    }
 
-    data[FIELD_COUNTRY] = country();
-    data[FIELD_CURRENCY] = currency();
-    data[FIELD_CVC_CHECK] = cvcCheckName(cvcCheck());
+    if ((omitEmpty && m_Brand != CardBrand::Unknown) || !omitEmpty) {
+        data[FIELD_BRAND] = cardBrandName(brand());
+    }
 
-    data[FIELD_EXP_MONTH] = expirationMonth();
-    data[FIELD_EXP_YEAR] = expirationYear();
-    data[FIELD_FINGERPRINT] = fingerprint();
+    if ((omitEmpty && m_Country.length() > 0) || !omitEmpty) {
+        data[FIELD_COUNTRY] = m_Country;
+    }
 
-    data[FIELD_FUNDING] = fundingTypeString(funding());
-    data[FIELD_NAME] = name();
-    data[FIELD_LAST4] = lastFourDigits();
+    if ((omitEmpty && m_Currency.length() > 0) || !omitEmpty) {
+        data[FIELD_CURRENCY] = m_Currency;
+    }
 
-    data[FIELD_TOKENIZATION_METHOD] = tokenizationMethodName(tokenizationMethod());
-    data[FIELD_METADATA] = metaData();
+    if ((omitEmpty && m_CVCCheck != CVCCheckUnknown) || !omitEmpty) {
+        data[FIELD_CVC_CHECK] = cvcCheckName(cvcCheck());
+    }
+
+    if ((omitEmpty && m_ExpirationMonth > 0) || !omitEmpty) {
+        data[FIELD_EXP_MONTH] = m_ExpirationMonth;
+    }
+
+    if ((omitEmpty && m_ExpirationYear > 0) || !omitEmpty) {
+        data[FIELD_EXP_YEAR] = m_ExpirationYear;
+    }
+
+    if ((omitEmpty && m_Fingerprint.length() > 0) || !omitEmpty) {
+        data[FIELD_FINGERPRINT] = m_Fingerprint;
+    }
+
+    if ((omitEmpty && m_FundingType != FundingUnknown) || !omitEmpty) {
+        data[FIELD_FUNDING] = fundingTypeString(funding());
+    }
+
+    if ((omitEmpty && m_Name.length() > 0) || !omitEmpty) {
+        data[FIELD_NAME] = m_Name;
+    }
+
+    if ((omitEmpty && m_LastFourDigits.length() > 0) || !omitEmpty) {
+        data[FIELD_LAST4] = m_LastFourDigits;
+    }
+
+    if ((omitEmpty && m_TokenizationMethod != TokenizationUnknown) || !omitEmpty) {
+        data[FIELD_TOKENIZATION_METHOD] = tokenizationMethodName(tokenizationMethod());
+    }
+
+    if ((omitEmpty && m_MetaData.size() > 0) || !omitEmpty) {
+        for (auto it = m_MetaData.constBegin(); it != m_MetaData.constEnd(); it++) {
+            const QString key = FIELD_METADATA + "[" + it.key() + "]";
+            const QVariant &value = it.value();
+
+            if (value.type() == QVariant::String) {
+                data[key] = value.toString();
+            }
+            else if (value.type() == QVariant::Int) {
+                data[key] = value.toInt();
+            }
+            else if (value.type() == QVariant::Int) {
+                data[key] = value.toInt();
+            }
+        }
+    }
 
     const QVariantMap addressData = m_Address.json(FIELD_ADDRESS_PREFIX);
     for (auto it = addressData.constBegin(); it != addressData.constEnd(); it++) {
-        data[it.key()] = it.value();
+        if ((omitEmpty && it.value().toString().length() > 0) || !omitEmpty) {
+            data[it.key()] = it.value().toString();
+        }
     }
 
     return data;
 }
 
-QString Card::jsonString() const
+QString Card::jsonString(bool omitEmpty) const
 {
-    return Utils::toJsonString(json());
+    return Utils::toJsonString(json(omitEmpty));
 }
 
 Card::CardBrand Card::possibleCardBrand() const
@@ -359,6 +395,11 @@ Card::CardBrand Card::possibleCardBrand() const
     }
 
     return cardType;
+}
+
+const Token *Card::token() const
+{
+    return m_Token;
 }
 
 bool Card::validCardLenght() const
@@ -451,30 +492,99 @@ bool Card::validCard() const
     return validCardNumber() && validCVC() && validExpirationDate();
 }
 
-void Card::set(const Card &other)
+void Card::set(const Card *other)
 {
-    setCardID(other.cardID());
-    setCardNumber(other.cardNumber());
-    setCvc(other.cvc());
+    setCardID(other->cardID());
+    setCardNumber(other->cardNumber());
+    setCvc(other->cvc());
 
-    setCVCCheck(other.cvcCheck());
-    setCity(other.city());
-    setCountry(other.country());
+    setCVCCheck(other->cvcCheck());
+    setCountry(other->country());
+    setCurrency(other->currency());
 
-    setCurrency(other.currency());
-    setExpirationMonth(other.expirationMonth());
-    setExpirationYear(other.expirationYear());
+    setExpirationMonth(other->expirationMonth());
+    setExpirationYear(other->expirationYear());
+    setAddress(other->address());
 
-    setAddress(other.address());
-    setFunding(other.funding());
-    setName(other.name());
+    setFunding(other->funding());
+    setName(other->name());
+    setFingerprint(other->fingerprint());
 
-    setFingerprint(other.fingerprint());
-    setLastFourDigits(other.lastFourDigits());
-    setMetaData(other.metaData());
+    setLastFourDigits(other->lastFourDigits());
+    setMetaData(other->metaData());
+    setTokenizationMethod(other->tokenizationMethod());
 
-    setTokenizationMethod(other.tokenizationMethod());
-    setBrand(other.brand());
+    setBrand(other->brand());
+}
+
+bool Card::createToken()
+{
+    if (m_Token->tokenID().length() > 0) {
+        return false;
+    }
+
+    if (validCard() == false) {
+        return false;
+    }
+
+    auto callback = [this](const Response & response) {
+        QVariantMap data = Utils::toVariantMap(response.data);
+        if (response.httpStatus == NetworkUtils::HttpStatusCodes::HTTP_200) {
+            Token *token = Token::fromJson(data);
+            m_Token->set(token);
+            token->deleteLater();
+            emit tokenCreated();
+        }
+        else {
+            qDebug() << "[ERROR] Error occurred while creating the card token.";
+            m_Error.set(data, response.httpStatus, response.networkError);
+            emit errorOccurred(&m_Error);
+        }
+    };
+
+    m_NetworkUtils.setHeader("Authorization", "Bearer " + Stripe::secretKey());
+    if (Stripe::apiVersion().length() > 0) {
+        m_NetworkUtils.setHeader("Stripe-Version", Stripe::apiVersion());
+    }
+
+    QVariantMap data = jsonForTokenCreation();
+    m_NetworkUtils.sendPost(Token::getURL(), data, callback);
+    return true;
+}
+
+void Card::fetchToken(const QString &tokenID)
+{
+    auto callback = [this](const Response & response) {
+        QVariantMap data = Utils::toVariantMap(response.data);
+        if (response.httpStatus == NetworkUtils::HttpStatusCodes::HTTP_200) {
+            Token *token = Token::fromJson(data);
+            Card *card = Card::fromJson(data["card"].toMap());
+
+            this->set(card);
+            m_Token->set(token);
+
+            token->deleteLater();
+            card->deleteLater();
+            emit tokenFetched();
+        }
+        else {
+            qDebug() << "[ERROR] Error occurred while fetching token.";
+            m_Error.set(data, response.httpStatus, response.networkError);
+            emit errorOccurred(&m_Error);
+        }
+    };
+
+    m_NetworkUtils.setHeader("Authorization", "Bearer " + Stripe::secretKey());
+    if (Stripe::apiVersion().length() > 0) {
+        m_NetworkUtils.setHeader("Stripe-Version", Stripe::apiVersion());
+    }
+
+    m_NetworkUtils.sendGet(Token::getURL(tokenID), callback);
+}
+
+const Error *Card::lastError() const
+{
+    return &m_Error;
 }
 
 QString Card::cardBrandName(CardBrand brand)
@@ -619,10 +729,6 @@ QString Card::tokenizationMethodName(TokenizationMethod method)
 Card *Card::fromJson(const QVariantMap &data)
 {
     Card *card = new Card();
-
-    if (data.contains(FIELD_ADDRESS_CITY)) {
-        card->setCity(data[FIELD_ADDRESS_CITY].toString());
-    }
 
     if (data.contains(FIELD_BRAND)) {
         card->setBrand(cardBrandType(data[FIELD_BRAND].toString()));
@@ -793,6 +899,40 @@ void Card::setCVCCheck(CVCCheck check)
 void Card::updateCardBrand()
 {
     setBrand(possibleCardBrand());
+}
+
+QVariantMap Card::jsonForTokenCreation() const
+{
+    QVariantMap data;
+
+    auto wrap = [](const QString & key) {
+        return "card[" + key + "]";
+    };
+
+    data[FIELD_CURRENCY] = m_Currency;
+    data[wrap(FIELD_EXP_MONTH)] = m_ExpirationMonth;
+    data[wrap(FIELD_EXP_YEAR)] = m_ExpirationYear;
+
+    data[wrap(FIELD_NAME)] = m_Name;
+    data[wrap("cvc")] = m_CVC;
+    data[wrap("number")] = m_CardNumber;
+
+    const QVariantMap addressData = m_Address.json(FIELD_ADDRESS_PREFIX);
+    for (auto it = addressData.constBegin(); it != addressData.constEnd(); it++) {
+        const QString value = it.value().toString();
+        data[wrap(it.key())] = value;
+    }
+
+    if (data.contains(wrap(FIELD_ADDRESS_PREFIX + Address::FIELD_POSTAL_CODE))) {
+        data[wrap(FIELD_ADDRESS_PREFIX + "zip")] = data[wrap(FIELD_ADDRESS_PREFIX + Address::FIELD_POSTAL_CODE)];
+        data.remove(wrap(FIELD_ADDRESS_PREFIX + Address::FIELD_POSTAL_CODE));
+    }
+
+    if (data.contains(wrap(FIELD_ADDRESS_PREFIX + Address::FIELD_ZIP_CHECK))) {
+        data.remove(wrap(FIELD_ADDRESS_PREFIX + Address::FIELD_ZIP_CHECK));
+    }
+
+    return data;
 }
 
 }

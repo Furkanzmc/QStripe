@@ -3,66 +3,70 @@
 #include <QVector>
 // QStripe
 #include "Address.h"
+#include "NetworkUtils.h"
+#include "Error.h"
 
 namespace QStripe
 {
+
+class Token;
 
 class Card : public QObject
 {
     Q_OBJECT
 
     Q_PROPERTY(QString cardID READ cardID NOTIFY cardIDChanged)
-    Q_PROPERTY(QString city READ city WRITE setCity NOTIFY cityChanged)
     Q_PROPERTY(Address *address READ address WRITE setAddress NOTIFY addressChanged)
-
     Q_PROPERTY(CardBrand brand READ brand WRITE setBrand NOTIFY brandChanged)
+
     Q_PROPERTY(QString country READ country WRITE setCountry NOTIFY countryChanged)
     Q_PROPERTY(QString currency READ currency WRITE setCurrency NOTIFY currencyChanged)
-
     Q_PROPERTY(CVCCheck cvcCheck READ cvcCheck WRITE setCVCCheck NOTIFY cvcCheckChanged)
+
     Q_PROPERTY(int expirationMonth READ expirationMonth WRITE setExpirationMonth NOTIFY expirationMonthChanged)
     Q_PROPERTY(int expirationYear READ expirationYear WRITE setExpirationYear NOTIFY expirationYearChanged)
-
     Q_PROPERTY(QString fingerprint READ fingerprint WRITE setFingerprint NOTIFY fingerprintChanged)
+
     Q_PROPERTY(FundingType funding READ funding WRITE setFunding NOTIFY fundingChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-
     Q_PROPERTY(QString lastFourDigits READ lastFourDigits WRITE setLastFourDigits NOTIFY lastFourDigitsChanged)
+
     Q_PROPERTY(TokenizationMethod tokenizationMethod READ tokenizationMethod WRITE setTokenizationMethod NOTIFY tokenizationMethodChanged)
     Q_PROPERTY(QVariantMap metaData READ metaData WRITE setMetaData NOTIFY metaDataChanged)
-
     Q_PROPERTY(QString cardNumber READ cardNumber WRITE setCardNumber NOTIFY cardNumberChanged)
+
     Q_PROPERTY(QVariantMap json READ json CONSTANT)
     Q_PROPERTY(QString jsonString READ jsonString CONSTANT)
-
     Q_PROPERTY(QString cvc READ cvc WRITE setCvc NOTIFY cvcChanged)
+
     Q_PROPERTY(QString brandName READ brandName CONSTANT)
     Q_PROPERTY(CardBrand possibleCardBrand READ possibleCardBrand CONSTANT)
+    Q_PROPERTY(const Token *token READ token CONSTANT)
 
     Q_PROPERTY(bool validCardLenght READ validCardLenght CONSTANT)
     Q_PROPERTY(bool validCardNumber READ validCardNumber CONSTANT)
 
+    Q_CLASSINFO("DefaultProperty", "token")
+
 public:
     static const QString FIELD_ID;
     static const QString FIELD_OBJECT;
-    static const QString FIELD_ADDRESS_CITY;
-
     static const QString FIELD_ADDRESS_PREFIX;
+
     static const QString FIELD_BRAND;
     static const QString FIELD_COUNTRY;
-
     static const QString FIELD_CURRENCY;
+
     static const QString FIELD_CVC_CHECK;
     static const QString FIELD_EXP_MONTH;
-
     static const QString FIELD_EXP_YEAR;
+
     static const QString FIELD_FINGERPRINT;
     static const QString FIELD_FUNDING;
-
     static const QString FIELD_NAME;
+
     static const QString FIELD_LAST4;
     static const QString FIELD_TOKENIZATION_METHOD;
-
     static const QString FIELD_METADATA;
 
     enum CardBrand {
@@ -108,18 +112,6 @@ public:
      * @return QString
      */
     QString cardID() const;
-
-    /**
-     * @brief Returns the city.
-     * @return QString
-     */
-    QString city() const;
-
-    /**
-     * @brief Set city name.
-     * @param ct
-     */
-    void setCity(const QString &ct);
 
     /**
      * @brief Returns the current address object.
@@ -305,15 +297,16 @@ public:
     /**
      * @brief Returns the json representation of this instance. This will not include the CVC number or the card number.
      * To create a token, use `QStripe::Stripe::createToken()`
+     * @param omitEmpty If set to true, the empty fields will not be in the dictionary.
      * @return QVariantMap
      */
-    QVariantMap json() const;
+    Q_INVOKABLE QVariantMap json(bool omitEmpty = false) const;
 
     /**
      * @brief Returns the json representation of this instance in string.
      * @return QString
      */
-    QString jsonString() const;
+    Q_INVOKABLE QString jsonString(bool omitEmpty = false) const;
 
     /**
      * @brief Returns the possible card brand based on the card number. This method will be automatically called whenever the card number changes to a valid
@@ -321,6 +314,12 @@ public:
      * @return CardBrand
      */
     CardBrand possibleCardBrand() const;
+
+    /**
+     * @brief Returns the Token object for this Card. If the token was not created, the ID of the token will be empty.
+     * @return
+     */
+    const Token *token() const;
 
     /**
      * @brief Returns true If the card number length is valid for the current card brand. If the card brand is unknown, it will return false.
@@ -369,7 +368,27 @@ public:
      * @brief Copies the contents of other to this instance.
      * @param other
      */
-    Q_INVOKABLE void set(const Card &other);
+    Q_INVOKABLE void set(const Card *other);
+
+    /**
+     * @brief If the card is valid and there's no valid Token for the instance, this will create a token and set the response to the attached token.
+     * If the card is not valid, returns false.
+     * @return  bool
+     */
+    Q_INVOKABLE bool createToken();
+
+    /**
+     * @brief Fetches the token with the given ID. When the token is cetched, the contents of the card will be overwritten by the card that belongs to the
+     * token object.
+     * @param tokenID
+     */
+    void fetchToken(const QString &tokenID);
+
+    /**
+     * @brief Returns the last ocurred error.
+     * @return const Error *
+     */
+    const Error *lastError() const;
 
     /**
      * @brief Returns the name of the brand.
@@ -448,11 +467,6 @@ signals:
     void cardIDChanged();
 
     /**
-     * @brief Emitted when the city changes.
-     */
-    void cityChanged();
-
-    /**
      * @brief Emitted when the address changes.
      */
     void addressChanged();
@@ -527,31 +541,50 @@ signals:
      */
     void cvcChanged();
 
+    /**
+     * @brief Emitted when a Token is created for this card.
+     */
+    void tokenCreated();
+
+    /**
+     * @brief Emittedn when the token is fetched.
+     */
+    void tokenFetched();
+
+    /**
+     * @brief Emitted when a request to Stripe fails.
+     * @param error
+     */
+    void errorOccurred(const Error *error);
+
 private:
     QString m_CardID;
-    QString m_City;
     Address m_Address;
-
     CardBrand m_Brand;
+
     // This is the two letter country code that this card belongs to.
     QString m_Country;
     QString m_Currency;
-
     CVCCheck m_CVCCheck;
+
     int m_ExpirationMonth;
     // This can be a 2 digit or 4 digit number.
     int m_ExpirationYear;
-
     QString m_Fingerprint;
+
     FundingType m_FundingType;
     QString m_Name;
-
     QString m_LastFourDigits;
+
     TokenizationMethod m_TokenizationMethod;
     QVariantMap m_MetaData;
-
     QString m_CardNumber;
+
     QString m_CVC;
+    Token *m_Token;
+    NetworkUtils m_NetworkUtils;
+
+    Error m_Error;
 
 private:
     /**
@@ -591,6 +624,12 @@ private:
      * @brief This is connected to the cardNumberChanged() signal. And it udates the brand.
      */
     void updateCardBrand();
+
+    /**
+     * @brief Returns the json data that is used to create a card token.
+     * @return QVariantMap
+     */
+    QVariantMap jsonForTokenCreation() const;
 };
 
 }

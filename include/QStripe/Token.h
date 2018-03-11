@@ -1,14 +1,14 @@
 #pragma once
 #include <QObject>
 #include <QDateTime>
-// QStripe
-#include "Card.h"
+#include <QVariantMap>
 
 namespace QStripe
 {
 
 /**
- * @brief Token is a read-only class and it can only be created using `QStripe::Stripe::createToken()`.
+ * @brief Token is a read-only class and it can only be created using `QStripe::Card::createToken()`. The token will always be attached to a Card so it does
+ * not have the `card()` property.
  * The properties does not have a related changed signals.
  */
 class Token : public QObject
@@ -16,7 +16,6 @@ class Token : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QVariantMap bankAccount READ bankAccount CONSTANT)
-    Q_PROPERTY(const Card *card READ card CONSTANT)
     Q_PROPERTY(QDateTime created READ created CONSTANT)
 
     Q_PROPERTY(QString tokenID READ tokenID CONSTANT)
@@ -29,7 +28,6 @@ class Token : public QObject
 
 public:
     static const QString FIELD_BANK_ACCOUNT;
-    static const QString FIELD_CARD;
     static const QString FIELD_CREATED;
 
     static const QString FIELD_ID;
@@ -49,12 +47,6 @@ public:
 
 public:
     explicit Token(QObject *parent = nullptr);
-
-    /**
-     * @brief Returns the card that belongs to this token.
-     * @return const Card *
-     */
-    const Card *card() const;
 
     /**
      * @brief Returns the bank account. In the future release this will be a class of its own.
@@ -123,6 +115,13 @@ public:
     Q_INVOKABLE static Token *fromString(const QString &data);
 
     /**
+     * @brief Returns the complete Tokens endpoint url.
+     * @param tokenURL
+     * @return QString
+     */
+    static QString getURL(const QString &tokenID = "");
+
+    /**
      * @brief Returns the json representation of this instance. This function is invokable from QML.
      * @return QVariantMap
      */
@@ -134,16 +133,20 @@ public:
      */
     QString jsonString() const;
 
+    /**
+     * @brief Copies the contents of other to this one.
+     * @param other
+     */
+    Q_INVOKABLE void set(const Token *other);
+
 private:
     // FIXME: Create a seperate class for BankAccount.
     QVariantMap m_BankAccount;
-    Card m_Card;
     QDateTime m_Created;
-
     QString m_TokenID;
+
     Type m_Type;
     bool m_IsLiveMode;
-
     bool m_IsUsed;
 };
 
