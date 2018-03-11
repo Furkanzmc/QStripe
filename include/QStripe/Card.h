@@ -64,6 +64,7 @@ public:
     static const QString FIELD_TOKENIZATION_METHOD;
 
     static const QString FIELD_METADATA;
+    static const QString FIELD_SOURCE;
 
     enum CardBrand {
         AmericanExpress,
@@ -441,6 +442,12 @@ public:
      */
     Q_INVOKABLE static Card *fromString(const QString &dataStr);
 
+    /**
+     * @brief The token ID created for the card. This will be automatically set when you create the card. Thus the set method for this property is private.
+     * @return QString
+     */
+    QString source() const;
+
 signals:
     /**
      * @brief Emitted when the card ID changes.
@@ -552,6 +559,7 @@ private:
 
     QString m_CardNumber;
     QString m_CVC;
+    QString m_Source;
 
 private:
     /**
@@ -591,6 +599,12 @@ private:
      * @brief This is connected to the cardNumberChanged() signal. And it udates the brand.
      */
     void updateCardBrand();
+
+    /**
+     * @brief Set the source ID for this card. This will be set when the credit card is created.
+     * @param src
+     */
+    void setSource(const QString &src);
 };
 
 }

@@ -49,6 +49,7 @@ QVariantMap CardTests::getCardData()
 
     data[Card::FIELD_LAST4] = "last4";
     data[Card::FIELD_TOKENIZATION_METHOD] = "apple_pay";
+    data[Card::FIELD_SOURCE] = "source";
 
     QVariantMap metadata;
     metadata["foo"] = "bar";

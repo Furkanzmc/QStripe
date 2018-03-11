@@ -28,6 +28,7 @@ const QString Card::FIELD_LAST4 = "last4";
 
 const QString Card::FIELD_TOKENIZATION_METHOD = "tokenization_method";
 const QString Card::FIELD_METADATA = "metadata";
+const QString Card::FIELD_SOURCE = "source";
 
 Card::Card(QObject *parent)
     : QObject(parent)
@@ -48,6 +49,7 @@ Card::Card(QObject *parent)
     , m_MetaData()
     , m_CardNumber("")
     , m_CVC("")
+    , m_Source("")
 {
     connect(this, &Card::cardNumberChanged, this, &Card::updateCardBrand);
 }
@@ -304,6 +306,7 @@ QVariantMap Card::json() const
 
     data[FIELD_TOKENIZATION_METHOD] = tokenizationMethodName(tokenizationMethod());
     data[FIELD_METADATA] = metaData();
+    data[FIELD_SOURCE] = source();
 
     const QVariantMap addressData = m_Address.json(FIELD_ADDRESS_PREFIX);
     for (auto it = addressData.constBegin(); it != addressData.constEnd(); it++) {
@@ -475,6 +478,7 @@ void Card::set(const Card &other)
 
     setTokenizationMethod(other.tokenizationMethod());
     setBrand(other.brand());
+    setSource(other.source());
 }
 
 QString Card::cardBrandName(CardBrand brand)
@@ -676,6 +680,10 @@ Card *Card::fromJson(const QVariantMap &data)
         card->setTokenizationMethod(tokenizationMethodType(data[FIELD_TOKENIZATION_METHOD].toString()));
     }
 
+    if (data.contains(FIELD_SOURCE)) {
+        card->setSource(data[FIELD_SOURCE].toString());
+    }
+
     Address *addr = Address::fromJson(data, FIELD_ADDRESS_PREFIX);
     card->setAddress(addr);
     addr->deleteLater();
@@ -686,6 +694,11 @@ Card *Card::fromJson(const QVariantMap &data)
 Card *Card::fromString(const QString &dataStr)
 {
     return fromJson(Utils::toVariantMap(dataStr));
+}
+
+QString Card::source() const
+{
+    return m_Source;
 }
 
 QString Card::cvcCheckName(CVCCheck type)
@@ -793,6 +806,11 @@ void Card::setCVCCheck(CVCCheck check)
 void Card::updateCardBrand()
 {
     setBrand(possibleCardBrand());
+}
+
+void Card::setSource(const QString &src)
+{
+    m_Source = src;
 }
 
 }
