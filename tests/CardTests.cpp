@@ -11,6 +11,7 @@ using namespace QStripe;
 
 CardTests::CardTests(QObject *parent)
     : QObject(parent)
+    , m_TokenID("")
 {
 
 }
@@ -566,7 +567,27 @@ void CardTests::testCreateToken()
     const bool sucess = spy.wait() == true;
     QVERIFY2(sucess, card->lastError()->message().toStdString().c_str());
     if (sucess) {
-        qInfo() << card->token()->tokenID();
+        m_TokenID = card->token()->tokenID();
     }
+}
 
+void CardTests::testTokenFetch()
+{
+    QVERIFY2(m_TokenID.length() > 0, "Token ID is not set.");
+
+    if (m_TokenID.length() > 0) {
+        Card card;
+        card.fetchToken(m_TokenID);
+        QSignalSpy spy(&card, &Card::tokenFetched);
+        const bool sucess = spy.wait() == true;
+        QVERIFY2(sucess, card.lastError()->message().toStdString().c_str());
+
+        const QDate today = QDate::currentDate();
+        // The data here should match the one in CardTests::testCreateToken()
+        QCOMPARE(card.token()->tokenID(), m_TokenID);
+        qInfo() << "CVC Check: " << Card::cvcCheckName(card.cvcCheck());
+        QCOMPARE(card.lastFourDigits(), "4242");
+        QCOMPARE(card.expirationMonth(), today.month());
+        QCOMPARE(card.expirationYear(), today.year() + 5);
+    }
 }

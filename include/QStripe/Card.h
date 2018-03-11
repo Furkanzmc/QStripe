@@ -378,6 +378,13 @@ public:
     Q_INVOKABLE bool createToken();
 
     /**
+     * @brief Fetches the token with the given ID. When the token is cetched, the contents of the card will be overwritten by the card that belongs to the
+     * token object.
+     * @param tokenID
+     */
+    void fetchToken(const QString &tokenID);
+
+    /**
      * @brief Returns the last ocurred error.
      * @return const Error *
      */
@@ -538,6 +545,11 @@ signals:
      * @brief Emitted when a Token is created for this card.
      */
     void tokenCreated();
+
+    /**
+     * @brief Emittedn when the token is fetched.
+     */
+    void tokenFetched();
 
     /**
      * @brief Emitted when a request to Stripe fails.

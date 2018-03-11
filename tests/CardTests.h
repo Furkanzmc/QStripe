@@ -28,4 +28,8 @@ private slots:
     void testValidCVC();
 
     void testCreateToken();
+    void testTokenFetch();
+
+private:
+    QString m_TokenID;
 };

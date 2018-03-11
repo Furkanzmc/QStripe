@@ -552,6 +552,36 @@ bool Card::createToken()
     return true;
 }
 
+void Card::fetchToken(const QString &tokenID)
+{
+    auto callback = [this](const Response & response) {
+        QVariantMap data = Utils::toVariantMap(response.data);
+        if (response.httpStatus == NetworkUtils::HttpStatusCodes::HTTP_200) {
+            Token *token = Token::fromJson(data);
+            Card *card = Card::fromJson(data["card"].toMap());
+
+            this->set(card);
+            m_Token->set(token);
+
+            token->deleteLater();
+            card->deleteLater();
+            emit tokenFetched();
+        }
+        else {
+            qDebug() << "[ERROR] Error occurred while fetching token.";
+            m_Error.set(data, response.httpStatus, response.networkError);
+            emit errorOccurred(&m_Error);
+        }
+    };
+
+    m_NetworkUtils.setHeader("Authorization", "Bearer " + Stripe::secretKey());
+    if (Stripe::apiVersion().length() > 0) {
+        m_NetworkUtils.setHeader("Stripe-Version", Stripe::apiVersion());
+    }
+
+    m_NetworkUtils.sendGet(Token::getURL(tokenID), callback);
+}
+
 const Error *Card::lastError() const
 {
     return &m_Error;
