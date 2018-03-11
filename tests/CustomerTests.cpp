@@ -155,7 +155,7 @@ void CustomerTests::testJsonStr()
 void CustomerTests::testJson()
 {
     QVariantMap data = getData();
-    const Customer *customer = Customer::fromJson(data);
+    Customer *customer = Customer::fromJson(data);
 
     const QVariantMap metadata = customer->metadata();
     for (auto it = metadata.constBegin(); it != metadata.constEnd(); it++) {
@@ -178,6 +178,10 @@ void CustomerTests::testJson()
 
     data.remove(Customer::FIELD_METADATA);
     QCOMPARE(customer->json(), data);
+
+    data.remove(Customer::FIELD_CURRENCY);
+    customer->setCurrency("");
+    QCOMPARE(customer->json(true), data);
 }
 
 void CustomerTests::testSet()
