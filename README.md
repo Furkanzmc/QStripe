@@ -167,9 +167,9 @@ Stripe {
 After you tokenize the card, you can create a card for the customer.
 Now, `Card::create()` method need a customer ID to create the card for that customer. There are 3 ways of doing this.
 
-1- Set the `customerID` property of the `Card` object. This ID will be used when creating the card.
-2- Add the `Card` to a `Customer` instance that has an ID. The following uses this option.
-3- Explicitly pass the customer ID to `Card::create()`.
+- Set the `customerID` property of the `Card` object. This ID will be used when creating the card.
+- Add the `Card` to a `Customer` instance that has an ID. The following uses this option.
+- Explicitly pass the customer ID to `Card::create()`.
 
 ```qml
 Stripe {
