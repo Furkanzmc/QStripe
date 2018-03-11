@@ -284,41 +284,96 @@ void Card::setCvc(const QString &cvcNumber)
     }
 }
 
-QVariantMap Card::json() const
+QVariantMap Card::json(bool omitEmpty) const
 {
     QVariantMap data;
 
-    data[FIELD_ID] = cardID();
-    data[FIELD_ADDRESS_CITY] = city();
-    data[FIELD_BRAND] = cardBrandName(brand());
+    if ((omitEmpty && m_CardID.length() > 0) || !omitEmpty) {
+        data[FIELD_ID] = cardID();
+    }
 
-    data[FIELD_COUNTRY] = country();
-    data[FIELD_CURRENCY] = currency();
-    data[FIELD_CVC_CHECK] = cvcCheckName(cvcCheck());
+    if ((omitEmpty && m_City.length() > 0) || !omitEmpty) {
+        data[FIELD_ADDRESS_CITY] = m_City;
+    }
 
-    data[FIELD_EXP_MONTH] = expirationMonth();
-    data[FIELD_EXP_YEAR] = expirationYear();
-    data[FIELD_FINGERPRINT] = fingerprint();
+    if ((omitEmpty && m_Brand != CardBrand::Unknown) || !omitEmpty) {
+        data[FIELD_BRAND] = cardBrandName(brand());
+    }
 
-    data[FIELD_FUNDING] = fundingTypeString(funding());
-    data[FIELD_NAME] = name();
-    data[FIELD_LAST4] = lastFourDigits();
+    if ((omitEmpty && m_Country.length() > 0) || !omitEmpty) {
+        data[FIELD_COUNTRY] = m_Country;
+    }
 
-    data[FIELD_TOKENIZATION_METHOD] = tokenizationMethodName(tokenizationMethod());
-    data[FIELD_METADATA] = metaData();
-    data[FIELD_SOURCE] = source();
+    if ((omitEmpty && m_Currency.length() > 0) || !omitEmpty) {
+        data[FIELD_CURRENCY] = m_Currency;
+    }
+
+    if ((omitEmpty && m_CVCCheck != CVCCheckUnknown) || !omitEmpty) {
+        data[FIELD_CVC_CHECK] = cvcCheckName(cvcCheck());
+    }
+
+    if ((omitEmpty && m_ExpirationMonth > 0) || !omitEmpty) {
+        data[FIELD_EXP_MONTH] = m_ExpirationMonth;
+    }
+
+    if ((omitEmpty && m_ExpirationYear > 0) || !omitEmpty) {
+        data[FIELD_EXP_YEAR] = m_ExpirationYear;
+    }
+
+    if ((omitEmpty && m_Fingerprint.length() > 0) || !omitEmpty) {
+        data[FIELD_FINGERPRINT] = m_Fingerprint;
+    }
+
+    if ((omitEmpty && m_FundingType != FundingUnknown) || !omitEmpty) {
+        data[FIELD_FUNDING] = fundingTypeString(funding());
+    }
+
+    if ((omitEmpty && m_Name.length() > 0) || !omitEmpty) {
+        data[FIELD_NAME] = m_Name;
+    }
+
+    if ((omitEmpty && m_LastFourDigits.length() > 0) || !omitEmpty) {
+        data[FIELD_LAST4] = m_LastFourDigits;
+    }
+
+    if ((omitEmpty && m_TokenizationMethod != TokenizationUnknown) || !omitEmpty) {
+        data[FIELD_TOKENIZATION_METHOD] = tokenizationMethodName(tokenizationMethod());
+    }
+
+    if ((omitEmpty && m_MetaData.size() > 0) || !omitEmpty) {
+        for (auto it = m_MetaData.constBegin(); it != m_MetaData.constEnd(); it++) {
+            const QString key = FIELD_METADATA + "[" + it.key() + "]";
+            const QVariant &value = it.value();
+
+            if (value.type() == QVariant::String) {
+                data[key] = value.toString();
+            }
+            else if (value.type() == QVariant::Int) {
+                data[key] = value.toInt();
+            }
+            else if (value.type() == QVariant::Int) {
+                data[key] = value.toInt();
+            }
+        }
+    }
+
+    if ((omitEmpty && m_Source.length() > 0) || !omitEmpty) {
+        data[FIELD_SOURCE] = m_Source;
+    }
 
     const QVariantMap addressData = m_Address.json(FIELD_ADDRESS_PREFIX);
     for (auto it = addressData.constBegin(); it != addressData.constEnd(); it++) {
-        data[it.key()] = it.value();
+        if ((omitEmpty && it.value().toString().length() > 0) || !omitEmpty) {
+            data[it.key()] = it.value().toString();
+        }
     }
 
     return data;
 }
 
-QString Card::jsonString() const
+QString Card::jsonString(bool omitEmpty) const
 {
-    return Utils::toJsonString(json());
+    return Utils::toJsonString(json(omitEmpty));
 }
 
 Card::CardBrand Card::possibleCardBrand() const

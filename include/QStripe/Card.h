@@ -306,15 +306,16 @@ public:
     /**
      * @brief Returns the json representation of this instance. This will not include the CVC number or the card number.
      * To create a token, use `QStripe::Stripe::createToken()`
+     * @param omitEmpty If set to true, the empty fields will not be in the dictionary.
      * @return QVariantMap
      */
-    QVariantMap json() const;
+    Q_INVOKABLE QVariantMap json(bool omitEmpty = false) const;
 
     /**
      * @brief Returns the json representation of this instance in string.
      * @return QString
      */
-    QString jsonString() const;
+    Q_INVOKABLE QString jsonString(bool omitEmpty = false) const;
 
     /**
      * @brief Returns the possible card brand based on the card number. This method will be automatically called whenever the card number changes to a valid
