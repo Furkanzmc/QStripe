@@ -29,6 +29,8 @@ const QString Card::FIELD_LAST4 = "last4";
 const QString Card::FIELD_TOKENIZATION_METHOD = "tokenization_method";
 const QString Card::FIELD_METADATA = "metadata";
 
+const QString Card::FIELD_CUSTOMER = "customer";
+
 Card::Card(QObject *parent)
     : QObject(parent)
     , m_CardID("")
@@ -50,6 +52,7 @@ Card::Card(QObject *parent)
     , m_Token(new Token(this))
     , m_NetworkUtils()
     , m_Error()
+    , m_CustomerID("")
 {
     connect(this, &Card::cardNumberChanged, this, &Card::updateCardBrand);
 }
@@ -492,6 +495,20 @@ bool Card::validCard() const
     return validCardNumber() && validCVC() && validExpirationDate();
 }
 
+QString Card::customerID() const
+{
+    return m_CustomerID;
+}
+
+void Card::setCustomerID(const QString &id)
+{
+    const bool changed = m_CustomerID != id;
+    if (changed) {
+        m_CustomerID = id;
+        emit customerIDChanged();
+    }
+}
+
 void Card::set(const Card *other)
 {
     setCardID(other->cardID());
@@ -623,6 +640,41 @@ bool Card::create(QString customerID)
     QVariantMap data;
     data["source"] = m_Token->tokenID();
     m_NetworkUtils.sendPost(getURL(customerID), data, callback);
+    return true;
+}
+
+bool Card::deleteCard(QString customerID)
+{
+    if (m_CardID.length() == 0) {
+        return false;
+    }
+
+    if (customerID.length() == 0) {
+        customerID = getCustomerID();
+    }
+
+    if (customerID.length() == 0) {
+        return false;
+    }
+
+    auto callback = [this](const Response & response) {
+        QVariantMap data = Utils::toVariantMap(response.data);
+        if (response.httpStatus == NetworkUtils::HttpStatusCodes::HTTP_200) {
+            emit deleted();
+        }
+        else {
+            qDebug() << "[ERROR] Error occurred while deleting the card.";
+            m_Error.set(data, response.httpStatus, response.networkError);
+            emit errorOccurred(&m_Error);
+        }
+    };
+
+    m_NetworkUtils.setHeader("Authorization", "Bearer " + Stripe::secretKey());
+    if (Stripe::apiVersion().length() > 0) {
+        m_NetworkUtils.setHeader("Stripe-Version", Stripe::apiVersion());
+    }
+
+    m_NetworkUtils.sendDelete(getURL(customerID, m_CardID), callback);
     return true;
 }
 
@@ -993,11 +1045,16 @@ QString Card::getCustomerID() const
 {
     QString id = "";
 
-    if (parent()) {
-        Customer *customer = dynamic_cast<Customer *>(parent());
-        if (customer) {
-            id = customer->customerID();
+    if (m_CustomerID.length() == 0) {
+        if (parent()) {
+            Customer *customer = dynamic_cast<Customer *>(parent());
+            if (customer) {
+                id = customer->customerID();
+            }
         }
+    }
+    else {
+        id = m_CustomerID;
     }
 
     return id;

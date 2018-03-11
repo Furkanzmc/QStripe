@@ -111,6 +111,39 @@ bool Stripe::fetchCustomer(const QString &customerID)
     return true;
 }
 
+bool Stripe::fetchCard(const QString &customerID, const QString &cardID)
+{
+    if (cardID.length() == 0) {
+        return false;
+    }
+
+    if (customerID.length() == 0) {
+        return false;
+    }
+
+    m_NetworkUtils.setHeader("Authorization", "Bearer " + Stripe::secretKey());
+    if (Stripe::apiVersion().length() > 0) {
+        m_NetworkUtils.setHeader("Stripe-Version", Stripe::apiVersion());
+    }
+
+    auto callback = [this](const Response & response) {
+        QVariantMap data = Utils::toVariantMap(response.data);
+        if (response.httpStatus == NetworkUtils::HttpStatusCodes::HTTP_200) {
+            Card *card = Card::fromJson(data);
+            card->setParent(this);
+            emit cardFetched(card);
+        }
+        else {
+            qDebug() << "[ERROR] Error occurred while fetching the card.";
+            m_Error.set(data, response.httpStatus, response.networkError);
+            emit errorOccurred(&m_Error);
+        }
+    };
+
+    m_NetworkUtils.sendGet(Card::getURL(customerID, cardID), callback);
+    return true;
+}
+
 const Error *Stripe::lastError() const
 {
     return &m_Error;

@@ -45,6 +45,7 @@ class Card : public QObject
 
     Q_PROPERTY(bool validCardLenght READ validCardLenght CONSTANT)
     Q_PROPERTY(bool validCardNumber READ validCardNumber CONSTANT)
+    Q_PROPERTY(QString customerID READ customerID WRITE setCustomerID NOTIFY customerIDChanged)
 
     Q_CLASSINFO("DefaultProperty", "token")
 
@@ -68,6 +69,8 @@ public:
     static const QString FIELD_LAST4;
     static const QString FIELD_TOKENIZATION_METHOD;
     static const QString FIELD_METADATA;
+
+    static const QString FIELD_CUSTOMER;
 
     enum CardBrand {
         AmericanExpress,
@@ -365,6 +368,18 @@ public:
     bool validCard() const;
 
     /**
+     * @brief Returns the customer ID.
+     * @return QString
+     */
+    QString customerID() const;
+
+    /**
+     * @brief Sets the customer ID.
+     * @param id
+     */
+    void setCustomerID(const QString &id);
+
+    /**
      * @brief Copies the contents of other to this instance.
      * @param other
      */
@@ -387,10 +402,20 @@ public:
     /**
      * @brief This will only work If the Token has a Token ID. If the token ID does not exist, it will return false.
      * You can provide the customerID here. If the parent of this instance is a Customer object, the customer ID will be fetched from that Customer.
-     * If that's not the case and you provided an empty customerID, this will return false. You cannot call the createCard method If the card ID exists.
+     * If that's not the case and you provided an empty customerID, this will return false. You cannot call the create method If the card ID exists.
      * @param customerID
      */
     Q_INVOKABLE bool create(QString customerID = "");
+
+    /**
+     * @brief This will only work If the card has an ID. If the ID does not exist, it will return false.
+     * You can provide the customerID here. If the parent of this instance is a Customer object, the customer ID will be fetched from that Customer.
+     * If that's not the case and you provided an empty customerID, this will return false.
+     * You cannot call the deleteCard method If the card ID does not exists.
+     * @param customerID
+     * @return
+     */
+    Q_INVOKABLE bool deleteCard(QString customerID = "");
 
     /**
      * @brief Returns the last ocurred error.
@@ -558,6 +583,11 @@ signals:
     void cvcChanged();
 
     /**
+     * @brief Emitted when the customer ID changes.
+     */
+    void customerIDChanged();
+
+    /**
      * @brief Emitted when a Token is created for this card.
      */
     void tokenCreated();
@@ -571,6 +601,11 @@ signals:
      * @brief Emitted when the card is created.
      */
     void created();
+
+    /**
+     * @brief Emitted when the card is deleted.
+     */
+    void deleted();
 
     /**
      * @brief Emitted when a request to Stripe fails.
@@ -606,6 +641,11 @@ private:
     NetworkUtils m_NetworkUtils;
 
     Error m_Error;
+    /**
+     * @brief This will be empty by default. But it will be set to a value when the card is created by calling the create() method.
+     * This can also be set from the outside and if it has a value it will have a presedence over the parameters.
+     */
+    QString m_CustomerID;
 
 private:
     /**

@@ -9,9 +9,10 @@
 
 using namespace QStripe;
 
-StripeTests::StripeTests(QString customerID, QObject *parent)
+StripeTests::StripeTests(QString customerID, QString cardID, QObject *parent)
     : QObject(parent)
     , m_CustomerID(customerID)
+    , m_CardID(cardID)
 {
 
 }
@@ -37,4 +38,27 @@ void StripeTests::testFetchCustomer()
         QCOMPARE(customer->customerID(), m_CustomerID);
         QCOMPARE(customer->deleted(), false);
     }
+}
+
+void StripeTests::testFetchCard()
+{
+    if (m_CardID.length() == 0) {
+        qWarning() << "Card ID does not exist. Skipping customer fetch test.";
+        return;
+    }
+
+    Stripe stripe;
+    QCOMPARE(stripe.fetchCard(m_CustomerID, ""), false);
+
+    // FIXME: The card ID does not exist because we delete it in CardTests. Create another card for the fetch test.
+    QCOMPARE(stripe.fetchCard(m_CustomerID, m_CardID), true);
+
+    QSignalSpy spyUpdated(&stripe, &Stripe::errorOccurred);
+    QCOMPARE(spyUpdated.wait(), true);
+//    QList<QVariant> list = spyUpdated.takeFirst();
+//    if (list.size() > 0) {
+//        QObject *obj = qvariant_cast<QObject *>(list.at(0));
+//        Card *card = qobject_cast<Card *>(obj);
+//        QCOMPARE(card->cardID(), m_CardID);
+//    }
 }

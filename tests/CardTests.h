@@ -15,6 +15,8 @@ public:
     static QVariantMap getAddressData();
     static QVariantMap getCardData();
 
+    QString getCardID() const;
+
 private slots:
     void testSignals();
     void testFromJson();
@@ -36,8 +38,12 @@ private slots:
     void testTokenFetch();
     void testCreate();
 
+    void testDelete();
+
 private:
-    QString m_CustomerID, m_TokenID;
+    QString m_CustomerID,
+            m_TokenID,
+            m_CardID;
     // The card that the token ID belongs to.
     QStripe::Card *m_Card;
 };
