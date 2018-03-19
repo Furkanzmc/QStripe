@@ -1,0 +1,3 @@
+module QStripe
+plugin QStripe
+classname QStripePlugin
