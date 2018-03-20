@@ -657,7 +657,7 @@ signals:
      * @brief Emitted when a request to Stripe fails.
      * @param error
      */
-    void errorOccurred(const Error *error);
+    void errorOccurred(Error *error);
 
 private:
     QString m_CardID;
