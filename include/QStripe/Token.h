@@ -144,6 +144,12 @@ public:
      */
     Q_INVOKABLE void set(const Token *other);
 
+signals:
+    /**
+     * @brief Emitted after the clear() method is called.
+     */
+    void cleared();
+
 private:
     // FIXME: Create a seperate class for BankAccount.
     QVariantMap m_BankAccount;

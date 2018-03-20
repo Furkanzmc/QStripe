@@ -630,6 +630,11 @@ signals:
     void validCardChanged();
 
     /**
+     * @brief Emitted after the clear() method is called.
+     */
+    void cleared();
+
+    /**
      * @brief Emitted when a request to Stripe fails.
      * @param error
      */

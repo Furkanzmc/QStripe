@@ -64,6 +64,8 @@ void Token::clear()
     m_Type = TypeUnknown;
     m_IsLiveMode = false;
     m_IsUsed = false;
+
+    emit cleared();
 }
 
 QString Token::typeName(Type type)

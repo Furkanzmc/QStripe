@@ -714,6 +714,8 @@ void Card::clear()
     m_Error.clear();
 
     m_CustomerID = "";
+
+    emit cleared();
 }
 
 const Error *Card::lastError() const
