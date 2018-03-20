@@ -46,5 +46,7 @@ SOURCES += \
 
 OTHER_FILES += $$PWD/README.md
 
+QML_IMPORT_PATH += $$PWD
+
 DISTFILES += \
     $$PWD/qmldir
