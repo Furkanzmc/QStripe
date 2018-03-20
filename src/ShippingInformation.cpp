@@ -91,8 +91,14 @@ void ShippingInformation::set(const ShippingInformation *other)
 void ShippingInformation::clear()
 {
     m_Name.clear();
+    emit nameChanged();
+
     m_Phone.clear();
+    emit phoneChanged();
+
     m_Address.clear();
+    emit addressChanged();
+
     emit cleared();
 }
 

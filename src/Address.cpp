@@ -180,14 +180,26 @@ void Address::set(const Address *other)
 void Address::clear()
 {
     m_Country.clear();
+    emit countryChanged();
+
     m_State.clear();
+    emit stateChanged();
+
     m_City.clear();
+    emit cityChanged();
 
     m_LineOne.clear();
+    emit lineOneChanged();
+
     m_LineTwo.clear();
+    emit lineTwoChanged();
+
     m_PostalCode.clear();
+    emit postalCodeChanged();
 
     m_ZipCheck = ZipCheck::ZipCheckUnknown;
+    emit zipCheckChanged();
+
     emit cleared();
 }
 

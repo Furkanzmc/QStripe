@@ -361,14 +361,26 @@ bool Customer::deleteCustomer()
 void Customer::clear()
 {
     m_CustomerID.clear();
+    emit customerIDChanged();
+
     m_DefaultSource.clear();
+    emit defaultSourceChanged();
+
     m_Email.clear();
+    emit emailChanged();
 
     m_Description.clear();
+    emit descriptionChanged();
+
     m_Currency.clear();
+    emit currencyChanged();
+
     m_Metadata.clear();
+    emit metadataChanged();
 
     m_ShippingInformation.clear();
+    emit shippingInformationChanged();
+
     emit cleared();
 }
 

@@ -690,30 +690,58 @@ bool Card::deleteCard(QString customerID)
 void Card::clear()
 {
     m_CardID = "";
+    emit cardIDChanged();
+
     m_Address.clear();
+    emit addressChanged();
+
     m_Brand = CardBrand::Unknown;
+    emit brandChanged();
 
     m_Country = "";
+    emit countryChanged();
+
     m_Currency = "";
+    emit currencyChanged();
+
     m_CVCCheck = CVCCheck::CVCCheckUnknown;
+    emit cvcCheckChanged();
 
     m_ExpirationMonth = 0;
+    emit expirationMonthChanged();
+
     m_ExpirationYear = 0;
+    emit expirationYearChanged();
+
     m_Fingerprint = "";
+    emit fingerprintChanged();
 
     m_FundingType = FundingType::FundingUnknown;
+    emit fundingChanged();
+
     m_Name = "";
+    emit nameChanged();
+
     m_LastFourDigits = "";
+    emit lastFourDigitsChanged();
 
     m_TokenizationMethod = TokenizationMethod::TokenizationUnknown;
+    emit tokenizationMethodChanged();
+
     m_MetaData.clear();
+    emit metaDataChanged();
+
     m_CardNumber = "";
+    emit cardNumberChanged();
 
     m_CVC = "";
+    emit cvcChanged();
+
     m_Token->clear();
     m_Error.clear();
 
     m_CustomerID = "";
+    emit customerIDChanged();
 
     emit cleared();
 }
