@@ -17,7 +17,7 @@ class Card : public QObject
 
     Q_PROPERTY(QString cardID READ cardID NOTIFY cardIDChanged)
     Q_PROPERTY(Address *address READ address WRITE setAddress NOTIFY addressChanged)
-    Q_PROPERTY(CardBrand brand READ brand WRITE setBrand NOTIFY brandChanged)
+    Q_PROPERTY(CardBrand brand READ brand NOTIFY brandChanged)
 
     Q_PROPERTY(QString country READ country WRITE setCountry NOTIFY countryChanged)
     Q_PROPERTY(QString currency READ currency WRITE setCurrency NOTIFY currencyChanged)
