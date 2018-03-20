@@ -439,56 +439,56 @@ public:
      * @param brand
      * @return QString
      */
-    static QString cardBrandName(CardBrand brand);
+    Q_INVOKABLE static QString cardBrandName(CardBrand brand);
 
     /**
      * @brief Returns the CardBrand enum from the name.
      * @param name
      * @return CardBrand
      */
-    static CardBrand cardBrandType(const QString &name);
+    Q_INVOKABLE static CardBrand cardBrandType(const QString &name);
 
     /**
      * @brief Returns the string representation of the funding type.
      * @param type
      * @return QString
      */
-    static QString fundingTypeString(FundingType type);
+    Q_INVOKABLE static QString fundingTypeString(FundingType type);
 
     /**
      * @brief Returns the FundingType enum for the given name.
      * @param name
      * @return FundingType
      */
-    static FundingType fundingType(const QString &name);
+    Q_INVOKABLE static FundingType fundingType(const QString &name);
 
     /**
      * @brief Returns the CVCCheck type from the name.
      * @param name
      * @return CVCCheck
      */
-    static CVCCheck cvcCheckType(const QString &name);
+    Q_INVOKABLE static CVCCheck cvcCheckType(const QString &name);
 
     /**
      * @brief Returns the name of the cvc check type.
      * @param type
      * @return QString
      */
-    static QString cvcCheckName(CVCCheck type);
+    Q_INVOKABLE static QString cvcCheckName(CVCCheck type);
 
     /**
      * @brief Returns the tokenization type from its string representation.
      * @param name
      * @return TokenizationMethod
      */
-    static TokenizationMethod tokenizationMethodType(const QString &name);
+    Q_INVOKABLE static TokenizationMethod tokenizationMethodType(const QString &name);
 
     /**
      * @brief Returns the string representation of the tokenization method.
      * @param method
      * @return QString
      */
-    static QString tokenizationMethodName(TokenizationMethod method);
+    Q_INVOKABLE static QString tokenizationMethodName(TokenizationMethod method);
 
     /**
      * @brief Returns a Card instance from the json string.
