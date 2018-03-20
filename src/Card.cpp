@@ -53,6 +53,9 @@ Card::Card(QObject *parent)
     , m_NetworkUtils()
     , m_Error()
     , m_CustomerID("")
+    , m_IsValidCardLenght(false)
+    , m_IsValidCardNumber(false)
+    , m_IsValidCard(false)
 {
     connect(this, &Card::cardNumberChanged, this, &Card::updateCardBrand);
 }
@@ -143,6 +146,7 @@ void Card::setExpirationMonth(int month)
     const bool changed = m_ExpirationMonth != month;
     if (changed) {
         m_ExpirationMonth = month;
+        setValidCard(validCard());
         emit expirationMonthChanged();
     }
 }
@@ -157,6 +161,7 @@ void Card::setExpirationYear(int year)
     const bool changed = m_ExpirationYear != year;
     if (changed) {
         m_ExpirationYear = year;
+        setValidCard(validCard());
         emit expirationYearChanged();
     }
 }
@@ -255,6 +260,9 @@ void Card::setCardNumber(const QString &number)
     const bool changed = m_CardNumber != number;
     if (changed) {
         m_CardNumber = number;
+        setValidCardNumber(validCardNumber());
+        setValidCard(validCard());
+        setValidCardNumberLenght(validCardLenght());
         emit cardNumberChanged();
     }
 }
@@ -269,6 +277,7 @@ void Card::setCvc(const QString &cvcNumber)
     const bool changed = m_CVC != cvcNumber;
     if (changed) {
         m_CVC = cvcNumber;
+        setValidCard(validCard());
         emit cvcChanged();
     }
 }
@@ -1028,6 +1037,33 @@ void Card::setCVCCheck(CVCCheck check)
     if (changed) {
         m_CVCCheck = check;
         emit cvcCheckChanged();
+    }
+}
+
+void Card::setValidCard(bool valid)
+{
+    const bool changed = m_IsValidCard != valid;
+    if (changed) {
+        m_IsValidCard = valid;
+        emit validCardChanged();
+    }
+}
+
+void Card::setValidCardNumber(bool valid)
+{
+    const bool changed = m_IsValidCardNumber != valid;
+    if (changed) {
+        m_IsValidCardNumber = valid;
+        emit validCardNumberChanged();
+    }
+}
+
+void Card::setValidCardNumberLenght(bool valid)
+{
+    const bool changed = m_IsValidCardLenght != valid;
+    if (changed) {
+        m_IsValidCardLenght = valid;
+        emit validCardLenghtChanged();
     }
 }
 
