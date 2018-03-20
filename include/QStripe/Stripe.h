@@ -18,7 +18,7 @@ class Stripe : public QObject
     Q_PROPERTY(QString secretKey READ secretKey WRITE setSecretKey)
     Q_PROPERTY(QString apiVersion READ apiVersion WRITE setApiVersion)
 
-    Q_PROPERTY(QQmlListProperty<Customer> customers READ customers)
+    Q_PROPERTY(QQmlListProperty<QStripe::Customer> customers READ customers)
     Q_CLASSINFO("DefaultProperty", "customers")
 
 public:

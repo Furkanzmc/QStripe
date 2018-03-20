@@ -25,7 +25,7 @@ class Customer : public QObject
 
     Q_PROPERTY(ShippingInformation *shippingInformation READ shippingInformation WRITE setShippingInformation NOTIFY shippingInformationChanged)
     Q_PROPERTY(bool deleted READ deleted CONSTANT)
-    Q_PROPERTY(QQmlListProperty<Card> cards READ cards)
+    Q_PROPERTY(QQmlListProperty<QStripe::Card> cards READ cards)
 
     Q_CLASSINFO("DefaultProperty", "cards")
 
