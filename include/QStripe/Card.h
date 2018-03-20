@@ -47,6 +47,10 @@ class Card : public QObject
     Q_PROPERTY(bool validCardNumber READ validCardNumber NOTIFY validCardNumberChanged)
     Q_PROPERTY(bool validCard READ validCard NOTIFY validCardChanged)
 
+    Q_PROPERTY(bool validExpirationMonth READ validExpirationMonth NOTIFY validExpirationMonthChanged)
+    Q_PROPERTY(bool validExpirationYear READ validExpirationYear NOTIFY validExpirationYearChanged)
+    Q_PROPERTY(bool validCVC READ validCVC NOTIFY validCVCChanged)
+
     Q_PROPERTY(QString customerID READ customerID WRITE setCustomerID NOTIFY customerIDChanged)
 
     Q_CLASSINFO("DefaultProperty", "token")
@@ -635,6 +639,21 @@ signals:
     void cleared();
 
     /**
+     * @brief Emitted when the validity of the expiration month changes.
+     */
+    void validExpirationMonthChanged();
+
+    /**
+     * @brief Emitted when the validity of the expiration year changes.
+     */
+    void validExpirationYearChanged();
+
+    /**
+     * @brief Emitted when the validity of the cvc number changes.
+     */
+    void validCVCChanged();
+
+    /**
      * @brief Emitted when a request to Stripe fails.
      * @param error
      */
@@ -675,7 +694,10 @@ private:
     QString m_CustomerID;
     bool m_IsValidCardLenght,
          m_IsValidCardNumber,
-         m_IsValidCard;
+         m_IsValidCard,
+         m_IsValidExpirationMonth,
+         m_IsValidExpirationYear,
+         m_IsValidCVC;
 
 private:
     /**
@@ -728,6 +750,24 @@ private:
      * @param valid
      */
     void setValidCardNumberLenght(bool valid);
+
+    /**
+     * @brief Emits the signal If the validity of the expiration month has changed.
+     * @param valid
+     */
+    void setValidExpirationMonth(bool valid);
+
+    /**
+     * @brief Emits the signal If the validity of the expiration year has changed.
+     * @param valid
+     */
+    void setValidExpirationYear(bool valid);
+
+    /**
+     * @brief Emits the signal If the validity of the cvc has changed.
+     * @param valid
+     */
+    void setValidCVC(bool valid);
 
     /**
      * @brief This is connected to the cardNumberChanged() signal. And it udates the brand.

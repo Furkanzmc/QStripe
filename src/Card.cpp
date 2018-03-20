@@ -56,6 +56,9 @@ Card::Card(QObject *parent)
     , m_IsValidCardLenght(false)
     , m_IsValidCardNumber(false)
     , m_IsValidCard(false)
+    , m_IsValidExpirationMonth(false)
+    , m_IsValidExpirationYear(false)
+    , m_IsValidCVC(false)
 {
     connect(this, &Card::cardNumberChanged, this, &Card::updateCardBrand);
 }
@@ -147,6 +150,7 @@ void Card::setExpirationMonth(int month)
     if (changed) {
         m_ExpirationMonth = month;
         setValidCard(validCard());
+        setValidExpirationMonth(validExpirationMonth());
         emit expirationMonthChanged();
     }
 }
@@ -162,6 +166,7 @@ void Card::setExpirationYear(int year)
     if (changed) {
         m_ExpirationYear = year;
         setValidCard(validCard());
+        setValidExpirationYear(validExpirationYear());
         emit expirationYearChanged();
     }
 }
@@ -278,6 +283,7 @@ void Card::setCvc(const QString &cvcNumber)
     if (changed) {
         m_CVC = cvcNumber;
         setValidCard(validCard());
+        setValidCVC(validCVC());
         emit cvcChanged();
     }
 }
@@ -1094,6 +1100,33 @@ void Card::setValidCardNumberLenght(bool valid)
     if (changed) {
         m_IsValidCardLenght = valid;
         emit validCardLenghtChanged();
+    }
+}
+
+void Card::setValidExpirationMonth(bool valid)
+{
+    const bool changed = m_IsValidExpirationMonth != valid;
+    if (changed) {
+        m_IsValidExpirationMonth = valid;
+        emit validExpirationMonthChanged();
+    }
+}
+
+void Card::setValidExpirationYear(bool valid)
+{
+    const bool changed = m_IsValidExpirationYear != valid;
+    if (changed) {
+        m_IsValidExpirationYear = valid;
+        emit validExpirationYearChanged();
+    }
+}
+
+void Card::setValidCVC(bool valid)
+{
+    const bool changed = m_IsValidCVC != valid;
+    if (changed) {
+        m_IsValidCardLenght = valid;
+        emit validCVCChanged();
     }
 }
 
