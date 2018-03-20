@@ -149,7 +149,6 @@ const Error *Stripe::lastError() const
     return &m_Error;
 }
 
-
 void Stripe::updateVersionHeader()
 {
     m_NetworkUtils.setHeader("Stripe-Version", m_APIVersion);
