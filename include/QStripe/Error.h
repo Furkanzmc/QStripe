@@ -116,6 +116,11 @@ public:
     void set(QVariantMap errorResponse, int httpCode = -1, int networkErrorCode = -1);
 
     /**
+     * @brief Resets the properties to the default.
+     */
+    void clear();
+
+    /**
      * @brief Returns the JSON object that was used to construct this Error.
      * @return QVariantMap
      */

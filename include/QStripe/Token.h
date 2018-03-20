@@ -86,6 +86,11 @@ public:
     bool used() const;
 
     /**
+     * @brief Resets the properties to their default.
+     */
+    Q_INVOKABLE void clear();
+
+    /**
      * @brief Returns the string representation of the given Type.
      * @param type
      * @return QString

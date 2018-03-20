@@ -167,6 +167,21 @@ void Error::set(QVariantMap errorResponse, int httpCode, int networkErrorCode)
     m_NetworkError = networkErrorCode;
 }
 
+void Error::clear()
+{
+    m_ChargeID = "";
+    m_Message = "";
+    m_DeclineCode = "";
+
+    m_Param = "";
+    m_Code = CodeNone;
+    m_Type = ErrorNone;
+
+    m_HttpStatus = -1;
+    m_NetworkError = -1;
+    m_RawError.clear();
+}
+
 const QVariantMap &Error::rawErrorObject() const
 {
     return m_RawError;

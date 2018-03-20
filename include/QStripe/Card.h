@@ -418,6 +418,11 @@ public:
     Q_INVOKABLE bool deleteCard(QString customerID = "");
 
     /**
+     * @brief Resets the properties to their defaults.
+     */
+    Q_INVOKABLE void clear();
+
+    /**
      * @brief Returns the last ocurred error.
      * @return const Error *
      */

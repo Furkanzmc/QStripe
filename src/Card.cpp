@@ -678,6 +678,35 @@ bool Card::deleteCard(QString customerID)
     return true;
 }
 
+void Card::clear()
+{
+    m_CardID = "";
+    m_Address.clear();
+    m_Brand = CardBrand::Unknown;
+
+    m_Country = "";
+    m_Currency = "";
+    m_CVCCheck = CVCCheck::CVCCheckUnknown;
+
+    m_ExpirationMonth = 0;
+    m_ExpirationYear = 0;
+    m_Fingerprint = "";
+
+    m_FundingType = FundingType::FundingUnknown;
+    m_Name = "";
+    m_LastFourDigits = "";
+
+    m_TokenizationMethod = TokenizationMethod::TokenizationUnknown;
+    m_MetaData.clear();
+    m_CardNumber = "";
+
+    m_CVC = "";
+    m_Token->clear();
+    m_Error.clear();
+
+    m_CustomerID = "";
+}
+
 const Error *Card::lastError() const
 {
     return &m_Error;
