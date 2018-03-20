@@ -84,6 +84,11 @@ void Stripe::clearCustomers()
 
 bool Stripe::fetchCustomer(const QString &customerID)
 {
+    if (m_SecretKey.length() == 0) {
+        qDebug() << "[ERROR] secretKey is not set in the Stripe instance. Cannot send the request.";
+        return false;
+    }
+
     if (customerID.length() == 0) {
         return false;
     }
@@ -113,6 +118,11 @@ bool Stripe::fetchCustomer(const QString &customerID)
 
 bool Stripe::fetchCard(const QString &customerID, const QString &cardID)
 {
+    if (m_SecretKey.length() == 0) {
+        qDebug() << "[ERROR] secretKey is not set in the Stripe instance. Cannot send the request.";
+        return false;
+    }
+
     if (cardID.length() == 0) {
         return false;
     }

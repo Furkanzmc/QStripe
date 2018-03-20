@@ -257,6 +257,11 @@ void Customer::set(const Customer *other)
 
 bool Customer::create()
 {
+    if (Stripe::secretKey().length() == 0) {
+        qDebug() << "[ERROR] secretKey is not set in the Stripe instance. Cannot send the request.";
+        return false;
+    }
+
     if (m_CustomerID.length() > 0) {
         return false;
     }
@@ -294,6 +299,11 @@ bool Customer::create()
 
 bool Customer::update()
 {
+    if (Stripe::secretKey().length() == 0) {
+        qDebug() << "[ERROR] secretKey is not set in the Stripe instance. Cannot send the request.";
+        return false;
+    }
+
     if (m_CustomerID.length() == 0) {
         return false;
     }
@@ -332,6 +342,11 @@ bool Customer::update()
 
 bool Customer::deleteCustomer()
 {
+    if (Stripe::secretKey().length() == 0) {
+        qDebug() << "[ERROR] secretKey is not set in the Stripe instance. Cannot send the request.";
+        return false;
+    }
+
     if (m_CustomerID.length() == 0) {
         return false;
     }

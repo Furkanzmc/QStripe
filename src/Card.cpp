@@ -551,6 +551,11 @@ void Card::set(const Card *other)
 
 bool Card::createToken()
 {
+    if (Stripe::secretKey().length() == 0) {
+        qDebug() << "[ERROR] secretKey is not set in the Stripe instance. Cannot send the request.";
+        return false;
+    }
+
     if (m_Token->tokenID().length() > 0) {
         return false;
     }
@@ -586,6 +591,16 @@ bool Card::createToken()
 
 void Card::fetchToken(const QString &tokenID)
 {
+    if (Stripe::secretKey().length() == 0) {
+        qDebug() << "[ERROR] secretKey is not set in the Stripe instance. Cannot send the request.";
+        return;
+    }
+
+    if (tokenID.length() == 0) {
+        qDebug() << "[ERROR] tokenID is empty.";
+        return;
+    }
+
     auto callback = [this](const Response & response) {
         QVariantMap data = Utils::toVariantMap(response.data);
         if (response.httpStatus == NetworkUtils::HttpStatusCodes::HTTP_200) {
@@ -616,6 +631,11 @@ void Card::fetchToken(const QString &tokenID)
 
 bool Card::create(QString customerID)
 {
+    if (Stripe::secretKey().length() == 0) {
+        qDebug() << "[ERROR] secretKey is not set in the Stripe instance. Cannot send the request.";
+        return false;
+    }
+
     if (m_Token->tokenID().length() == 0) {
         return false;
     }
@@ -660,6 +680,11 @@ bool Card::create(QString customerID)
 
 bool Card::deleteCard(QString customerID)
 {
+    if (Stripe::secretKey().length() == 0) {
+        qDebug() << "[ERROR] secretKey is not set in the Stripe instance. Cannot send the request.";
+        return false;
+    }
+
     if (m_CardID.length() == 0) {
         return false;
     }
