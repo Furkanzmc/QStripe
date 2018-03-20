@@ -20,6 +20,50 @@ class Error : public QObject
     Q_PROPERTY(int httpStatus READ httpStatus CONSTANT)
     Q_PROPERTY(int networkErrorCode READ networkErrorCode CONSTANT)
 
+    // Since decline codes are strings, define a property for each one here.
+    Q_PROPERTY(QString DeclineCodeApproveWithId READ declineCodeApproveWithId CONSTANT)
+    Q_PROPERTY(QString DeclineCodeCallIssuer READ declineCodeCallIssuer CONSTANT)
+    Q_PROPERTY(QString DeclineCodeCardNotSupported READ declineCodeCardNotSupported CONSTANT)
+    Q_PROPERTY(QString DeclineCodeCardVelocityExceeded READ declineCodeCardVelocityExceeded CONSTANT)
+    Q_PROPERTY(QString DeclineCodeCurrencyNotSupported READ declineCodeCurrencyNotSupported CONSTANT)
+    Q_PROPERTY(QString DeclineCodeDoNotHonor READ declineCodeDoNotHonor CONSTANT)
+    Q_PROPERTY(QString DeclineCodeDoNotTryAgain READ declineCodeDoNotTryAgain CONSTANT)
+    Q_PROPERTY(QString DeclineCodeDuplicateTransaction READ declineCodeDuplicateTransaction CONSTANT)
+    Q_PROPERTY(QString DeclineCodeExpiredCard READ declineCodeExpiredCard CONSTANT)
+    Q_PROPERTY(QString DeclineCodeFraudulent READ declineCodeFraudulent CONSTANT)
+    Q_PROPERTY(QString DeclineCodeGenericDecline READ declineCodeGenericDecline CONSTANT)
+    Q_PROPERTY(QString DeclineCodeIncorrectNumber READ declineCodeIncorrectNumber CONSTANT)
+    Q_PROPERTY(QString DeclineCodeIncorrectCvc READ declineCodeIncorrectCvc CONSTANT)
+    Q_PROPERTY(QString DeclineCodeIncorrectPin READ declineCodeIncorrectPin CONSTANT)
+    Q_PROPERTY(QString DeclineCodeIncorrectZip READ declineCodeIncorrectZip CONSTANT)
+    Q_PROPERTY(QString DeclineCodeInsufficientFunds READ declineCodeInsufficientFunds CONSTANT)
+    Q_PROPERTY(QString DeclineCodeInvalidAccount READ declineCodeInvalidAccount CONSTANT)
+    Q_PROPERTY(QString DeclineCodeInvalidAmount READ declineCodeInvalidAmount CONSTANT)
+    Q_PROPERTY(QString DeclineCodeInvalidCvc READ declineCodeInvalidCvc CONSTANT)
+    Q_PROPERTY(QString DeclineCodeInvalidExpiryYear READ declineCodeInvalidExpiryYear CONSTANT)
+    Q_PROPERTY(QString DeclineCodeInvalidNumber READ declineCodeInvalidNumber CONSTANT)
+    Q_PROPERTY(QString DeclineCodeInvalidPin READ declineCodeInvalidPin CONSTANT)
+    Q_PROPERTY(QString DeclineCodeIssuerNotAvailable READ declineCodeIssuerNotAvailable CONSTANT)
+    Q_PROPERTY(QString DeclineCodeLostCard READ declineCodeLostCard CONSTANT)
+    Q_PROPERTY(QString DeclineCodeNewAccountInformationAvailable READ declineCodeNewAccountInformationAvailable CONSTANT)
+    Q_PROPERTY(QString DeclineCodeNoActionTaken READ declineCodeNoActionTaken CONSTANT)
+    Q_PROPERTY(QString DeclineCodeNotPermitted READ declineCodeNotPermitted CONSTANT)
+    Q_PROPERTY(QString DeclineCodePickupCard READ declineCodePickupCard CONSTANT)
+    Q_PROPERTY(QString DeclineCodePinTryExceeded READ declineCodePinTryExceeded CONSTANT)
+    Q_PROPERTY(QString DeclineCodeProcessingError READ declineCodeProcessingError CONSTANT)
+    Q_PROPERTY(QString DeclineCodeReenterTransaction READ declineCodeReenterTransaction CONSTANT)
+    Q_PROPERTY(QString DeclineCodeRestrictedCard READ declineCodeRestrictedCard CONSTANT)
+    Q_PROPERTY(QString DeclineCodeRevocationOfAllAuthorizations READ declineCodeRevocationOfAllAuthorizations CONSTANT)
+    Q_PROPERTY(QString DeclineCodeRevocationOfAuthorization READ declineCodeRevocationOfAuthorization CONSTANT)
+    Q_PROPERTY(QString DeclineCodeSecurityViolation READ declineCodeSecurityViolation CONSTANT)
+    Q_PROPERTY(QString DeclineCodeServiceNotAllowed READ declineCodeServiceNotAllowed CONSTANT)
+    Q_PROPERTY(QString DeclineCodeStolenCard READ declineCodeStolenCard CONSTANT)
+    Q_PROPERTY(QString DeclineCodeStopPaymentOrder READ declineCodeStopPaymentOrder CONSTANT)
+    Q_PROPERTY(QString DeclineCodeTestmodeDecline READ declineCodeTestmodeDecline CONSTANT)
+    Q_PROPERTY(QString DeclineCodeTransactionNotAllowed READ declineCodeTransactionNotAllowed CONSTANT)
+    Q_PROPERTY(QString DeclineCodeTryAgainLater READ declineCodeTryAgainLater CONSTANT)
+    Q_PROPERTY(QString DeclineCodeWithdrawalCountLimitExceeded READ declineCodeWithdrawalCountLimitExceeded CONSTANT)
+
 public:
     enum ErrorType {
         ErrorApiConnection, // Failure to connect to Stripe's API.
@@ -125,6 +169,64 @@ public:
      * @return QVariantMap
      */
     const QVariantMap &rawErrorObject() const;
+
+    // Define the decline code getters.
+
+    QString declineCodeApproveWithId() const;
+    QString declineCodeCallIssuer() const;
+    QString declineCodeCardNotSupported() const;
+
+    QString declineCodeCardVelocityExceeded() const;
+    QString declineCodeCurrencyNotSupported() const;
+    QString declineCodeDoNotHonor() const;
+
+    QString declineCodeDoNotTryAgain() const;
+    QString declineCodeDuplicateTransaction() const;
+    QString declineCodeExpiredCard() const;
+
+    QString declineCodeFraudulent() const;
+    QString declineCodeGenericDecline() const;
+    QString declineCodeIncorrectNumber() const;
+
+    QString declineCodeIncorrectCvc() const;
+    QString declineCodeIncorrectPin() const;
+    QString declineCodeIncorrectZip() const;
+
+    QString declineCodeInsufficientFunds() const;
+    QString declineCodeInvalidAccount() const;
+    QString declineCodeInvalidAmount() const;
+
+    QString declineCodeInvalidCvc() const;
+    QString declineCodeInvalidExpiryYear() const;
+    QString declineCodeInvalidNumber() const;
+
+    QString declineCodeInvalidPin() const;
+    QString declineCodeIssuerNotAvailable() const;
+    QString declineCodeLostCard() const;
+
+    QString declineCodeNewAccountInformationAvailable() const;
+    QString declineCodeNoActionTaken() const;
+    QString declineCodeNotPermitted() const;
+
+    QString declineCodePickupCard() const;
+    QString declineCodePinTryExceeded() const;
+    QString declineCodeProcessingError() const;
+
+    QString declineCodeReenterTransaction() const;
+    QString declineCodeRestrictedCard() const;
+    QString declineCodeRevocationOfAllAuthorizations() const;
+
+    QString declineCodeRevocationOfAuthorization() const;
+    QString declineCodeSecurityViolation() const;
+    QString declineCodeServiceNotAllowed() const;
+
+    QString declineCodeStolenCard() const;
+    QString declineCodeStopPaymentOrder() const;
+    QString declineCodeTestmodeDecline() const;
+
+    QString declineCodeTransactionNotAllowed() const;
+    QString declineCodeTryAgainLater() const;
+    QString declineCodeWithdrawalCountLimitExceeded() const;
 
 private:
     QString m_ChargeID,

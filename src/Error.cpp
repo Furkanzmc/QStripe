@@ -187,4 +187,214 @@ const QVariantMap &Error::rawErrorObject() const
     return m_RawError;
 }
 
+QString Error::declineCodeApproveWithId() const
+{
+    return "approve_with_id";
+}
+
+QString Error::declineCodeCallIssuer() const
+{
+    return "call_issuer";
+}
+
+QString Error::declineCodeCardNotSupported() const
+{
+    return "card_not_supported";
+}
+
+QString Error::declineCodeCardVelocityExceeded() const
+{
+    return "card_velocity_exceeded";
+}
+
+QString Error::declineCodeCurrencyNotSupported() const
+{
+    return "currency_not_supported";
+}
+
+QString Error::declineCodeDoNotHonor() const
+{
+    return "do_not_honor";
+}
+
+QString Error::declineCodeDoNotTryAgain() const
+{
+    return "do_not_try_again";
+}
+
+QString Error::declineCodeDuplicateTransaction() const
+{
+    return "duplicate_transaction";
+}
+
+QString Error::declineCodeExpiredCard() const
+{
+    return "expired_card";
+}
+
+QString Error::declineCodeFraudulent() const
+{
+    return "fraudulent";
+}
+
+QString Error::declineCodeGenericDecline() const
+{
+    return "generic_decline";
+}
+
+QString Error::declineCodeIncorrectNumber() const
+{
+    return "incorrect_number";
+}
+
+QString Error::declineCodeIncorrectCvc() const
+{
+    return "incorrect_cvc";
+}
+
+QString Error::declineCodeIncorrectPin() const
+{
+    return "incorrect_pin";
+}
+
+QString Error::declineCodeIncorrectZip() const
+{
+    return "incorrect_zip";
+}
+
+QString Error::declineCodeInsufficientFunds() const
+{
+    return "insufficient_funds";
+}
+
+QString Error::declineCodeInvalidAccount() const
+{
+    return "invalid_account";
+}
+
+QString Error::declineCodeInvalidAmount() const
+{
+    return "invalid_amount";
+}
+
+QString Error::declineCodeInvalidCvc() const
+{
+    return "invalid_cvc";
+}
+
+QString Error::declineCodeInvalidExpiryYear() const
+{
+    return "invalid_expiry_year";
+}
+
+QString Error::declineCodeInvalidNumber() const
+{
+    return "invalid_number";
+}
+
+QString Error::declineCodeInvalidPin() const
+{
+    return "invalid_pin";
+}
+
+QString Error::declineCodeIssuerNotAvailable() const
+{
+    return "issuer_not_available";
+}
+
+QString Error::declineCodeLostCard() const
+{
+    return "lost_card";
+}
+
+QString Error::declineCodeNewAccountInformationAvailable() const
+{
+    return "new_account_information_available";
+}
+
+QString Error::declineCodeNoActionTaken() const
+{
+    return "no_action_taken";
+}
+
+QString Error::declineCodeNotPermitted() const
+{
+    return "not_permitted";
+}
+
+QString Error::declineCodePickupCard() const
+{
+    return "pickup_card";
+}
+
+QString Error::declineCodePinTryExceeded() const
+{
+    return "pin_try_exceeded";
+}
+
+QString Error::declineCodeProcessingError() const
+{
+    return "processing_error";
+}
+
+QString Error::declineCodeReenterTransaction() const
+{
+    return "reenter_transaction";
+}
+
+QString Error::declineCodeRestrictedCard() const
+{
+    return "restricted_card";
+}
+
+QString Error::declineCodeRevocationOfAllAuthorizations() const
+{
+    return "revocation_of_all_authorizations";
+}
+
+QString Error::declineCodeRevocationOfAuthorization() const
+{
+    return "revocation_of_authorization";
+}
+
+QString Error::declineCodeSecurityViolation() const
+{
+    return "security_violation";
+}
+
+QString Error::declineCodeServiceNotAllowed() const
+{
+    return "service_not_allowed";
+}
+
+QString Error::declineCodeStolenCard() const
+{
+    return "stolen_card";
+}
+
+QString Error::declineCodeStopPaymentOrder() const
+{
+    return "stop_payment_order";
+}
+
+QString Error::declineCodeTestmodeDecline() const
+{
+    return "testmode_decline";
+}
+
+QString Error::declineCodeTransactionNotAllowed() const
+{
+    return "transaction_not_allowed";
+}
+
+QString Error::declineCodeTryAgainLater() const
+{
+    return "try_again_later";
+}
+
+QString Error::declineCodeWithdrawalCountLimitExceeded() const
+{
+    return "withdrawal_count_limit_exceeded";
+}
+
 }
