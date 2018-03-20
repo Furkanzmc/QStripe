@@ -547,8 +547,8 @@ void Card::set(const Card *other)
 
 bool Card::createToken()
 {
-    if (Stripe::secretKey().length() == 0) {
-        qDebug() << "[ERROR] secretKey is not set in the Stripe instance. Cannot send the request.";
+    if (Stripe::publishableKey().length() == 0) {
+        qDebug() << "[ERROR] publishableKey is not set in the Stripe instance. Cannot send the request.";
         return false;
     }
 
@@ -577,7 +577,7 @@ bool Card::createToken()
         }
     };
 
-    m_NetworkUtils.setHeader("Authorization", "Bearer " + Stripe::secretKey());
+    m_NetworkUtils.setHeader("Authorization", "Bearer " + Stripe::publishableKey());
     if (Stripe::apiVersion().length() > 0) {
         m_NetworkUtils.setHeader("Stripe-Version", Stripe::apiVersion());
     }
