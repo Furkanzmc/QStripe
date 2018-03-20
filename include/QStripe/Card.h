@@ -785,6 +785,13 @@ private:
      * @return QString
      */
     QString getCustomerID() const;
+
+    /**
+     * @brief Returns the >four digit year for the expiration year.
+     * @param year
+     * @return
+     */
+    int normilizedYear(int year) const;
 };
 
 }

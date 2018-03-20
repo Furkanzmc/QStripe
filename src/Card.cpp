@@ -462,13 +462,7 @@ bool Card::validExpirationYear() const
 {
     // Normilize the year first. Year can be a two digit or 4 digit number.
     const QDate today = QDate::currentDate();
-    int year = m_ExpirationYear;
-    if (year < 100 && year >= 0) {
-        const QString yearStr = QString::number(year);
-        const QString currentYearStr = QString::number(today.year());
-        const QString yearPrefix = currentYearStr.left(currentYearStr.length() - yearStr.length());
-        year = QString(yearPrefix + yearStr).toInt();
-    }
+    int year = normilizedYear(m_ExpirationYear);
 
     bool isValid = true;
 
@@ -488,7 +482,9 @@ bool Card::validExpirationDate() const
     // If the expiration year and month is valid, check If the month is in the past and return false If it is.
     if (isValid) {
         const QDate today = QDate::currentDate();
-        isValid = m_ExpirationMonth >= today.month();
+        if (today.year() == normilizedYear(m_ExpirationYear)) {
+            isValid = m_ExpirationMonth >= today.month();
+        }
     }
 
     return isValid;
@@ -557,10 +553,12 @@ bool Card::createToken()
     }
 
     if (m_Token->tokenID().length() > 0) {
+        qDebug() << "[WARNING] Token already exists. Not sending the create token request.";
         return false;
     }
 
     if (validCard() == false) {
+        qDebug() << "[ERROR] Card is not valid. Not sending the create token request.";
         return false;
     }
 
@@ -1211,6 +1209,19 @@ QString Card::getCustomerID() const
     }
 
     return id;
+}
+
+int Card::normilizedYear(int year) const
+{
+    if (year < 100 && year >= 0) {
+        const QDate today = QDate::currentDate();
+        const QString yearStr = QString::number(year);
+        const QString currentYearStr = QString::number(today.year());
+        const QString yearPrefix = currentYearStr.left(currentYearStr.length() - yearStr.length());
+        year = QString(yearPrefix + yearStr).toInt();
+    }
+
+    return year;
 }
 
 }
