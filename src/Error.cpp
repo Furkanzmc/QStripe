@@ -1,4 +1,6 @@
 #include "QStripe/Error.h"
+// Qt
+#include <QNetworkReply>
 
 namespace QStripe
 {
@@ -65,7 +67,12 @@ void Error::set(QVariantMap errorResponse, int httpCode, int networkErrorCode)
     }
 
     m_RawError = errorResponse;
-    if (errorResponse.contains("type")) {
+    if (networkErrorCode == QNetworkReply::ConnectionRefusedError ||
+        networkErrorCode == QNetworkReply::RemoteHostClosedError ||
+        networkErrorCode == QNetworkReply::HostNotFoundError) {
+        m_Type = ErrorType::ErrorApiConnection;
+    }
+    else if (errorResponse.contains("type")) {
         const QString typeString = errorResponse["type"].toString();
         if (typeString == "api_connection_error") {
             m_Type = ErrorType::ErrorApiConnection;
