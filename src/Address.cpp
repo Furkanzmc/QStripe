@@ -166,7 +166,7 @@ QString Address::jsonString(const QString &prefix) const
     return Utils::toJsonString(json(prefix));
 }
 
-void Address::set(const Address *other)
+void Address::set(Address *other)
 {
     this->setCountry(other->country());
     this->setState(other->state());

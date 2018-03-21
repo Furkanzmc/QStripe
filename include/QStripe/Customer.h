@@ -23,7 +23,7 @@ class Customer : public QObject
     Q_PROPERTY(QString currency READ currency WRITE setCurrency NOTIFY currencyChanged)
     Q_PROPERTY(QVariantMap metadata READ metadata WRITE setMetadata NOTIFY metadataChanged)
 
-    Q_PROPERTY(ShippingInformation *shippingInformation READ shippingInformation WRITE setShippingInformation NOTIFY shippingInformationChanged)
+    Q_PROPERTY(QStripe::ShippingInformation *shippingInformation READ shippingInformation WRITE setShippingInformation NOTIFY shippingInformationChanged)
     Q_PROPERTY(bool deleted READ deleted CONSTANT)
     Q_PROPERTY(QQmlListProperty<QStripe::Card> cards READ cards)
 
@@ -119,7 +119,6 @@ public:
      * @return ShippingInformation
      */
     ShippingInformation *shippingInformation();
-    const ShippingInformation *shippingInformation() const;
 
     /**
      * @brief This will be true when a deleted Customer is fetched. The defaul value is false and this will NOT be affected by the call of `deleteCustomer()`.
@@ -131,7 +130,7 @@ public:
      * @brief Sett shipping information.
      * @param shippingInformation
      */
-    void setShippingInformation(const ShippingInformation *shippingInformation);
+    void setShippingInformation(ShippingInformation *shippingInformation);
 
     /**
      * @brief Returns a json representation of this object. If the customerID is empty, it omits that field.
@@ -165,7 +164,7 @@ public:
      * @brief Copies the contents of other to this instance.
      * @param other
      */
-    Q_INVOKABLE void set(const Customer *other);
+    Q_INVOKABLE void set(Customer *other);
 
     /**
      * @brief If this instance does not have an assosicated customer ID, you can create a new customer. When the customer is created, the customer ID of this
@@ -230,7 +229,7 @@ public:
      * @brief Returns the last ocurred error.
      * @return const Error *
      */
-    const Error *lastError() const;
+    Error *lastError();
 
     /**
      * @brief Returns the customers endpoint full URL.

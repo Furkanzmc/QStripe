@@ -78,7 +78,7 @@ const Address *Card::address() const
     return &m_Address;
 }
 
-void Card::setAddress(const Address *addr)
+void Card::setAddress(Address *addr)
 {
     const bool changed = m_Address != (*addr);
     if (changed) {
@@ -415,7 +415,7 @@ Card::CardBrand Card::possibleCardBrand() const
     return cardType;
 }
 
-const Token *Card::token() const
+Token *Card::token() const
 {
     return m_Token;
 }
@@ -520,7 +520,7 @@ void Card::setCustomerID(const QString &id)
     }
 }
 
-void Card::set(const Card *other)
+void Card::set(Card *other)
 {
     setCardID(other->cardID());
     setCardNumber(other->cardNumber());

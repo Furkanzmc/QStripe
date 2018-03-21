@@ -57,7 +57,7 @@ public:
      * @brief Set the address to the given address.
      * @param name
      */
-    void setAddress(const Address *addr);
+    void setAddress(Address *addr);
 
     /**
      * @brief Returns the QVariantMap representation of the current object.
@@ -75,7 +75,7 @@ public:
      * @brief Copy another address to this one. This will copy the address.
      * @param other
      */
-    Q_INVOKABLE void set(const ShippingInformation *other);
+    Q_INVOKABLE void set(ShippingInformation *other);
 
     /**
      * @brief Resets every property to its default state. When the clearing is complete, `cleared()` signal will be emitted.

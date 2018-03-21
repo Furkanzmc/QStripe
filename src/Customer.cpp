@@ -118,17 +118,12 @@ ShippingInformation *Customer::shippingInformation()
     return &m_ShippingInformation;
 }
 
-const ShippingInformation *Customer::shippingInformation() const
-{
-    return &m_ShippingInformation;
-}
-
 bool Customer::deleted() const
 {
     return m_IsDeleted;
 }
 
-void Customer::setShippingInformation(const ShippingInformation *shippingInformation)
+void Customer::setShippingInformation(ShippingInformation *shippingInformation)
 {
     // TODO: Check for content equality instead of memory location.
     const bool changed = m_ShippingInformation.name() != shippingInformation->name() ||
@@ -240,19 +235,19 @@ Customer *Customer::fromString(const QString &dataStr)
     return fromJson(Utils::toVariantMap(dataStr));
 }
 
-void Customer::set(const Customer *other)
+void Customer::set(Customer *other)
 {
-    Q_ASSERT(other != nullptr);
+    if (other) {
+        setCustomerID(other->customerID());
+        setDefaultSource(other->defaultSource());
+        setEmail(other->email());
 
-    setCustomerID(other->customerID());
-    setDefaultSource(other->defaultSource());
-    setEmail(other->email());
+        setDescription(other->description());
+        setCurrency(other->currency());
+        setMetadata(other->metadata());
 
-    setDescription(other->description());
-    setCurrency(other->currency());
-    setMetadata(other->metadata());
-
-    setShippingInformation(other->shippingInformation());
+        setShippingInformation(other->shippingInformation());
+    }
 }
 
 bool Customer::create()
@@ -424,7 +419,7 @@ void Customer::clearCards()
     return m_Cards.clear();
 }
 
-const Error *Customer::lastError() const
+Error *Customer::lastError()
 {
     return &m_Error;
 }

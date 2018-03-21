@@ -162,7 +162,7 @@ public:
      * @brief Copy another address to this one.
      * @param other
      */
-    Q_INVOKABLE void set(const Address *other);
+    Q_INVOKABLE void set(Address *other);
 
     /**
      * @brief Resets every property to its default state. When the clearing is complete, `cleared()` signal will be emitted.

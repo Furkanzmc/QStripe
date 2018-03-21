@@ -16,7 +16,7 @@ class Card : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QString cardID READ cardID NOTIFY cardIDChanged)
-    Q_PROPERTY(Address *address READ address WRITE setAddress NOTIFY addressChanged)
+    Q_PROPERTY(QStripe::Address *address READ address WRITE setAddress NOTIFY addressChanged)
     Q_PROPERTY(CardBrand brand READ brand NOTIFY brandChanged)
 
     Q_PROPERTY(QString country READ country WRITE setCountry NOTIFY countryChanged)
@@ -41,7 +41,7 @@ class Card : public QObject
 
     Q_PROPERTY(QString brandName READ brandName CONSTANT)
     Q_PROPERTY(CardBrand possibleCardBrand READ possibleCardBrand CONSTANT)
-    Q_PROPERTY(const Token *token READ token CONSTANT)
+    Q_PROPERTY(QStripe::Token *token READ token CONSTANT)
 
     Q_PROPERTY(bool validCardLenght READ validCardLenght NOTIFY validCardLenghtChanged)
     Q_PROPERTY(bool validCardNumber READ validCardNumber NOTIFY validCardNumberChanged)
@@ -133,7 +133,7 @@ public:
      * @brief Sett the current address. The object is copied.
      * @param addr
      */
-    void setAddress(const Address *addr);
+    void setAddress(Address *addr);
 
     /**
      * @brief Returns the card brand.
@@ -328,7 +328,7 @@ public:
      * @brief Returns the Token object for this Card. If the token was not created, the ID of the token will be empty.
      * @return
      */
-    const Token *token() const;
+    Token *token() const;
 
     /**
      * @brief Returns true If the card number length is valid for the current card brand. If the card brand is unknown, it will return false.
@@ -389,7 +389,7 @@ public:
      * @brief Copies the contents of other to this instance.
      * @param other
      */
-    Q_INVOKABLE void set(const Card *other);
+    Q_INVOKABLE void set(Card *other);
 
     /**
      * @brief If the card is valid and there's no valid Token for the instance, this will create a token and set the response to the attached token.
