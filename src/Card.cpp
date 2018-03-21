@@ -73,11 +73,6 @@ Address *Card::address()
     return &m_Address;
 }
 
-const Address *Card::address() const
-{
-    return &m_Address;
-}
-
 void Card::setAddress(Address *addr)
 {
     const bool changed = m_Address != (*addr);
@@ -415,7 +410,7 @@ Card::CardBrand Card::possibleCardBrand() const
     return cardType;
 }
 
-Token *Card::token() const
+QStripe::Token *Card::token()
 {
     return m_Token;
 }

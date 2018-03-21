@@ -50,11 +50,6 @@ Address *ShippingInformation::address()
     return &m_Address;
 }
 
-const Address *ShippingInformation::address() const
-{
-    return &m_Address;
-}
-
 void ShippingInformation::setAddress(Address *addr)
 {
     const bool changed = (*addr) != m_Address;

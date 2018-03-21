@@ -13,8 +13,6 @@
 
 #include <QDebug>
 
-using namespace QStripe;
-
 QStripePlugin::QStripePlugin(QObject *parent)
     : QQmlExtensionPlugin(parent)
 {
@@ -25,16 +23,16 @@ void QStripePlugin::registerQStripe(const char *uri)
 {
     Q_ASSERT(uri == "QStripe");
 
-    qmlRegisterType<Address>(uri, 1, 0, "Address");
-    qmlRegisterType<Card>(uri, 1, 0, "Card");
-    qmlRegisterType<Customer>(uri, 1, 0, "Customer");
+    qmlRegisterType<QStripe::Address>(uri, 1, 0, "Address");
+    qmlRegisterType<QStripe::Card>(uri, 1, 0, "Card");
+    qmlRegisterType<QStripe::Customer>(uri, 1, 0, "Customer");
 
-    qmlRegisterType<Error>(uri, 1, 0, "Error");
-    qmlRegisterType<PaymentSource>(uri, 1, 0, "PaymentSource");
-    qmlRegisterType<ShippingInformation>(uri, 1, 0, "ShippingInformation");
+    qmlRegisterType<QStripe::Error>(uri, 1, 0, "Error");
+    qmlRegisterType<QStripe::PaymentSource>(uri, 1, 0, "PaymentSource");
+    qmlRegisterType<QStripe::ShippingInformation>(uri, 1, 0, "ShippingInformation");
 
-    qmlRegisterType<Stripe>(uri, 1, 0, "Stripe");
-    qmlRegisterType<Token>(uri, 1, 0, "Token");
+    qmlRegisterType<QStripe::Stripe>(uri, 1, 0, "Stripe");
+    qmlRegisterType<QStripe::Token>(uri, 1, 0, "Token");
 }
 
 void QStripePlugin::registerTypes(const char *uri)

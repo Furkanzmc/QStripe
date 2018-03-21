@@ -127,7 +127,6 @@ public:
      * @return Address*
      */
     Address *address();
-    const Address *address() const;
 
     /**
      * @brief Sett the current address. The object is copied.
@@ -328,7 +327,7 @@ public:
      * @brief Returns the Token object for this Card. If the token was not created, the ID of the token will be empty.
      * @return
      */
-    Token *token() const;
+    QStripe::Token *token();
 
     /**
      * @brief Returns true If the card number length is valid for the current card brand. If the card brand is unknown, it will return false.

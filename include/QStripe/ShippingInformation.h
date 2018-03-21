@@ -12,7 +12,7 @@ class ShippingInformation : public QObject
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString phone READ phone WRITE setPhone NOTIFY phoneChanged)
-    Q_PROPERTY(Address *address READ address WRITE setAddress NOTIFY addressChanged)
+    Q_PROPERTY(QStripe::Address *address READ address WRITE setAddress NOTIFY addressChanged)
 
 public:
     static const QString FIELD_ADDRESS;
@@ -51,7 +51,6 @@ public:
      * @return Address
      */
     Address *address();
-    const Address *address() const;
 
     /**
      * @brief Set the address to the given address.
