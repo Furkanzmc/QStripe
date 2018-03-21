@@ -1113,6 +1113,13 @@ void Card::setValidCardNumber(bool valid)
     const bool changed = m_IsValidCardNumber != valid;
     if (changed) {
         m_IsValidCardNumber = valid;
+        if (m_IsValidCardNumber) {
+            setLastFourDigits(m_CardNumber.right(4));
+        }
+        else {
+            setLastFourDigits("");
+        }
+
         emit validCardNumberChanged();
     }
 }
