@@ -79,7 +79,7 @@ QString ShippingInformation::jsonString() const
     return Utils::toJsonString(json());
 }
 
-void ShippingInformation::set(const ShippingInformation *other)
+void ShippingInformation::set(ShippingInformation *other)
 {
     setName(other->name());
     setPhone(other->phone());
