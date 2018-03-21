@@ -33,6 +33,17 @@ QStripe is a client for Stripe's REST API. It is completely compatible for use w
     + [ ] Capture Charge
 
 
+# Secret Key vs Publishable Key
+
+From [Stripe Documentation](https://stripe.com/docs/dashboard#api-keys):
+
+> **Publishable API** keys are meant solely to identify your account with Stripe, they aren't secret. In other words, they can safely be published in places
+> like your Stripe.js JavaScript code, or in an Android or iPhone app. Publishable keys only have the power to create tokens.
+> **Secret API** keys should be kept confidential and only stored on your own servers. Your account's secret API key can perform any API request to Stripe
+> without restriction.
+
+So, QStripe uses your publishable key to create card tokens. But for any other action, you will have to provide the secret key.
+
 # Classes
 
 A Stripe instance has children of `Customer` objects.
