@@ -154,6 +154,30 @@ public:
     int networkErrorCode() const;
 
     /**
+     * @brief Returns the decline code description from here: https://stripe.com/docs/declines/codes
+     * All the descriptions are translateable. This message is assumed to be customer facing, so the decline code titles for stolen cards are replaced with
+     * the title of the generic error. If you want to get the actual title, set the @param omitSensitive parameter to false.
+     * @param omitSensitive When set to true, the title for the following decline codes will be replaced with the generic error code title.
+     *     - pickup_card
+     *     - restricted_card
+     *     - stolen_card
+     * @return QString
+     */
+    Q_INVOKABLE QString declineCodeDescription(bool omitSensitive = true) const;
+
+    /**
+     * @brief Returns the decline code next steps from here: https://stripe.com/docs/declines/codes
+     * The returned value is translateable. This message is assumed to be customer facing, so the decline code titles for stolen cards are replaced with
+     * the title of the generic error. If you want to get the actual next step description, set the @param omitSensitive parameter to false.
+     * @param omitSensitive When set to true, the title for the following decline codes will be replaced with the generic error code title.
+     *     - pickup_card
+     *     - restricted_card
+     *     - stolen_card
+     * @return QString
+     */
+    Q_INVOKABLE QString declineCodeNextSteps(bool omitSensitive = true) const;
+
+    /**
      * @brief Changes the contents of this instance based on the errorResponse. If any field does not exist for some reason, the default values are set.
      * @param errorResponse
      */
