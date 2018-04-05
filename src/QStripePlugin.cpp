@@ -21,7 +21,7 @@ QStripePlugin::QStripePlugin(QObject *parent)
 
 void QStripePlugin::registerQStripe(const char *uri)
 {
-    Q_ASSERT(uri == "QStripe");
+    Q_ASSERT(QString(uri) == QString("QStripe"));
 
     qmlRegisterType<QStripe::Address>(uri, 1, 0, "Address");
     qmlRegisterType<QStripe::Card>(uri, 1, 0, "Card");
@@ -37,7 +37,7 @@ void QStripePlugin::registerQStripe(const char *uri)
 
 void QStripePlugin::registerTypes(const char *uri)
 {
-    Q_ASSERT(uri == "QStripe");
+    Q_ASSERT(QString(uri) == QString("QStripe"));
 
     registerQStripe(uri);
 }
