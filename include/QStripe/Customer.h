@@ -1,6 +1,7 @@
 #pragma once
-#include <QObject>
+// Qt
 #include <QQmlListProperty>
+#include <QObject>
 #include <QVector>
 // QStripe
 #include "ShippingInformation.h"
@@ -118,6 +119,7 @@ public:
      * @brief Returns the shipping information, The defaul is an empty shipping information.
      * @return ShippingInformation
      */
+    const ShippingInformation *shippingInformation() const;
     ShippingInformation *shippingInformation();
 
     /**

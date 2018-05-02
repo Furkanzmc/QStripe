@@ -39,5 +39,5 @@ void ErrorTests::testError()
 
     data.remove("type");
     error.set(data, 400, 2);
-    QCOMPARE(error.type(), Error::ErrorNone);
+    QCOMPARE(error.type(), Error::ErrorApiConnection);
 }

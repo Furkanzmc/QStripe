@@ -1,6 +1,7 @@
 #pragma once
-#include <QObject>
+// Qt
 #include <QVariantMap>
+#include <QObject>
 
 namespace QStripe
 {

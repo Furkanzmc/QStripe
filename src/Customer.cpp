@@ -2,8 +2,8 @@
 // Qt
 #include <QUrlQuery>
 // QStripe
-#include "QStripe/Utils.h"
 #include "QStripe/Stripe.h"
+#include "QStripe/Utils.h"
 
 namespace QStripe
 {
@@ -111,6 +111,11 @@ void Customer::setMetadata(const QVariantMap &metadata)
         m_Metadata = metadata;
         emit metadataChanged();
     }
+}
+
+const ShippingInformation *Customer::shippingInformation() const
+{
+    return &m_ShippingInformation;
 }
 
 ShippingInformation *Customer::shippingInformation()
@@ -258,6 +263,7 @@ bool Customer::create()
     }
 
     if (m_CustomerID.length() > 0) {
+        qDebug() << "[INFO] Customer already has an ID. Skipping customer creation.";
         return false;
     }
 

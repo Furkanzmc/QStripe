@@ -1,11 +1,11 @@
 #include "QStripe/NetworkUtils.h"
 // Qt
 #include <QNetworkRequest>
+#include <QMimeDatabase>
 #include <QNetworkReply>
 #include <QHttpPart>
-#include <QFile>
-#include <QMimeDatabase>
 #include <QUrlQuery>
+#include <QFile>
 // QStripe
 #include "QStripe/Utils.h"
 

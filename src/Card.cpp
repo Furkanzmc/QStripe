@@ -2,9 +2,9 @@
 // Qt
 #include <QDate>
 // QStripe
+#include "QStripe/Stripe.h"
 #include "QStripe/Utils.h"
 #include "QStripe/Token.h"
-#include "QStripe/Stripe.h"
 
 namespace QStripe
 {
@@ -66,6 +66,11 @@ Card::Card(QObject *parent)
 QString Card::cardID() const
 {
     return m_CardID;
+}
+
+const Address *Card::address() const
+{
+    return &m_Address;
 }
 
 Address *Card::address()

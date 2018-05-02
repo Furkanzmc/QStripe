@@ -1,7 +1,8 @@
 #pragma once
-#include <QObject>
-#include <QDateTime>
+// Qt
 #include <QVariantMap>
+#include <QDateTime>
+#include <QObject>
 
 namespace QStripe
 {
