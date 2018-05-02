@@ -1,10 +1,11 @@
 #pragma once
-#include <QObject>
+// Qt
 #include <QQmlListProperty>
+#include <QObject>
 #include <QVector>
-// Stripe
-#include "Customer.h"
+// QStripe
 #include "NetworkUtils.h"
+#include "Customer.h"
 #include "Error.h"
 
 namespace QStripe

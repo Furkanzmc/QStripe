@@ -1,9 +1,10 @@
 #pragma once
+// Qt
 #include <QObject>
 #include <QVector>
 // QStripe
-#include "Address.h"
 #include "NetworkUtils.h"
+#include "Address.h"
 #include "Error.h"
 
 namespace QStripe
@@ -126,6 +127,7 @@ public:
      * @brief Returns the current address object.
      * @return Address*
      */
+    const Address *address() const;
     Address *address();
 
     /**

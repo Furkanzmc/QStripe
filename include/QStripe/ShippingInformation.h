@@ -1,6 +1,7 @@
 #pragma once
+// Qt
 #include <QObject>
-// Stripe
+// QStripe
 #include "Address.h"
 
 namespace QStripe

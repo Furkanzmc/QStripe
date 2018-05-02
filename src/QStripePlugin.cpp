@@ -1,17 +1,16 @@
 #include "QStripe/QStripePlugin.h"
+// Qt
 #include <QtQml/qqml.h>
 #include <QCoreApplication>
 // QStripe
-#include "QStripe/Address.h"
-#include "QStripe/Card.h"
-#include "QStripe/Customer.h"
-#include "QStripe/Error.h"
-#include "QStripe/PaymentSource.h"
 #include "QStripe/ShippingInformation.h"
+#include "QStripe/PaymentSource.h"
+#include "QStripe/Customer.h"
+#include "QStripe/Address.h"
 #include "QStripe/Stripe.h"
+#include "QStripe/Error.h"
 #include "QStripe/Token.h"
-
-#include <QDebug>
+#include "QStripe/Card.h"
 
 QStripePlugin::QStripePlugin(QObject *parent)
     : QQmlExtensionPlugin(parent)
