@@ -515,7 +515,7 @@ void CardTests::testValidExpirationDate()
 
     card.setExpirationMonth(1);
     card.setExpirationYear(35);
-    QCOMPARE(card.validExpirationDate(), false);
+    QCOMPARE(card.validExpirationDate(), true);
 }
 
 void CardTests::testValidCVC()

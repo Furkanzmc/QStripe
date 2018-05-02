@@ -206,6 +206,9 @@ void CustomerTests::testCreateCustomerErrors()
 
     QCOMPARE(customer->create(), false);
 
+    Stripe::setPublishableKey("foo-bar");
+    Stripe::setSecretKey("foo-bar");
+
     customer->deleteLater();
     data.remove(Customer::FIELD_ID);
     customer = Customer::fromJson(data);
