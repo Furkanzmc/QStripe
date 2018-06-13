@@ -166,7 +166,7 @@ int NetworkUtils::getAvailableIndex()
         return -1;
     }
 
-    return std::distance(m_Callbacks.begin(), foundIt);
+    return static_cast<int>(std::distance(m_Callbacks.begin(), foundIt));
 }
 
 void NetworkUtils::insertCallback(const int &threadIndex, RequestCallback &&callback)
