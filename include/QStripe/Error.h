@@ -67,7 +67,7 @@ class Error : public QObject
 
 public:
     enum ErrorType {
-        ErrorApiConnection, // Failure to connect to Stripe's API.
+        ErrorApiConnection = 0, // Failure to connect to Stripe's API.
         ErrorApi, // API errors cover any other type of problem (e.g., a temporary problem with Stripe's servers) and are extremely uncommon.
         ErrorAuthentication, // Failure to properly authenticate yourself in the request.
         ErrorCard, /** Card errors are the most common type of error you should expect to handle.
@@ -86,7 +86,7 @@ public:
     Q_ENUM(ErrorType);
 
     enum ErrorCode {
-        CodeInvalidNumber, // The card number is not a valid credit card number.
+        CodeInvalidNumber = 0, // The card number is not a valid credit card number.
         CodeInvalidExpiryMonth, // The card's expiration month is invalid.
         CodeInvalidExpiryYear, // The card's expiration year is invalid.
         CodeInvalidCVC, // The card's security code is invalid.
@@ -98,7 +98,7 @@ public:
         CodeCardDeclined, // The card was declined.
         CodeMissing, // There is no card on a customer that is being charged.
         CodeProcessingError, // An error occurred while processing the card.
-        CodeNone, // This is the default value.
+        CodeNone // This is the default value.
     };
     Q_ENUM(ErrorCode);
 
@@ -162,9 +162,10 @@ public:
      *     - pickup_card
      *     - restricted_card
      *     - stolen_card
+     * @param declineCode
      * @return QString
      */
-    Q_INVOKABLE QString declineCodeDescription(bool omitSensitive = true) const;
+    Q_INVOKABLE QString declineCodeDescription(QString declineCode = "", bool omitSensitive = true) const;
 
     /**
      * @brief Returns the decline code next steps from here: https://stripe.com/docs/declines/codes
@@ -174,9 +175,11 @@ public:
      *     - pickup_card
      *     - restricted_card
      *     - stolen_card
+     * @param declineCode
      * @return QString
      */
-    Q_INVOKABLE QString declineCodeNextSteps(bool omitSensitive = true) const;
+    Q_INVOKABLE QString declineCodeNextSteps(QString declineCode = "", bool omitSensitive = true) const;
+
     /**
      * @brief Converts the string to the associated ErrorType.
      * @param typeString

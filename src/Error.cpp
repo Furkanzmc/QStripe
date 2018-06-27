@@ -1,5 +1,6 @@
 #include "QStripe/Error.h"
 // Qt
+#include <QDebug>
 #include <QNetworkReply>
 
 namespace QStripe
@@ -60,79 +61,83 @@ int Error::networkErrorCode() const
     return m_NetworkError;
 }
 
-QString Error::declineCodeDescription(bool omitSensitive) const
+QString Error::declineCodeDescription(QString declineCode, bool omitSensitive) const
 {
+    if (declineCode.isEmpty()) {
+        declineCode = m_DeclineCode;
+    }
+
     QString description = "";
-    if (m_DeclineCode == declineCodeApproveWithId()) {
+    if (declineCode == declineCodeApproveWithId()) {
         description = tr("The payment cannot be authorized.");
     }
-    else if (m_DeclineCode == declineCodeCallIssuer()) {
+    else if (declineCode == declineCodeCallIssuer()) {
         description = tr("The card has been declined for an unknown reason.");
     }
-    else if (m_DeclineCode == declineCodeCardNotSupported()) {
+    else if (declineCode == declineCodeCardNotSupported()) {
         description = tr("The card does not support this type of purchase.");
     }
-    else if (m_DeclineCode == declineCodeCardVelocityExceeded()) {
+    else if (declineCode == declineCodeCardVelocityExceeded()) {
         description = tr("You have exceeded the balance or credit limit available on your card.");
     }
-    else if (m_DeclineCode == declineCodeCurrencyNotSupported()) {
+    else if (declineCode == declineCodeCurrencyNotSupported()) {
         description = tr("The card does not support the specified currency.");
     }
-    else if (m_DeclineCode == declineCodeDoNotHonor()) {
+    else if (declineCode == declineCodeDoNotHonor()) {
         description = tr("The card has been declined for an unknown reason.");
     }
-    else if (m_DeclineCode == declineCodeDoNotTryAgain()) {
+    else if (declineCode == declineCodeDoNotTryAgain()) {
         description = tr("The card has been declined for an unknown reason.");
     }
-    else if (m_DeclineCode == declineCodeDuplicateTransaction()) {
+    else if (declineCode == declineCodeDuplicateTransaction()) {
         description = tr("A transaction with identical amount and credit card information was submitted very recently.");
     }
-    else if (m_DeclineCode == declineCodeExpiredCard()) {
+    else if (declineCode == declineCodeExpiredCard()) {
         description = tr("The card has expired.");
     }
-    else if (m_DeclineCode == declineCodeFraudulent()) {
+    else if (declineCode == declineCodeFraudulent()) {
         description = tr("The payment has been declined as Stripe suspects it is fraudulent.");
     }
-    else if (m_DeclineCode == declineCodeGenericDecline()) {
+    else if (declineCode == declineCodeGenericDecline()) {
         description = tr("The card has been declined for an unknown reason.");
     }
-    else if (m_DeclineCode == declineCodeIncorrectNumber()) {
+    else if (declineCode == declineCodeIncorrectNumber()) {
         description = tr("The card number is incorrect.");
     }
-    else if (m_DeclineCode == declineCodeIncorrectCvc()) {
+    else if (declineCode == declineCodeIncorrectCvc()) {
         description = tr("The CVC number is incorrect.");
     }
-    else if (m_DeclineCode == declineCodeIncorrectPin()) {
+    else if (declineCode == declineCodeIncorrectPin()) {
         description = tr("The PIN entered is incorrect.");
     }
-    else if (m_DeclineCode == declineCodeIncorrectZip()) {
+    else if (declineCode == declineCodeIncorrectZip()) {
         description = tr("The ZIP/postal code is incorrect.");
     }
-    else if (m_DeclineCode == declineCodeInsufficientFunds()) {
+    else if (declineCode == declineCodeInsufficientFunds()) {
         description = tr("The card has insufficient funds to complete the purchase.");
     }
-    else if (m_DeclineCode == declineCodeInvalidAccount()) {
+    else if (declineCode == declineCodeInvalidAccount()) {
         description = tr("The card, or account the card is connected to, is invalid.");
     }
-    else if (m_DeclineCode == declineCodeInvalidAmount()) {
+    else if (declineCode == declineCodeInvalidAmount()) {
         description = tr("The payment amount is invalid, or exceeds the amount that is allowed.");
     }
-    else if (m_DeclineCode == declineCodeInvalidCvc()) {
+    else if (declineCode == declineCodeInvalidCvc()) {
         description = tr("The CVC number is incorrect.");
     }
-    else if (m_DeclineCode == declineCodeInvalidExpiryYear()) {
+    else if (declineCode == declineCodeInvalidExpiryYear()) {
         description = tr("The expiration year invalid.");
     }
-    else if (m_DeclineCode == declineCodeInvalidNumber()) {
+    else if (declineCode == declineCodeInvalidNumber()) {
         description = tr("The card number is incorrect.");
     }
-    else if (m_DeclineCode == declineCodeInvalidPin()) {
+    else if (declineCode == declineCodeInvalidPin()) {
         description = tr("The PIN entered is incorrect.");
     }
-    else if (m_DeclineCode == declineCodeIssuerNotAvailable()) {
+    else if (declineCode == declineCodeIssuerNotAvailable()) {
         description = tr("The card issuer could not be reached, so the payment could not be authorized.");
     }
-    else if (m_DeclineCode == declineCodeLostCard()) {
+    else if (declineCode == declineCodeLostCard()) {
         if (omitSensitive) {
             description = tr("The card has been declined for an unknown reason.");
         }
@@ -140,16 +145,16 @@ QString Error::declineCodeDescription(bool omitSensitive) const
             description = tr("The payment has been declined because the card is reported lost.");
         }
     }
-    else if (m_DeclineCode == declineCodeNewAccountInformationAvailable()) {
+    else if (declineCode == declineCodeNewAccountInformationAvailable()) {
         description = tr("The card, or account the card is connected to, is invalid.");
     }
-    else if (m_DeclineCode == declineCodeNoActionTaken()) {
+    else if (declineCode == declineCodeNoActionTaken()) {
         description = tr("The card has been declined for an unknown reason.");
     }
-    else if (m_DeclineCode == declineCodeNotPermitted()) {
+    else if (declineCode == declineCodeNotPermitted()) {
         description = tr("The payment is not permitted.");
     }
-    else if (m_DeclineCode == declineCodePickupCard()) {
+    else if (declineCode == declineCodePickupCard()) {
         if (omitSensitive) {
             description = tr("The card cannot be used to make this payment.");
         }
@@ -157,16 +162,16 @@ QString Error::declineCodeDescription(bool omitSensitive) const
             description = tr("The card cannot be used to make this payment (it is possible it has been reported lost or stolen).");
         }
     }
-    else if (m_DeclineCode == declineCodePinTryExceeded()) {
+    else if (declineCode == declineCodePinTryExceeded()) {
         description = tr("The allowable number of PIN tries has been exceeded.");
     }
-    else if (m_DeclineCode == declineCodeProcessingError()) {
+    else if (declineCode == declineCodeProcessingError()) {
         description = tr("An error occurred while processing the card.");
     }
-    else if (m_DeclineCode == declineCodeReenterTransaction()) {
+    else if (declineCode == declineCodeReenterTransaction()) {
         description = tr("The payment could not be processed by the issuer for an unknown reason.");
     }
-    else if (m_DeclineCode == declineCodeRestrictedCard()) {
+    else if (declineCode == declineCodeRestrictedCard()) {
         if (omitSensitive) {
             description = tr("The card cannot be used to make this payment");
         }
@@ -174,19 +179,19 @@ QString Error::declineCodeDescription(bool omitSensitive) const
             description = tr("The card cannot be used to make this payment (it is possible it has been reported lost or stolen).");
         }
     }
-    else if (m_DeclineCode == declineCodeRevocationOfAllAuthorizations()) {
+    else if (declineCode == declineCodeRevocationOfAllAuthorizations()) {
         description = tr("The card has been declined for an unknown reason.");
     }
-    else if (m_DeclineCode == declineCodeRevocationOfAuthorization()) {
+    else if (declineCode == declineCodeRevocationOfAuthorization()) {
         description = tr("The card has been declined for an unknown reason.");
     }
-    else if (m_DeclineCode == declineCodeSecurityViolation()) {
+    else if (declineCode == declineCodeSecurityViolation()) {
         description = tr("The card has been declined for an unknown reason.");
     }
-    else if (m_DeclineCode == declineCodeServiceNotAllowed()) {
+    else if (declineCode == declineCodeServiceNotAllowed()) {
         description = tr("The card has been declined for an unknown reason.");
     }
-    else if (m_DeclineCode == declineCodeStolenCard()) {
+    else if (declineCode == declineCodeStolenCard()) {
         if (omitSensitive) {
             description = tr("The payment has been declined.");
         }
@@ -194,98 +199,105 @@ QString Error::declineCodeDescription(bool omitSensitive) const
             description = tr("The payment has been declined because the card is reported stolen.");
         }
     }
-    else if (m_DeclineCode == declineCodeStopPaymentOrder()) {
+    else if (declineCode == declineCodeStopPaymentOrder()) {
         description = tr("The card has been declined for an unknown reason.");
     }
-    else if (m_DeclineCode == declineCodeTestmodeDecline()) {
+    else if (declineCode == declineCodeTestmodeDecline()) {
         description = tr("A Stripe test card number was used.");
     }
-    else if (m_DeclineCode == declineCodeTransactionNotAllowed()) {
+    else if (declineCode == declineCodeTransactionNotAllowed()) {
         description = tr("The card has been declined for an unknown reason.");
     }
-    else if (m_DeclineCode == declineCodeTryAgainLater()) {
+    else if (declineCode == declineCodeTryAgainLater()) {
         description = tr("The card has been declined for an unknown reason.");
     }
-    else if (m_DeclineCode == declineCodeWithdrawalCountLimitExceeded()) {
+    else if (declineCode == declineCodeWithdrawalCountLimitExceeded()) {
         description = tr("The customer has exceeded the balance or credit limit available on their card.");
+    }
+    else {
+        qDebug() << "[WARNING] Cannot find a description for the given decline code: " << declineCode;
     }
 
     return description;
 }
 
-QString Error::declineCodeNextSteps(bool omitSensitive) const
+QString Error::declineCodeNextSteps(QString declineCode, bool omitSensitive) const
 {
+    if (declineCode.isEmpty()) {
+        declineCode = m_DeclineCode;
+    }
+
     QString nextSteps = "";
-    if (m_DeclineCode == declineCodeApproveWithId()) {
+    if (declineCode == declineCodeApproveWithId()) {
         nextSteps = tr("The payment should be attempted again. If it still cannot be processed, the customer needs to contact their card issuer.");
     }
-    else if (m_DeclineCode == declineCodeCallIssuer()) {
+    else if (declineCode == declineCodeCallIssuer()) {
         nextSteps = tr("The customer needs to contact their card issuer for more information.");
     }
-    else if (m_DeclineCode == declineCodeCardNotSupported()) {
+    else if (declineCode == declineCodeCardNotSupported()) {
         nextSteps = tr("The customer needs to contact their card issuer to make sure their card can be used to make this type of purchase.");
     }
-    else if (m_DeclineCode == declineCodeCardVelocityExceeded()) {
+    else if (declineCode == declineCodeCardVelocityExceeded()) {
         nextSteps = tr("The customer should contact their card issuer for more information.");
     }
-    else if (m_DeclineCode == declineCodeCurrencyNotSupported()) {
+    else if (declineCode == declineCodeCurrencyNotSupported()) {
         nextSteps = tr("The customer needs check with the issuer that the card can be used for the type of currency specified.");
     }
-    else if (m_DeclineCode == declineCodeDoNotHonor()) {
+    else if (declineCode == declineCodeDoNotHonor()) {
         nextSteps = tr("The customer needs to contact their card issuer for more information.");
     }
-    else if (m_DeclineCode == declineCodeDoNotTryAgain()) {
+    else if (declineCode == declineCodeDoNotTryAgain()) {
         nextSteps = tr("The customer should contact their card issuer for more information.");
     }
-    else if (m_DeclineCode == declineCodeDuplicateTransaction()) {
+    else if (declineCode == declineCodeDuplicateTransaction()) {
         nextSteps = tr("Check to see if a recent payment already exists.");
     }
-    else if (m_DeclineCode == declineCodeExpiredCard()) {
+    else if (declineCode == declineCodeExpiredCard()) {
         nextSteps = tr("The customer should use another card.");
     }
-    else if (m_DeclineCode == declineCodeFraudulent()) {
+    else if (declineCode == declineCodeFraudulent()) {
         nextSteps = tr("The customer needs to contact their card issuer for more information.");
     }
-    else if (m_DeclineCode == declineCodeGenericDecline()) {
+    else if (declineCode == declineCodeGenericDecline()) {
         nextSteps = tr("The customer needs to contact their card issuer for more information.");
     }
-    else if (m_DeclineCode == declineCodeIncorrectNumber()) {
+    else if (declineCode == declineCodeIncorrectNumber()) {
         nextSteps = tr("The customer should try again using the correct card number.");
     }
-    else if (m_DeclineCode == declineCodeIncorrectCvc()) {
+    else if (declineCode == declineCodeIncorrectCvc()) {
         nextSteps = tr("The customer should try again using the correct CVC.");
     }
-    else if (m_DeclineCode == declineCodeIncorrectPin()) {
+    else if (declineCode == declineCodeIncorrectPin()) {
         nextSteps = tr("The customer should try again using the correct PIN.");
     }
-    else if (m_DeclineCode == declineCodeIncorrectZip()) {
+    else if (declineCode == declineCodeIncorrectZip()) {
         nextSteps = tr("The customer should try again using the correct billing ZIP/postal code.");
     }
-    else if (m_DeclineCode == declineCodeInsufficientFunds()) {
+    else if (declineCode == declineCodeInsufficientFunds()) {
         nextSteps = tr("The customer should use an alternative payment method.");
     }
-    else if (m_DeclineCode == declineCodeInvalidAccount()) {
+    else if (declineCode == declineCodeInvalidAccount()) {
         nextSteps = tr("The customer needs to contact their card issuer to check that the card is working correctly.");
     }
-    else if (m_DeclineCode == declineCodeInvalidAmount()) {
+    else if (declineCode == declineCodeInvalidAmount()) {
         nextSteps = tr("If the amount appears to be correct, the customer needs to check with their card issuer that they can make purchases of that amount.");
     }
-    else if (m_DeclineCode == declineCodeInvalidCvc()) {
+    else if (declineCode == declineCodeInvalidCvc()) {
         nextSteps = tr("The customer should try again using the correct CVC.");
     }
-    else if (m_DeclineCode == declineCodeInvalidExpiryYear()) {
+    else if (declineCode == declineCodeInvalidExpiryYear()) {
         nextSteps = tr("The customer should try again using the correct expiration date.");
     }
-    else if (m_DeclineCode == declineCodeInvalidNumber()) {
+    else if (declineCode == declineCodeInvalidNumber()) {
         nextSteps = tr("The customer should try again using the correct card number.");
     }
-    else if (m_DeclineCode == declineCodeInvalidPin()) {
+    else if (declineCode == declineCodeInvalidPin()) {
         nextSteps = tr("The customer should try again using the correct PIN.");
     }
-    else if (m_DeclineCode == declineCodeIssuerNotAvailable()) {
+    else if (declineCode == declineCodeIssuerNotAvailable()) {
         nextSteps = tr("The payment should be attempted again. If it still cannot be processed, the customer needs to contact their card issuer.");
     }
-    else if (m_DeclineCode == declineCodeLostCard()) {
+    else if (declineCode == declineCodeLostCard()) {
         if (omitSensitive) {
             nextSteps = tr("The customer needs to contact their card issuer for more information.");
         }
@@ -293,43 +305,43 @@ QString Error::declineCodeNextSteps(bool omitSensitive) const
             nextSteps = tr("The specific reason for the decline should not be reported to the customer. Instead, it needs to be presented as a generic decline.");
         }
     }
-    else if (m_DeclineCode == declineCodeNewAccountInformationAvailable()) {
+    else if (declineCode == declineCodeNewAccountInformationAvailable()) {
         nextSteps = tr("The customer needs to contact their card issuer for more information.");
     }
-    else if (m_DeclineCode == declineCodeNoActionTaken()) {
+    else if (declineCode == declineCodeNoActionTaken()) {
         nextSteps = tr("The customer should contact their card issuer for more information.");
     }
-    else if (m_DeclineCode == declineCodeNotPermitted()) {
+    else if (declineCode == declineCodeNotPermitted()) {
         nextSteps = tr("The customer needs to contact their card issuer for more information.");
     }
-    else if (m_DeclineCode == declineCodePickupCard()) {
+    else if (declineCode == declineCodePickupCard()) {
         nextSteps = tr("The customer needs to contact their card issuer for more information.");
     }
-    else if (m_DeclineCode == declineCodePinTryExceeded()) {
+    else if (declineCode == declineCodePinTryExceeded()) {
         nextSteps = tr("The customer must use another card or method of payment.");
     }
-    else if (m_DeclineCode == declineCodeProcessingError()) {
+    else if (declineCode == declineCodeProcessingError()) {
         nextSteps = tr("The payment should be attempted again. If it still cannot be processed, try again later.");
     }
-    else if (m_DeclineCode == declineCodeReenterTransaction()) {
+    else if (declineCode == declineCodeReenterTransaction()) {
         nextSteps = tr("The payment should be attempted again. If it still cannot be processed, the customer needs to contact their card issuer.");
     }
-    else if (m_DeclineCode == declineCodeRestrictedCard()) {
+    else if (declineCode == declineCodeRestrictedCard()) {
         nextSteps = tr("The customer needs to contact their card issuer for more information.");
     }
-    else if (m_DeclineCode == declineCodeRevocationOfAllAuthorizations()) {
+    else if (declineCode == declineCodeRevocationOfAllAuthorizations()) {
         nextSteps = tr("The customer should contact their card issuer for more information.");
     }
-    else if (m_DeclineCode == declineCodeRevocationOfAuthorization()) {
+    else if (declineCode == declineCodeRevocationOfAuthorization()) {
         nextSteps = tr("The customer should contact their card issuer for more information.");
     }
-    else if (m_DeclineCode == declineCodeSecurityViolation()) {
+    else if (declineCode == declineCodeSecurityViolation()) {
         nextSteps = tr("The customer needs to contact their card issuer for more information.");
     }
-    else if (m_DeclineCode == declineCodeServiceNotAllowed()) {
+    else if (declineCode == declineCodeServiceNotAllowed()) {
         nextSteps = tr("The customer should contact their card issuer for more information.");
     }
-    else if (m_DeclineCode == declineCodeStolenCard()) {
+    else if (declineCode == declineCodeStolenCard()) {
         if (omitSensitive) {
             nextSteps = tr("The customer needs to contact their card issuer for more information.");
         }
@@ -338,21 +350,24 @@ QString Error::declineCodeNextSteps(bool omitSensitive) const
         }
 
     }
-    else if (m_DeclineCode == declineCodeStopPaymentOrder()) {
+    else if (declineCode == declineCodeStopPaymentOrder()) {
         nextSteps = tr("The customer should contact their card issuer for more information.");
     }
-    else if (m_DeclineCode == declineCodeTestmodeDecline()) {
+    else if (declineCode == declineCodeTestmodeDecline()) {
         nextSteps = tr("A genuine card must be used to make a payment.");
     }
-    else if (m_DeclineCode == declineCodeTransactionNotAllowed()) {
+    else if (declineCode == declineCodeTransactionNotAllowed()) {
         nextSteps = tr("The customer needs to contact their card issuer for more information.");
     }
-    else if (m_DeclineCode == declineCodeTryAgainLater()) {
+    else if (declineCode == declineCodeTryAgainLater()) {
         nextSteps =
             tr("Ask the customer to attempt the payment again. If subsequent payments are declined, the customer should contact their card issuer for more information.");
     }
-    else if (m_DeclineCode == declineCodeWithdrawalCountLimitExceeded()) {
+    else if (declineCode == declineCodeWithdrawalCountLimitExceeded()) {
         nextSteps = tr("The customer should use an alternative payment method.");
+    }
+    else {
+        qDebug() << "[WARNING] Cannot find a next step for the given decline code: " << declineCode;
     }
 
     return nextSteps;
