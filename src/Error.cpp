@@ -358,6 +358,78 @@ QString Error::declineCodeNextSteps(bool omitSensitive) const
     return nextSteps;
 }
 
+Error::ErrorType Error::errorTypeFromString(const QString &typeString) const
+{
+    ErrorType type = ErrorType::ErrorNone;
+    if (typeString == "api_connection_error") {
+        type = ErrorType::ErrorApiConnection;
+    }
+    else if (typeString == "api_error") {
+        type = ErrorType::ErrorApi;
+    }
+    else if (typeString == "authentication_error") {
+        type = ErrorType::ErrorAuthentication;
+    }
+    else if (typeString == "card_error") {
+        type = ErrorType::ErrorCard;
+    }
+    else if (typeString == "idempotency_error") {
+        type = ErrorType::ErrorIdempotency;
+    }
+    else if (typeString == "invalid_request_error") {
+        type = ErrorType::ErrorInvalidRequest;
+    }
+    else if (typeString == "rate_limit_error") {
+        type = ErrorType::ErrorRateLimit;
+    }
+
+    return type;
+}
+
+Error::ErrorCode Error::errorCodeFromString(const QString &codeStr) const
+{
+    ErrorCode code = ErrorCode::CodeNone;
+
+    if (codeStr == "invalid_number") {
+        code = ErrorCode::CodeInvalidNumber;
+    }
+    else if (codeStr == "invalid_expiry_month") {
+        code = ErrorCode::CodeInvalidExpiryMonth;
+    }
+    else if (codeStr == "invalid_expiry_year") {
+        code = ErrorCode::CodeInvalidExpiryYear;
+    }
+    else if (codeStr == "invalid_cvc") {
+        code = ErrorCode::CodeInvalidCVC;
+    }
+    else if (codeStr == "invalid_swipe_data") {
+        code = ErrorCode::CodeInvalidSwipeData;
+    }
+    else if (codeStr == "incorrect_number") {
+        code = ErrorCode::CodeIncorrectNumber;
+    }
+    else if (codeStr == "expired_card") {
+        code = ErrorCode::CodeExpiredCard;
+    }
+    else if (codeStr == "incorrect_cvc") {
+        code = ErrorCode::CodeIncorrectCVC;
+    }
+    else if (codeStr == "incorrect_zip") {
+        code = ErrorCode::CodeIncorrectZip;
+    }
+    else if (codeStr == "card_declined") {
+        code = ErrorCode::CodeCardDeclined;
+    }
+    else if (codeStr == "missing") {
+        code = ErrorCode::CodeMissing;
+    }
+    else if (codeStr == "processing_error") {
+        code = ErrorCode::CodeProcessingError;
+    }
+
+    return code;
+}
+
 void Error::set(QVariantMap errorResponse, int httpCode, int networkErrorCode)
 {
     if (errorResponse.contains("error")) {
@@ -372,27 +444,7 @@ void Error::set(QVariantMap errorResponse, int httpCode, int networkErrorCode)
     }
     else if (errorResponse.contains("type")) {
         const QString typeString = errorResponse["type"].toString();
-        if (typeString == "api_connection_error") {
-            m_Type = ErrorType::ErrorApiConnection;
-        }
-        else if (typeString == "api_error") {
-            m_Type = ErrorType::ErrorApi;
-        }
-        else if (typeString == "authentication_error") {
-            m_Type = ErrorType::ErrorAuthentication;
-        }
-        else if (typeString == "card_error") {
-            m_Type = ErrorType::ErrorCard;
-        }
-        else if (typeString == "idempotency_error") {
-            m_Type = ErrorType::ErrorIdempotency;
-        }
-        else if (typeString == "invalid_request_error") {
-            m_Type = ErrorType::ErrorInvalidRequest;
-        }
-        else if (typeString == "rate_limit_error") {
-            m_Type = ErrorType::ErrorRateLimit;
-        }
+        m_Type = errorTypeFromString(typeString);
     }
     else {
         m_Type = ErrorType::ErrorNone;
@@ -413,42 +465,8 @@ void Error::set(QVariantMap errorResponse, int httpCode, int networkErrorCode)
     }
 
     if (errorResponse.contains("code")) {
-        if (errorResponse["code"].toString() == "invalid_number") {
-            m_Code = ErrorCode::CodeInvalidNumber;
-        }
-        else if (errorResponse["code"].toString() == "invalid_expiry_month") {
-            m_Code = ErrorCode::CodeInvalidExpiryMonth;
-        }
-        else if (errorResponse["code"].toString() == "invalid_expiry_year") {
-            m_Code = ErrorCode::CodeInvalidExpiryYear;
-        }
-        else if (errorResponse["code"].toString() == "invalid_cvc") {
-            m_Code = ErrorCode::CodeInvalidCVC;
-        }
-        else if (errorResponse["code"].toString() == "invalid_swipe_data") {
-            m_Code = ErrorCode::CodeInvalidSwipeData;
-        }
-        else if (errorResponse["code"].toString() == "incorrect_number") {
-            m_Code = ErrorCode::CodeIncorrectNumber;
-        }
-        else if (errorResponse["code"].toString() == "expired_card") {
-            m_Code = ErrorCode::CodeExpiredCard;
-        }
-        else if (errorResponse["code"].toString() == "incorrect_cvc") {
-            m_Code = ErrorCode::CodeIncorrectCVC;
-        }
-        else if (errorResponse["code"].toString() == "incorrect_zip") {
-            m_Code = ErrorCode::CodeIncorrectZip;
-        }
-        else if (errorResponse["code"].toString() == "card_declined") {
-            m_Code = ErrorCode::CodeCardDeclined;
-        }
-        else if (errorResponse["code"].toString() == "missing") {
-            m_Code = ErrorCode::CodeMissing;
-        }
-        else if (errorResponse["code"].toString() == "processing_error") {
-            m_Code = ErrorCode::CodeProcessingError;
-        }
+        const QString codeStr = errorResponse["code"].toString();
+        m_Code = errorCodeFromString(codeStr);
     }
     else {
         m_Code = ErrorCode::CodeNone;

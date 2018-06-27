@@ -177,6 +177,23 @@ public:
      * @return QString
      */
     Q_INVOKABLE QString declineCodeNextSteps(bool omitSensitive = true) const;
+    /**
+     * @brief Converts the string to the associated ErrorType.
+     * @param typeString
+     * @return ErrorType
+     *
+     * This method is invokable from QML.
+     */
+    Q_INVOKABLE ErrorType errorTypeFromString(const QString &typeString) const;
+
+    /**
+     * @brief Converts the string to the associated ErrorCode.
+     * @param codeStr
+     * @return ErrorCode
+     *
+     * This method is invokable from QML.
+     */
+    Q_INVOKABLE ErrorCode errorCodeFromString(const QString &codeStr) const;
 
     /**
      * @brief Changes the contents of this instance based on the errorResponse. If any field does not exist for some reason, the default values are set.
