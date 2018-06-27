@@ -41,9 +41,11 @@ void QStripePlugin::registerTypes(const char *uri)
     registerQStripe(uri);
 }
 
+#if QSTRIPE_AUTO_REGISTER
 static void startupFunction()
 {
     QStripePlugin::registerQStripe();
 }
 
 Q_COREAPP_STARTUP_FUNCTION(startupFunction)
+#endif // QSTRIPE_AUTO_REGISTER

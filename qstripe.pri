@@ -18,6 +18,15 @@ DEFINES += QSTRIPE_VER_STR=$$VERSION
 
 INCLUDEPATH += $$PWD/include
 
+contains(STRIPE_CONFIG, QSTRIPE_AUTO_REGISTER) {
+    DEFINES += QSTRIPE_AUTO_REGISTER=1
+    message("[QStripe] Automatically registering the QML types.")
+}
+else {
+    DEFINES += QSTRIPE_AUTO_REGISTER=0
+    message("[QStripe] Automatic registration is disabled. You have to manually register the QML types.")
+}
+
 HEADERS += \
     $$PWD/include/QStripe/Token.h \
     $$PWD/include/QStripe/Card.h \
