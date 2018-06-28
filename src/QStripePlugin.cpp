@@ -3,14 +3,14 @@
 #include <QtQml/qqml.h>
 #include <QCoreApplication>
 // QStripe
-#include "QStripe/ShippingInformation.h"
-#include "QStripe/PaymentSource.h"
-#include "QStripe/Customer.h"
-#include "QStripe/Address.h"
-#include "QStripe/Stripe.h"
+#include "QStripe/Card.h"
 #include "QStripe/Error.h"
 #include "QStripe/Token.h"
-#include "QStripe/Card.h"
+#include "QStripe/Stripe.h"
+#include "QStripe/Address.h"
+#include "QStripe/Customer.h"
+#include "QStripe/PaymentSource.h"
+#include "QStripe/ShippingInformation.h"
 
 QStripePlugin::QStripePlugin(QObject *parent)
     : QQmlExtensionPlugin(parent)
@@ -22,22 +22,20 @@ void QStripePlugin::registerQStripe(const char *uri)
 {
     Q_ASSERT(QString(uri) == QString("QStripe"));
 
-    qmlRegisterType<QStripe::Address>(uri, 1, 0, "Address");
-    qmlRegisterType<QStripe::Card>(uri, 1, 0, "Card");
-    qmlRegisterType<QStripe::Customer>(uri, 1, 0, "Customer");
+    qmlRegisterType<QStripe::Address>(uri, QSTRIPE_VER_MAJOR, QSTRIPE_VER_MINOR, "Address");
+    qmlRegisterType<QStripe::Card>(uri, QSTRIPE_VER_MAJOR, QSTRIPE_VER_MINOR, "Card");
+    qmlRegisterType<QStripe::Customer>(uri, QSTRIPE_VER_MAJOR, QSTRIPE_VER_MINOR, "Customer");
 
-    qmlRegisterType<QStripe::Error>(uri, 1, 0, "Error");
-    qmlRegisterType<QStripe::PaymentSource>(uri, 1, 0, "PaymentSource");
-    qmlRegisterType<QStripe::ShippingInformation>(uri, 1, 0, "ShippingInformation");
+    qmlRegisterType<QStripe::Error>(uri, QSTRIPE_VER_MAJOR, QSTRIPE_VER_MINOR, "Error");
+    qmlRegisterType<QStripe::PaymentSource>(uri, QSTRIPE_VER_MAJOR, QSTRIPE_VER_MINOR, "PaymentSource");
+    qmlRegisterType<QStripe::ShippingInformation>(uri, QSTRIPE_VER_MAJOR, QSTRIPE_VER_MINOR, "ShippingInformation");
 
-    qmlRegisterType<QStripe::Stripe>(uri, 1, 0, "Stripe");
-    qmlRegisterType<QStripe::Token>(uri, 1, 0, "Token");
+    qmlRegisterType<QStripe::Stripe>(uri, QSTRIPE_VER_MAJOR, QSTRIPE_VER_MINOR, "Stripe");
+    qmlRegisterType<QStripe::Token>(uri, QSTRIPE_VER_MAJOR, QSTRIPE_VER_MINOR, "Token");
 }
 
 void QStripePlugin::registerTypes(const char *uri)
 {
-    Q_ASSERT(QString(uri) == QString("QStripe"));
-
     registerQStripe(uri);
 }
 
