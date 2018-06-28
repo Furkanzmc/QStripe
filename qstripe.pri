@@ -6,9 +6,9 @@
     QT += network
 }
 
-VER_MAJ = 0
-VER_MIN = 1
-VER_PAT = 0
+VER_MAJ = 1
+VER_MIN = 0
+VER_PAT = 1
 VERSION = $$sprintf("%1.%2.%3", $$VER_MAJ, $$VER_MIN, $$VER_PAT)
 
 DEFINES += QSTRIPE_VER_MAJOR=$$VER_MAJ
