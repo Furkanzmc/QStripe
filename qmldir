@@ -1,3 +1,2 @@
 module QStripe
-plugin QStripe
-classname QStripePlugin
+plugin QStripePlugin
