@@ -1,4 +1,5 @@
 #pragma once
+// Qt
 #include <QVariantMap>
 
 namespace QStripe

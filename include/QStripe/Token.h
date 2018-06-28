@@ -1,7 +1,8 @@
 #pragma once
-#include <QObject>
-#include <QDateTime>
+// Qt
 #include <QVariantMap>
+#include <QDateTime>
+#include <QObject>
 
 namespace QStripe
 {
@@ -86,6 +87,11 @@ public:
     bool used() const;
 
     /**
+     * @brief Resets the properties to their default.
+     */
+    Q_INVOKABLE void clear();
+
+    /**
      * @brief Returns the string representation of the given Type.
      * @param type
      * @return QString
@@ -138,6 +144,12 @@ public:
      * @param other
      */
     Q_INVOKABLE void set(const Token *other);
+
+signals:
+    /**
+     * @brief Emitted after the clear() method is called.
+     */
+    void cleared();
 
 private:
     // FIXME: Create a seperate class for BankAccount.

@@ -1,11 +1,11 @@
 #include "QStripe/NetworkUtils.h"
 // Qt
 #include <QNetworkRequest>
+#include <QMimeDatabase>
 #include <QNetworkReply>
 #include <QHttpPart>
-#include <QFile>
-#include <QMimeDatabase>
 #include <QUrlQuery>
+#include <QFile>
 // QStripe
 #include "QStripe/Utils.h"
 
@@ -166,7 +166,7 @@ int NetworkUtils::getAvailableIndex()
         return -1;
     }
 
-    return std::distance(m_Callbacks.begin(), foundIt);
+    return static_cast<int>(std::distance(m_Callbacks.begin(), foundIt));
 }
 
 void NetworkUtils::insertCallback(const int &threadIndex, RequestCallback &&callback)

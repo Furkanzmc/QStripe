@@ -1,4 +1,5 @@
 #include "QStripe/Token.h"
+// QStripe
 #include "QStripe/Utils.h"
 
 namespace QStripe
@@ -53,6 +54,19 @@ bool Token::liveMode() const
 bool Token::used() const
 {
     return m_IsUsed;
+}
+
+void Token::clear()
+{
+    m_BankAccount.clear();
+    m_Created = QDateTime();
+    m_TokenID = "";
+
+    m_Type = TypeUnknown;
+    m_IsLiveMode = false;
+    m_IsUsed = false;
+
+    emit cleared();
 }
 
 QString Token::typeName(Type type)

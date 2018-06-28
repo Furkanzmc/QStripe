@@ -1,10 +1,11 @@
 #pragma once
-#include <QObject>
+// Qt
 #include <QQmlListProperty>
+#include <QObject>
 #include <QVector>
-// Stripe
-#include "Customer.h"
+// QStripe
 #include "NetworkUtils.h"
+#include "Customer.h"
 #include "Error.h"
 
 namespace QStripe
@@ -18,7 +19,7 @@ class Stripe : public QObject
     Q_PROPERTY(QString secretKey READ secretKey WRITE setSecretKey)
     Q_PROPERTY(QString apiVersion READ apiVersion WRITE setApiVersion)
 
-    Q_PROPERTY(QQmlListProperty<Customer> customers READ customers)
+    Q_PROPERTY(QQmlListProperty<QStripe::Customer> customers READ customers)
     Q_CLASSINFO("DefaultProperty", "customers")
 
 public:
@@ -126,7 +127,7 @@ signals:
      * @brief Emitted when a request to Stripe fails.
      * @param error
      */
-    void errorOccurred(const Error *error);
+    void errorOccurred(Error *error);
 
 private:
     static QString m_PublishableKey,

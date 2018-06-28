@@ -1,6 +1,7 @@
 #pragma once
+// Qt
 #include <QObject>
-// Stripe
+// QStripe
 #include "Address.h"
 
 namespace QStripe
@@ -12,7 +13,7 @@ class ShippingInformation : public QObject
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString phone READ phone WRITE setPhone NOTIFY phoneChanged)
-    Q_PROPERTY(Address *address READ address WRITE setAddress NOTIFY addressChanged)
+    Q_PROPERTY(QStripe::Address *address READ address WRITE setAddress NOTIFY addressChanged)
 
 public:
     static const QString FIELD_ADDRESS;
@@ -51,13 +52,12 @@ public:
      * @return Address
      */
     Address *address();
-    const Address *address() const;
 
     /**
      * @brief Set the address to the given address.
      * @param name
      */
-    void setAddress(const Address *addr);
+    void setAddress(Address *addr);
 
     /**
      * @brief Returns the QVariantMap representation of the current object.
@@ -75,7 +75,7 @@ public:
      * @brief Copy another address to this one. This will copy the address.
      * @param other
      */
-    Q_INVOKABLE void set(const ShippingInformation *other);
+    Q_INVOKABLE void set(ShippingInformation *other);
 
     /**
      * @brief Resets every property to its default state. When the clearing is complete, `cleared()` signal will be emitted.

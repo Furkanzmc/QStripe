@@ -1,4 +1,5 @@
 #include "QStripe/Address.h"
+// QStripe
 #include "QStripe/Utils.h"
 
 namespace QStripe
@@ -166,7 +167,7 @@ QString Address::jsonString(const QString &prefix) const
     return Utils::toJsonString(json(prefix));
 }
 
-void Address::set(const Address *other)
+void Address::set(Address *other)
 {
     this->setCountry(other->country());
     this->setState(other->state());
@@ -180,14 +181,26 @@ void Address::set(const Address *other)
 void Address::clear()
 {
     m_Country.clear();
+    emit countryChanged();
+
     m_State.clear();
+    emit stateChanged();
+
     m_City.clear();
+    emit cityChanged();
 
     m_LineOne.clear();
+    emit lineOneChanged();
+
     m_LineTwo.clear();
+    emit lineTwoChanged();
+
     m_PostalCode.clear();
+    emit postalCodeChanged();
 
     m_ZipCheck = ZipCheck::ZipCheckUnknown;
+    emit zipCheckChanged();
+
     emit cleared();
 }
 

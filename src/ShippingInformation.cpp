@@ -1,4 +1,5 @@
 #include "QStripe/ShippingInformation.h"
+// QStripe
 #include "QStripe/Utils.h"
 
 namespace QStripe
@@ -50,12 +51,7 @@ Address *ShippingInformation::address()
     return &m_Address;
 }
 
-const Address *ShippingInformation::address() const
-{
-    return &m_Address;
-}
-
-void ShippingInformation::setAddress(const Address *addr)
+void ShippingInformation::setAddress(Address *addr)
 {
     const bool changed = (*addr) != m_Address;
     if (changed) {
@@ -79,7 +75,7 @@ QString ShippingInformation::jsonString() const
     return Utils::toJsonString(json());
 }
 
-void ShippingInformation::set(const ShippingInformation *other)
+void ShippingInformation::set(ShippingInformation *other)
 {
     setName(other->name());
     setPhone(other->phone());
@@ -91,8 +87,14 @@ void ShippingInformation::set(const ShippingInformation *other)
 void ShippingInformation::clear()
 {
     m_Name.clear();
+    emit nameChanged();
+
     m_Phone.clear();
+    emit phoneChanged();
+
     m_Address.clear();
+    emit addressChanged();
+
     emit cleared();
 }
 

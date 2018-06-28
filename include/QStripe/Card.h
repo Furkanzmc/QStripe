@@ -1,9 +1,10 @@
 #pragma once
+// Qt
 #include <QObject>
 #include <QVector>
 // QStripe
-#include "Address.h"
 #include "NetworkUtils.h"
+#include "Address.h"
 #include "Error.h"
 
 namespace QStripe
@@ -16,8 +17,8 @@ class Card : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QString cardID READ cardID NOTIFY cardIDChanged)
-    Q_PROPERTY(Address *address READ address WRITE setAddress NOTIFY addressChanged)
-    Q_PROPERTY(CardBrand brand READ brand WRITE setBrand NOTIFY brandChanged)
+    Q_PROPERTY(QStripe::Address *address READ address WRITE setAddress NOTIFY addressChanged)
+    Q_PROPERTY(CardBrand brand READ brand NOTIFY brandChanged)
 
     Q_PROPERTY(QString country READ country WRITE setCountry NOTIFY countryChanged)
     Q_PROPERTY(QString currency READ currency WRITE setCurrency NOTIFY currencyChanged)
@@ -41,10 +42,16 @@ class Card : public QObject
 
     Q_PROPERTY(QString brandName READ brandName CONSTANT)
     Q_PROPERTY(CardBrand possibleCardBrand READ possibleCardBrand CONSTANT)
-    Q_PROPERTY(const Token *token READ token CONSTANT)
+    Q_PROPERTY(QStripe::Token *token READ token CONSTANT)
 
-    Q_PROPERTY(bool validCardLenght READ validCardLenght CONSTANT)
-    Q_PROPERTY(bool validCardNumber READ validCardNumber CONSTANT)
+    Q_PROPERTY(bool validCardLenght READ validCardLenght NOTIFY validCardLenghtChanged)
+    Q_PROPERTY(bool validCardNumber READ validCardNumber NOTIFY validCardNumberChanged)
+    Q_PROPERTY(bool validCard READ validCard NOTIFY validCardChanged)
+
+    Q_PROPERTY(bool validExpirationMonth READ validExpirationMonth NOTIFY validExpirationMonthChanged)
+    Q_PROPERTY(bool validExpirationYear READ validExpirationYear NOTIFY validExpirationYearChanged)
+    Q_PROPERTY(bool validCVC READ validCVC NOTIFY validCVCChanged)
+
     Q_PROPERTY(QString customerID READ customerID WRITE setCustomerID NOTIFY customerIDChanged)
 
     Q_CLASSINFO("DefaultProperty", "token")
@@ -120,14 +127,14 @@ public:
      * @brief Returns the current address object.
      * @return Address*
      */
-    Address *address();
     const Address *address() const;
+    Address *address();
 
     /**
      * @brief Sett the current address. The object is copied.
      * @param addr
      */
-    void setAddress(const Address *addr);
+    void setAddress(Address *addr);
 
     /**
      * @brief Returns the card brand.
@@ -322,7 +329,7 @@ public:
      * @brief Returns the Token object for this Card. If the token was not created, the ID of the token will be empty.
      * @return
      */
-    const Token *token() const;
+    QStripe::Token *token();
 
     /**
      * @brief Returns true If the card number length is valid for the current card brand. If the card brand is unknown, it will return false.
@@ -383,7 +390,7 @@ public:
      * @brief Copies the contents of other to this instance.
      * @param other
      */
-    Q_INVOKABLE void set(const Card *other);
+    Q_INVOKABLE void set(Card *other);
 
     /**
      * @brief If the card is valid and there's no valid Token for the instance, this will create a token and set the response to the attached token.
@@ -418,6 +425,11 @@ public:
     Q_INVOKABLE bool deleteCard(QString customerID = "");
 
     /**
+     * @brief Resets the properties to their defaults.
+     */
+    Q_INVOKABLE void clear();
+
+    /**
      * @brief Returns the last ocurred error.
      * @return const Error *
      */
@@ -428,56 +440,56 @@ public:
      * @param brand
      * @return QString
      */
-    static QString cardBrandName(CardBrand brand);
+    Q_INVOKABLE static QString cardBrandName(CardBrand brand);
 
     /**
      * @brief Returns the CardBrand enum from the name.
      * @param name
      * @return CardBrand
      */
-    static CardBrand cardBrandType(const QString &name);
+    Q_INVOKABLE static CardBrand cardBrandType(const QString &name);
 
     /**
      * @brief Returns the string representation of the funding type.
      * @param type
      * @return QString
      */
-    static QString fundingTypeString(FundingType type);
+    Q_INVOKABLE static QString fundingTypeString(FundingType type);
 
     /**
      * @brief Returns the FundingType enum for the given name.
      * @param name
      * @return FundingType
      */
-    static FundingType fundingType(const QString &name);
+    Q_INVOKABLE static FundingType fundingType(const QString &name);
 
     /**
      * @brief Returns the CVCCheck type from the name.
      * @param name
      * @return CVCCheck
      */
-    static CVCCheck cvcCheckType(const QString &name);
+    Q_INVOKABLE static CVCCheck cvcCheckType(const QString &name);
 
     /**
      * @brief Returns the name of the cvc check type.
      * @param type
      * @return QString
      */
-    static QString cvcCheckName(CVCCheck type);
+    Q_INVOKABLE static QString cvcCheckName(CVCCheck type);
 
     /**
      * @brief Returns the tokenization type from its string representation.
      * @param name
      * @return TokenizationMethod
      */
-    static TokenizationMethod tokenizationMethodType(const QString &name);
+    Q_INVOKABLE static TokenizationMethod tokenizationMethodType(const QString &name);
 
     /**
      * @brief Returns the string representation of the tokenization method.
      * @param method
      * @return QString
      */
-    static QString tokenizationMethodName(TokenizationMethod method);
+    Q_INVOKABLE static QString tokenizationMethodName(TokenizationMethod method);
 
     /**
      * @brief Returns a Card instance from the json string.
@@ -608,10 +620,45 @@ signals:
     void deleted();
 
     /**
+     * @brief Emitted when validCardLenght changes.
+     */
+    void validCardLenghtChanged();
+
+    /**
+     * @brief Emitted when validCardNumber changes.
+     */
+    void validCardNumberChanged();
+
+    /**
+     * @brief Emitted when validCard changes.
+     */
+    void validCardChanged();
+
+    /**
+     * @brief Emitted after the clear() method is called.
+     */
+    void cleared();
+
+    /**
+     * @brief Emitted when the validity of the expiration month changes.
+     */
+    void validExpirationMonthChanged();
+
+    /**
+     * @brief Emitted when the validity of the expiration year changes.
+     */
+    void validExpirationYearChanged();
+
+    /**
+     * @brief Emitted when the validity of the cvc number changes.
+     */
+    void validCVCChanged();
+
+    /**
      * @brief Emitted when a request to Stripe fails.
      * @param error
      */
-    void errorOccurred(const Error *error);
+    void errorOccurred(Error *error);
 
 private:
     QString m_CardID;
@@ -646,6 +693,12 @@ private:
      * This can also be set from the outside and if it has a value it will have a presedence over the parameters.
      */
     QString m_CustomerID;
+    bool m_IsValidCardLenght,
+         m_IsValidCardNumber,
+         m_IsValidCard,
+         m_IsValidExpirationMonth,
+         m_IsValidExpirationYear,
+         m_IsValidCVC;
 
 private:
     /**
@@ -682,6 +735,42 @@ private:
     void setCVCCheck(CVCCheck check);
 
     /**
+     * @brief Emits the signal If the validity of the card has changed.
+     * @param valid
+     */
+    void setValidCard(bool valid);
+
+    /**
+     * @brief Emits the signal If the validity of the card number has changed.
+     * @param valid
+     */
+    void setValidCardNumber(bool valid);
+
+    /**
+     * @brief Emits the signal If the validity of the length of the card number has changed.
+     * @param valid
+     */
+    void setValidCardNumberLenght(bool valid);
+
+    /**
+     * @brief Emits the signal If the validity of the expiration month has changed.
+     * @param valid
+     */
+    void setValidExpirationMonth(bool valid);
+
+    /**
+     * @brief Emits the signal If the validity of the expiration year has changed.
+     * @param valid
+     */
+    void setValidExpirationYear(bool valid);
+
+    /**
+     * @brief Emits the signal If the validity of the cvc has changed.
+     * @param valid
+     */
+    void setValidCVC(bool valid);
+
+    /**
      * @brief This is connected to the cardNumberChanged() signal. And it udates the brand.
      */
     void updateCardBrand();
@@ -697,6 +786,13 @@ private:
      * @return QString
      */
     QString getCustomerID() const;
+
+    /**
+     * @brief Returns the >four digit year for the expiration year.
+     * @param year
+     * @return
+     */
+    int normilizedYear(int year) const;
 };
 
 }

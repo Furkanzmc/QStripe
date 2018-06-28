@@ -2,8 +2,8 @@
 // Qt
 #include <QUrlQuery>
 // QStripe
-#include "QStripe/Utils.h"
 #include "QStripe/Stripe.h"
+#include "QStripe/Utils.h"
 
 namespace QStripe
 {
@@ -113,12 +113,12 @@ void Customer::setMetadata(const QVariantMap &metadata)
     }
 }
 
-ShippingInformation *Customer::shippingInformation()
+const ShippingInformation *Customer::shippingInformation() const
 {
     return &m_ShippingInformation;
 }
 
-const ShippingInformation *Customer::shippingInformation() const
+ShippingInformation *Customer::shippingInformation()
 {
     return &m_ShippingInformation;
 }
@@ -128,7 +128,7 @@ bool Customer::deleted() const
     return m_IsDeleted;
 }
 
-void Customer::setShippingInformation(const ShippingInformation *shippingInformation)
+void Customer::setShippingInformation(ShippingInformation *shippingInformation)
 {
     // TODO: Check for content equality instead of memory location.
     const bool changed = m_ShippingInformation.name() != shippingInformation->name() ||
@@ -240,24 +240,30 @@ Customer *Customer::fromString(const QString &dataStr)
     return fromJson(Utils::toVariantMap(dataStr));
 }
 
-void Customer::set(const Customer *other)
+void Customer::set(Customer *other)
 {
-    Q_ASSERT(other != nullptr);
+    if (other) {
+        setCustomerID(other->customerID());
+        setDefaultSource(other->defaultSource());
+        setEmail(other->email());
 
-    setCustomerID(other->customerID());
-    setDefaultSource(other->defaultSource());
-    setEmail(other->email());
+        setDescription(other->description());
+        setCurrency(other->currency());
+        setMetadata(other->metadata());
 
-    setDescription(other->description());
-    setCurrency(other->currency());
-    setMetadata(other->metadata());
-
-    setShippingInformation(other->shippingInformation());
+        setShippingInformation(other->shippingInformation());
+    }
 }
 
 bool Customer::create()
 {
+    if (Stripe::secretKey().length() == 0) {
+        qDebug() << "[ERROR] secretKey is not set in the Stripe instance. Cannot send the request.";
+        return false;
+    }
+
     if (m_CustomerID.length() > 0) {
+        qDebug() << "[INFO] Customer already has an ID. Skipping customer creation.";
         return false;
     }
 
@@ -294,6 +300,11 @@ bool Customer::create()
 
 bool Customer::update()
 {
+    if (Stripe::secretKey().length() == 0) {
+        qDebug() << "[ERROR] secretKey is not set in the Stripe instance. Cannot send the request.";
+        return false;
+    }
+
     if (m_CustomerID.length() == 0) {
         return false;
     }
@@ -332,6 +343,11 @@ bool Customer::update()
 
 bool Customer::deleteCustomer()
 {
+    if (Stripe::secretKey().length() == 0) {
+        qDebug() << "[ERROR] secretKey is not set in the Stripe instance. Cannot send the request.";
+        return false;
+    }
+
     if (m_CustomerID.length() == 0) {
         return false;
     }
@@ -361,14 +377,26 @@ bool Customer::deleteCustomer()
 void Customer::clear()
 {
     m_CustomerID.clear();
+    emit customerIDChanged();
+
     m_DefaultSource.clear();
+    emit defaultSourceChanged();
+
     m_Email.clear();
+    emit emailChanged();
 
     m_Description.clear();
+    emit descriptionChanged();
+
     m_Currency.clear();
+    emit currencyChanged();
+
     m_Metadata.clear();
+    emit metadataChanged();
 
     m_ShippingInformation.clear();
+    emit shippingInformationChanged();
+
     emit cleared();
 }
 
@@ -397,7 +425,7 @@ void Customer::clearCards()
     return m_Cards.clear();
 }
 
-const Error *Customer::lastError() const
+Error *Customer::lastError()
 {
     return &m_Error;
 }

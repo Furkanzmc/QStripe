@@ -2,9 +2,9 @@
 // Qt
 #include <QDate>
 // QStripe
+#include "QStripe/Stripe.h"
 #include "QStripe/Utils.h"
 #include "QStripe/Token.h"
-#include "QStripe/Stripe.h"
 
 namespace QStripe
 {
@@ -53,6 +53,12 @@ Card::Card(QObject *parent)
     , m_NetworkUtils()
     , m_Error()
     , m_CustomerID("")
+    , m_IsValidCardLenght(false)
+    , m_IsValidCardNumber(false)
+    , m_IsValidCard(false)
+    , m_IsValidExpirationMonth(false)
+    , m_IsValidExpirationYear(false)
+    , m_IsValidCVC(false)
 {
     connect(this, &Card::cardNumberChanged, this, &Card::updateCardBrand);
 }
@@ -62,17 +68,17 @@ QString Card::cardID() const
     return m_CardID;
 }
 
-Address *Card::address()
-{
-    return &m_Address;
-}
-
 const Address *Card::address() const
 {
     return &m_Address;
 }
 
-void Card::setAddress(const Address *addr)
+Address *Card::address()
+{
+    return &m_Address;
+}
+
+void Card::setAddress(Address *addr)
 {
     const bool changed = m_Address != (*addr);
     if (changed) {
@@ -143,6 +149,8 @@ void Card::setExpirationMonth(int month)
     const bool changed = m_ExpirationMonth != month;
     if (changed) {
         m_ExpirationMonth = month;
+        setValidCard(validCard());
+        setValidExpirationMonth(validExpirationMonth());
         emit expirationMonthChanged();
     }
 }
@@ -157,6 +165,8 @@ void Card::setExpirationYear(int year)
     const bool changed = m_ExpirationYear != year;
     if (changed) {
         m_ExpirationYear = year;
+        setValidCard(validCard());
+        setValidExpirationYear(validExpirationYear());
         emit expirationYearChanged();
     }
 }
@@ -255,6 +265,9 @@ void Card::setCardNumber(const QString &number)
     const bool changed = m_CardNumber != number;
     if (changed) {
         m_CardNumber = number;
+        setValidCardNumber(validCardNumber());
+        setValidCard(validCard());
+        setValidCardNumberLenght(validCardLenght());
         emit cardNumberChanged();
     }
 }
@@ -269,6 +282,8 @@ void Card::setCvc(const QString &cvcNumber)
     const bool changed = m_CVC != cvcNumber;
     if (changed) {
         m_CVC = cvcNumber;
+        setValidCard(validCard());
+        setValidCVC(validCVC());
         emit cvcChanged();
     }
 }
@@ -400,7 +415,7 @@ Card::CardBrand Card::possibleCardBrand() const
     return cardType;
 }
 
-const Token *Card::token() const
+QStripe::Token *Card::token()
 {
     return m_Token;
 }
@@ -447,13 +462,7 @@ bool Card::validExpirationYear() const
 {
     // Normilize the year first. Year can be a two digit or 4 digit number.
     const QDate today = QDate::currentDate();
-    int year = m_ExpirationYear;
-    if (year < 100 && year >= 0) {
-        const QString yearStr = QString::number(year);
-        const QString currentYearStr = QString::number(today.year());
-        const QString yearPrefix = currentYearStr.left(currentYearStr.length() - yearStr.length());
-        year = QString(yearPrefix + yearStr).toInt();
-    }
+    int year = normilizedYear(m_ExpirationYear);
 
     bool isValid = true;
 
@@ -473,7 +482,9 @@ bool Card::validExpirationDate() const
     // If the expiration year and month is valid, check If the month is in the past and return false If it is.
     if (isValid) {
         const QDate today = QDate::currentDate();
-        isValid = m_ExpirationMonth >= today.month();
+        if (today.year() == normilizedYear(m_ExpirationYear)) {
+            isValid = m_ExpirationMonth >= today.month();
+        }
     }
 
     return isValid;
@@ -509,7 +520,7 @@ void Card::setCustomerID(const QString &id)
     }
 }
 
-void Card::set(const Card *other)
+void Card::set(Card *other)
 {
     setCardID(other->cardID());
     setCardNumber(other->cardNumber());
@@ -536,11 +547,18 @@ void Card::set(const Card *other)
 
 bool Card::createToken()
 {
+    if (Stripe::publishableKey().length() == 0) {
+        qDebug() << "[ERROR] publishableKey is not set in the Stripe instance. Cannot send the request.";
+        return false;
+    }
+
     if (m_Token->tokenID().length() > 0) {
+        qDebug() << "[WARNING] Token already exists. Not sending the create token request.";
         return false;
     }
 
     if (validCard() == false) {
+        qDebug() << "[ERROR] Card is not valid. Not sending the create token request.";
         return false;
     }
 
@@ -559,7 +577,7 @@ bool Card::createToken()
         }
     };
 
-    m_NetworkUtils.setHeader("Authorization", "Bearer " + Stripe::secretKey());
+    m_NetworkUtils.setHeader("Authorization", "Bearer " + Stripe::publishableKey());
     if (Stripe::apiVersion().length() > 0) {
         m_NetworkUtils.setHeader("Stripe-Version", Stripe::apiVersion());
     }
@@ -571,6 +589,16 @@ bool Card::createToken()
 
 void Card::fetchToken(const QString &tokenID)
 {
+    if (Stripe::secretKey().length() == 0) {
+        qDebug() << "[ERROR] secretKey is not set in the Stripe instance. Cannot send the request.";
+        return;
+    }
+
+    if (tokenID.length() == 0) {
+        qDebug() << "[ERROR] tokenID is empty.";
+        return;
+    }
+
     auto callback = [this](const Response & response) {
         QVariantMap data = Utils::toVariantMap(response.data);
         if (response.httpStatus == NetworkUtils::HttpStatusCodes::HTTP_200) {
@@ -601,6 +629,11 @@ void Card::fetchToken(const QString &tokenID)
 
 bool Card::create(QString customerID)
 {
+    if (Stripe::secretKey().length() == 0) {
+        qDebug() << "[ERROR] secretKey is not set in the Stripe instance. Cannot send the request.";
+        return false;
+    }
+
     if (m_Token->tokenID().length() == 0) {
         return false;
     }
@@ -645,6 +678,11 @@ bool Card::create(QString customerID)
 
 bool Card::deleteCard(QString customerID)
 {
+    if (Stripe::secretKey().length() == 0) {
+        qDebug() << "[ERROR] secretKey is not set in the Stripe instance. Cannot send the request.";
+        return false;
+    }
+
     if (m_CardID.length() == 0) {
         return false;
     }
@@ -676,6 +714,65 @@ bool Card::deleteCard(QString customerID)
 
     m_NetworkUtils.sendDelete(getURL(customerID, m_CardID), callback);
     return true;
+}
+
+void Card::clear()
+{
+    m_CardID = "";
+    emit cardIDChanged();
+
+    m_Address.clear();
+    emit addressChanged();
+
+    m_Brand = CardBrand::Unknown;
+    emit brandChanged();
+
+    m_Country = "";
+    emit countryChanged();
+
+    m_Currency = "";
+    emit currencyChanged();
+
+    m_CVCCheck = CVCCheck::CVCCheckUnknown;
+    emit cvcCheckChanged();
+
+    m_ExpirationMonth = 0;
+    emit expirationMonthChanged();
+
+    m_ExpirationYear = 0;
+    emit expirationYearChanged();
+
+    m_Fingerprint = "";
+    emit fingerprintChanged();
+
+    m_FundingType = FundingType::FundingUnknown;
+    emit fundingChanged();
+
+    m_Name = "";
+    emit nameChanged();
+
+    m_LastFourDigits = "";
+    emit lastFourDigitsChanged();
+
+    m_TokenizationMethod = TokenizationMethod::TokenizationUnknown;
+    emit tokenizationMethodChanged();
+
+    m_MetaData.clear();
+    emit metaDataChanged();
+
+    m_CardNumber = "";
+    emit cardNumberChanged();
+
+    m_CVC = "";
+    emit cvcChanged();
+
+    m_Token->clear();
+    m_Error.clear();
+
+    m_CustomerID = "";
+    emit customerIDChanged();
+
+    emit cleared();
 }
 
 const Error *Card::lastError() const
@@ -1002,6 +1099,67 @@ void Card::setCVCCheck(CVCCheck check)
     }
 }
 
+void Card::setValidCard(bool valid)
+{
+    const bool changed = m_IsValidCard != valid;
+    if (changed) {
+        m_IsValidCard = valid;
+        emit validCardChanged();
+    }
+}
+
+void Card::setValidCardNumber(bool valid)
+{
+    const bool changed = m_IsValidCardNumber != valid;
+    if (changed) {
+        m_IsValidCardNumber = valid;
+        if (m_IsValidCardNumber) {
+            setLastFourDigits(m_CardNumber.right(4));
+        }
+        else {
+            setLastFourDigits("");
+        }
+
+        emit validCardNumberChanged();
+    }
+}
+
+void Card::setValidCardNumberLenght(bool valid)
+{
+    const bool changed = m_IsValidCardLenght != valid;
+    if (changed) {
+        m_IsValidCardLenght = valid;
+        emit validCardLenghtChanged();
+    }
+}
+
+void Card::setValidExpirationMonth(bool valid)
+{
+    const bool changed = m_IsValidExpirationMonth != valid;
+    if (changed) {
+        m_IsValidExpirationMonth = valid;
+        emit validExpirationMonthChanged();
+    }
+}
+
+void Card::setValidExpirationYear(bool valid)
+{
+    const bool changed = m_IsValidExpirationYear != valid;
+    if (changed) {
+        m_IsValidExpirationYear = valid;
+        emit validExpirationYearChanged();
+    }
+}
+
+void Card::setValidCVC(bool valid)
+{
+    const bool changed = m_IsValidCVC != valid;
+    if (changed) {
+        m_IsValidCardLenght = valid;
+        emit validCVCChanged();
+    }
+}
+
 void Card::updateCardBrand()
 {
     setBrand(possibleCardBrand());
@@ -1058,6 +1216,19 @@ QString Card::getCustomerID() const
     }
 
     return id;
+}
+
+int Card::normilizedYear(int year) const
+{
+    if (year < 100 && year >= 0) {
+        const QDate today = QDate::currentDate();
+        const QString yearStr = QString::number(year);
+        const QString currentYearStr = QString::number(today.year());
+        const QString yearPrefix = currentYearStr.left(currentYearStr.length() - yearStr.length());
+        year = QString(yearPrefix + yearStr).toInt();
+    }
+
+    return year;
 }
 
 }
