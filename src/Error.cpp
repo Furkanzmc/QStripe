@@ -1,4 +1,6 @@
 #include "QStripe/Error.h"
+// QStripe
+#include "QStripe/NetworkUtils.h"
 // Qt
 #include <QDebug>
 #include <QNetworkReply>
@@ -458,8 +460,15 @@ void Error::set(QVariantMap errorResponse, int httpCode, int networkErrorCode)
         m_Type = ErrorType::ErrorApiConnection;
     }
     else if (errorResponse.contains("type")) {
-        const QString typeString = errorResponse["type"].toString();
-        m_Type = errorTypeFromString(typeString);
+        // Stripe reports authentication with a an invalid request error
+        // type.
+        if (httpCode == NetworkUtils::HTTP_401) {
+            m_Type = ErrorType::ErrorAuthentication;
+        }
+        else {
+            const QString typeString = errorResponse["type"].toString();
+            m_Type = errorTypeFromString(typeString);
+        }
     }
     else {
         m_Type = ErrorType::ErrorNone;
